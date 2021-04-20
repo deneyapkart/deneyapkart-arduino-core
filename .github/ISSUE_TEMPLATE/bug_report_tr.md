@@ -1,9 +1,9 @@
 ---
-isim: Hata raporu
-konu: Katkıda bulunmak ve destek almak için hata/sorun bildiriminde bulunun
-başlık: ''
-etiketler: ''
-atanan yetkililer: ''
+name: Hata raporu
+about: Katkıda bulunmak ve destek almak için hata/sorun bildiriminde bulunun
+title: ''
+labels: ''
+assignees: ''
 
 ---
 
