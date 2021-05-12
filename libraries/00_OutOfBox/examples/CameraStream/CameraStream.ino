@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "deneyap.h"
 #include <WiFiESP32.h>
 
@@ -27,7 +28,8 @@ void setup() {
 
   Serial.print("Kamera hazir! Baglanmak icin 'http://");  // Baglanti saglandi
   Serial.print(WiFi.softAPIP());                          // Goruntunun yayinlanacagi IP adresi seri terminale yaziliyor
-  Serial.println("' adresini kullaniniz");             
+  Serial.println("' adresini kullaniniz");      
+}       
 
 void loop() {
   delay(10000);

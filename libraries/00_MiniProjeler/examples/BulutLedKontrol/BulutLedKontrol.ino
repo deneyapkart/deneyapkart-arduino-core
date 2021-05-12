@@ -1,6 +1,6 @@
-
 // Adafruit IO kullanarak IoT tabanli uzaktan led kontrol uygulamasi 
 
+#include <Arduino.h>
 #include "deneyap.h"
 #include "WiFiESP32.h"
 #include <Adafruit_MQTT.h>
@@ -19,11 +19,37 @@ Adafruit_MQTT_Subscribe kirmizi_led = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAM
 Adafruit_MQTT_Subscribe yesil_led = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/yesil-led");
 Adafruit_MQTT_Subscribe mavi_led = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/mavi-led");
 
+void MQTT_connect() {
+  int8_t ret;
+  if (mqtt.connected()) 
+  {
+    return;
+  }
+  
+  Serial.print("Bulut sistemine baglaniliyor... ");
+  uint8_t count = 3;
+  
+  while ((ret = mqtt.connect()) != 0) 
+  {
+    Serial.println(mqtt.connectErrorString(ret));
+    Serial.println("3 saniye icinde tekrar baglanti denemesi gerceklesecek...");
+    mqtt.disconnect();
+    delay(5000); 
+    count = count - 1 ;
+
+    if (count == 0) 
+    {
+      esp_restart();
+    }
+  }
+  
+  Serial.println("Bulut sistemine baglanildi!");
+}
+
 void setup() {
-  expanderInit();                         
-  pinMode(BUILTIN_LED_R, OUTPUT);         
-  pinMode(BUILTIN_LED_G, OUTPUT);         
-  pinMode(BUILTIN_LED_B, OUTPUT);         
+  pinMode(LEDR, OUTPUT);         
+  pinMode(LEDG, OUTPUT);         
+  pinMode(LEDB, OUTPUT);         
   Serial.begin(115200);
   delay(10);
   
@@ -94,31 +120,4 @@ void loop() {
       }
     }
   }
-}
-
-void MQTT_connect() {
-  int8_t ret;
-  if (mqtt.connected()) 
-  {
-    return;
-  }
-  
-  Serial.print("Bulut sistemine baglaniliyor... ");
-  uint8_t count = 3;
-  
-  while ((ret = mqtt.connect()) != 0) 
-  {
-    Serial.println(mqtt.connectErrorString(ret));
-    Serial.println("3 saniye icinde tekrar baglanti denemesi gerceklesecek...");
-    mqtt.disconnect();
-    delay(5000); 
-    count = count - 1 ;
-
-    if (count == 0) 
-    {
-      esp_restart();
-    }
-  }
-  
-  Serial.println("Bulut sistemine baglanildi!");
 }

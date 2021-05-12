@@ -1,6 +1,6 @@
-
 // Adafruit IO kullanarak IoT tabanli sicaklik gozlem uygulamasi 
 
+#include <Arduino.h>
 #include "deneyap.h"
 #include "lsm6dsm.h"
 #include "WiFiESP32.h"
@@ -21,9 +21,35 @@ Adafruit_MQTT_Publish sicaklik = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/fee
 Adafruit_MQTT_Subscribe buton_durumu = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/buton-durumu");
 float sicaklik_degeri = 0.0;
 
+void MQTT_connect() {
+  int8_t ret;
+  if (mqtt.connected()) 
+  {
+    return;
+  }
+  
+  Serial.print("Bulut sistemine baglaniliyor... ");
+  uint8_t count = 3;
+  
+  while ((ret = mqtt.connect()) != 0) 
+  {
+    Serial.println(mqtt.connectErrorString(ret));
+    Serial.println("3 saniye icinde tekrar baglanti denemesi gerceklesecek...");
+    mqtt.disconnect();
+    delay(3000); 
+    count = count - 1 ;
+
+    if (count == 0) 
+    {
+      esp_restart();
+    }
+  }
+  
+  Serial.println("Bulut sistemine baglanildi!");
+}
+
 void setup() {
-  expanderInit();
-  pinMode(BUILTIN_LED_B, OUTPUT);
+  pinMode(LEDB, OUTPUT);
   imu.begin();   
   Serial.begin(115200);
   delay(10);
@@ -82,31 +108,4 @@ void loop() {
   }
 
   delay(250);
-}
-
-void MQTT_connect() {
-  int8_t ret;
-  if (mqtt.connected()) 
-  {
-    return;
-  }
-  
-  Serial.print("Bulut sistemine baglaniliyor... ");
-  uint8_t count = 3;
-  
-  while ((ret = mqtt.connect()) != 0) 
-  {
-    Serial.println(mqtt.connectErrorString(ret));
-    Serial.println("3 saniye icinde tekrar baglanti denemesi gerceklesecek...");
-    mqtt.disconnect();
-    delay(3000); 
-    count = count - 1 ;
-
-    if (count == 0) 
-    {
-      esp_restart();
-    }
-  }
-  
-  Serial.println("Bulut sistemine baglanildi!");
 }

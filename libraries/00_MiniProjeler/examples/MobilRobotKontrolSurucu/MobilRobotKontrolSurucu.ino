@@ -1,14 +1,14 @@
-
 // Iki farkli Deneyap Kart'in esp-now protokolunu kulanarak birbirleriyle haberlesmesi (motor surcu tarafi)
 
+#include <Arduino.h>
 #include "deneyap.h"
 #include "WiFiESP32.h"
 #include "esp_now.h"
 
-#define MOT1_DIRA DIG0
-#define MOT1_DIRB DIG1
-#define MOT2_DIRA DIG4
-#define MOT2_DIRB DIG5
+#define MOT1_DIRA D0
+#define MOT1_DIRB D1
+#define MOT2_DIRA D4
+#define MOT2_DIRB D5
 
 void motor_stop();
 void motor_forward();
@@ -51,10 +51,9 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
 }
 
 void setup() {
-  expanderInit();
-  pinMode(BUILTIN_LED_R, OUTPUT);
-  pinMode(BUILTIN_LED_G, OUTPUT);
-  pinMode(BUILTIN_LED_B, OUTPUT);
+  pinMode(LEDR, OUTPUT);
+  pinMode(LEDG, OUTPUT);
+  pinMode(LEDB, OUTPUT);
   Serial.begin(115200);
   WiFi.mode(WIFI_MODE_STA);
 
