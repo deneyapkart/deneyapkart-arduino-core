@@ -2,9 +2,9 @@
   "packages": [
     {
       "name": "deneyap",
-      "maintainer": "RFtek Electronics Ltd.", 
+      "maintainer": "Turkish Technnology Team Foundation (T3)", 
       "websiteURL": "https://github.com/deneyapkart/deneyapkart-arduino-core", 
-      "email": "info@rftek.com.tr",
+      "email": "destek@deneyapkart.org",
 
       "platforms": [
     		{
