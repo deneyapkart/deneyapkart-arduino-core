@@ -704,9 +704,7 @@ float LSM6DSM::readTempC(void)
   */
 float LSM6DSM::readTempF(void)
 {
-	float data = (float)readRawTemp() / 256;	// Divide by 16 to scale
-	data += 25;                              	// Add 25 degrees to remove offset
-	data = (data * 9) / 5 + 32;
+	float data = readRawTemp() * 45 / 6400 + 77;
 
 	return data;
 }
