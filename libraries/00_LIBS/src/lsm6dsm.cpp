@@ -549,7 +549,7 @@ float LSM6DSM::calcAccel(int16_t input)
 /**
   * @brief  Read gyro Z-axis raw data   
   * @param  None
-  * @retval X-axis raw data
+  * @retval Z-axis raw data
   */
 int16_t LSM6DSM::readRawGyroX(void)
 {
@@ -704,7 +704,7 @@ float LSM6DSM::readTempC(void)
   */
 float LSM6DSM::readTempF(void)
 {
-	float data = readRawTemp() * 45 / 6400 + 77;
+	float data = (float)readRawTemp() * 45 / 6400 + 77;
 
 	return data;
 }
