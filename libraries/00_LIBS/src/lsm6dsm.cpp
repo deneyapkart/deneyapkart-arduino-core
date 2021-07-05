@@ -547,9 +547,9 @@ float LSM6DSM::calcAccel(int16_t input)
 }
 
 /**
-  * @brief  Read gyro Z-axis raw data   
+  * @brief  Read gyro X-axis raw data   
   * @param  None
-  * @retval Z-axis raw data
+  * @retval X-axis raw data
   */
 int16_t LSM6DSM::readRawGyroX(void)
 {
