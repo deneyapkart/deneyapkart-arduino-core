@@ -34,8 +34,6 @@ public:
     uint64_t cardSize();
     uint64_t totalBytes();
     uint64_t usedBytes();
-    bool readRAW(uint8_t* buffer, uint32_t sector);
-    bool writeRAW(uint8_t* buffer, uint32_t sector);
 };
 
 }

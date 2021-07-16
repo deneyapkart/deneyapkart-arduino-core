@@ -1,5 +1,5 @@
 #include "deneyap.h"
-#include <WiFiESP32.h>
+#include <WiFi.h>
 
 // ---------->>>>>>>>>> YUKLEME YAPILAMDAN DIKKAT EDILMESI GEREKEN HUSUS <<<<<<<<<<----------
 // "Araclar->Partition Scheme->Huge APP" secilmeli //

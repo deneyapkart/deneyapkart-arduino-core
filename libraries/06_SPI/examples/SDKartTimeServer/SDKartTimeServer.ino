@@ -17,7 +17,7 @@
 #include "SD.h"
 #include "SPI.h"
 #include <time.h> 
-#include <WiFiESP32.h>
+#include <WiFi.h>
 
 const char* ssid     = "wifi-ag-adi";
 const char* password = "wifi-sifresi";

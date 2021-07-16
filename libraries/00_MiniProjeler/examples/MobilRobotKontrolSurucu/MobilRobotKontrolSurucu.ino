@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 #include "deneyap.h"
-#include "WiFiESP32.h"
+#include "WiFi.h"
 #include "esp_now.h"
 
 #define MOT1_DIRA D0

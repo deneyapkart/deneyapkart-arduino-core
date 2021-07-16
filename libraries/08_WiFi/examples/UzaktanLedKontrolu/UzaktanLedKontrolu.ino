@@ -1,5 +1,5 @@
 #include "deneyap.h"
-#include <WiFiESP32.h>
+#include <WiFi.h>
 #include <WiFiClient.h>
 #include <WiFiAP.h>
 
@@ -14,7 +14,7 @@ void setup() {
 
   Serial.begin(115200);                                                   // Seri haberlesme baslatildi
   Serial.println();
-  Serial.println("Erisim Noktasi (AP)konfigure ediliyor...");      
+  Serial.println("Erisim Noktasi (AP) konfigure ediliyor...");      
 
   WiFi.softAP(ssid, password);                                            // Cihaz Erisim Noktasi (AP) olarak baslatildi
   IPAddress myIP = WiFi.softAPIP();                                       

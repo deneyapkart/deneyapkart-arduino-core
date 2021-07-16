@@ -1,10 +1,10 @@
-#include <WiFiESP32.h>
+#include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include <Update.h>
 
-const char* host = "esp32";
+const char* host = "deneyapkart";
 const char* ssid = "xxx";
 const char* password = "xxxx";
 
@@ -154,7 +154,7 @@ void setup(void) {
       }
     } else if (upload.status == UPLOAD_FILE_END) {
       if (Update.end(true)) { //true to set the size to the current progress
-        Serial.printf("Guncelleme basarili: %u\Yeniden baslatiliyor...\n", upload.totalSize);
+        Serial.printf("Guncelleme basarili: %u\nYeniden baslatiliyor...\n", upload.totalSize);
       } else {
         Update.printError(Serial);
       }

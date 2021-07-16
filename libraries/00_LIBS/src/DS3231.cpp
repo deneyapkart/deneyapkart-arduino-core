@@ -247,7 +247,7 @@ uint8_t DS3231::getHours()
 	{
 		return (bcd2bin(hours));
 	}
-	else if (h_mode == CLOCK_H12)
+	else //if (h_mode == CLOCK_H12)
 	{
 		bitClear(hours, 5);
 		bitClear(hours, 6);
@@ -548,8 +548,9 @@ Taken from https://github.com/adafruit/RTClib/
 
 void DS3231::setDateTime(char* date, char* time)
 {
-	uint8_t day, month, hour, minute, second;
+	uint8_t day, hour, minute, second;
 	uint16_t year;
+	uint8_t month = 0;
 	// sample input: date = "Dec 26 2009", time = "12:34:56"
 	year = atoi(date + 9);
 	setYear(year);

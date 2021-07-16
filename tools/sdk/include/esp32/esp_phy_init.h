@@ -157,6 +157,18 @@ esp_err_t esp_phy_load_cal_data_from_nvs(esp_phy_calibration_data_t* out_cal_dat
 esp_err_t esp_phy_store_cal_data_to_nvs(const esp_phy_calibration_data_t* cal_data);
 
 /**
+ * @brief Erase PHY calibration data which is stored in the NVS
+ *
+ * This is a function which can be used to trigger full calibration as a last-resort remedy 
+ * if partial calibration is used. It can be called in the application based on some conditions 
+ * (e.g. an option provided in some diagnostic mode).
+ *
+ * @return ESP_OK on success
+ * @return others on fail. Please refer to NVS API return value error number.
+ */
+esp_err_t esp_phy_erase_cal_data_in_nvs(void);
+
+/**
  * @brief Initialize PHY and RF module
  *
  * PHY and RF module should be initialized in order to use WiFi or BT.
@@ -191,6 +203,18 @@ esp_err_t esp_phy_rf_deinit(phy_rf_module_t module);
 void esp_phy_load_cal_and_init(phy_rf_module_t module);
 
 /**
+* @brief Enable WiFi/BT common clock
+*
+*/
+void esp_phy_common_clock_enable(void);
+
+/**
+* @brief Disable WiFi/BT common clock
+*
+*/
+void esp_phy_common_clock_disable(void);
+
+/**
  * @brief Module requires to enter modem sleep
  */
 esp_err_t esp_modem_sleep_enter(modem_sleep_module_t module);
@@ -220,6 +244,13 @@ esp_err_t esp_modem_sleep_deregister(modem_sleep_module_t module);
  *                   microsecond since boot when phy/rf was last switched on
 */
 int64_t esp_phy_rf_get_on_ts(void);
+
+/**
+ * @brief Get PHY lib version
+ * @return PHY lib version.
+ */
+char * get_phy_version_str(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -19,6 +19,7 @@
 extern "C" {
 #endif
 
+#include "freertos/FreeRTOS.h"
 #include "esp_types.h"
 #include "esp_intr.h"
 #include "esp_err.h"
@@ -36,7 +37,8 @@ extern "C" {
 #define CAN_GENERAL_CONFIG_DEFAULT(tx_io_num, rx_io_num, op_mode) {.mode = op_mode, .tx_io = tx_io_num, .rx_io = rx_io_num,       \
                                                                    .clkout_io = CAN_IO_UNUSED, .bus_off_io = CAN_IO_UNUSED,       \
                                                                    .tx_queue_len = 5, .rx_queue_len = 5,                          \
-                                                                   .alerts_enabled = CAN_ALERT_NONE,  .clkout_divider = 0,        }
+                                                                   .alerts_enabled = CAN_ALERT_NONE,  .clkout_divider = 0,        \
+                                                                   .intr_flags = ESP_INTR_FLAG_LEVEL1}
 
 /**
  * @brief Initializer macros for timing configuration structure
@@ -44,7 +46,13 @@ extern "C" {
  * The following initializer macros offer commonly found bit rates.
  *
  * @note These timing values are based on the assumption APB clock is at 80MHz
+ * @note The 20K, 16K and 12.5K bit rates are only available from ESP32 Revision 2 onwards
  */
+#if (CONFIG_ESP32_REV_MIN >= 2)
+#define CAN_TIMING_CONFIG_12_5KBITS()   {.brp = 256, .tseg_1 = 16, .tseg_2 = 8, .sjw = 3, .triple_sampling = false}
+#define CAN_TIMING_CONFIG_16KBITS()     {.brp = 200, .tseg_1 = 16, .tseg_2 = 8, .sjw = 3, .triple_sampling = false}
+#define CAN_TIMING_CONFIG_20KBITS()     {.brp = 200, .tseg_1 = 15, .tseg_2 = 4, .sjw = 3, .triple_sampling = false}
+#endif
 #define CAN_TIMING_CONFIG_25KBITS()     {.brp = 128, .tseg_1 = 16, .tseg_2 = 8, .sjw = 3, .triple_sampling = false}
 #define CAN_TIMING_CONFIG_50KBITS()     {.brp = 80, .tseg_1 = 15, .tseg_2 = 4, .sjw = 3, .triple_sampling = false}
 #define CAN_TIMING_CONFIG_100KBITS()    {.brp = 40, .tseg_1 = 15, .tseg_2 = 4, .sjw = 3, .triple_sampling = false}
@@ -84,7 +92,7 @@ extern "C" {
 #define CAN_ALERT_BUS_OFF               0x1000      /**< Alert(4096): Bus-off condition occurred. CAN controller can no longer influence bus */
 #define CAN_ALERT_ALL                   0x1FFF      /**< Bit mask to enable all alerts during configuration */
 #define CAN_ALERT_NONE                  0x0000      /**< Bit mask to disable all alerts during configuration */
-#define CAN_ALERT_AND_LOG               0x2000      /**< Bit mask to enable alerts to also be logged when they occur */
+#define CAN_ALERT_AND_LOG               0x2000      /**< Bit mask to enable alerts to also be logged when they occur. Note that logging from the ISR is disabled if CONFIG_TWAI_ISR_IN_IRAM is enabled. */
 
 /**
  * @brief   Message flags
@@ -105,7 +113,7 @@ extern "C" {
 #define CAN_EXTD_ID_MASK                0x1FFFFFFF  /**< Bit mask for 29 bit Extended Frame Format ID */
 #define CAN_STD_ID_MASK                 0x7FF       /**< Bit mask for 11 bit Standard Frame Format ID */
 #define CAN_MAX_DATA_LEN                8           /**< Maximum number of data bytes in a CAN2.0B frame */
-#define CAN_IO_UNUSED                   (-1)        /**< Marks GPIO as unused in CAN configuration */
+#define CAN_IO_UNUSED                   ((gpio_num_t) -1)   /**< Marks GPIO as unused in CAN configuration */
 /** @endcond */
 
 /* ----------------------- Enum and Struct Definitions ---------------------- */
@@ -144,6 +152,7 @@ typedef struct {
     uint32_t rx_queue_len;          /**< Number of messages RX queue can hold */
     uint32_t alerts_enabled;        /**< Bit field of alerts to enable (see documentation) */
     uint32_t clkout_divider;        /**< CLKOUT divider. Can be 1 or any even number from 2 to 14 (optional, set to 0 if unused) */
+    int intr_flags;                 /**< Interrupt flags to set the priority of the driver's ISR. Note that to use the ESP_INTR_FLAG_IRAM, the CONFIG_CAN_ISR_IN_IRAM option should be enabled first. */
 } can_general_config_t;
 
 /**
@@ -152,7 +161,8 @@ typedef struct {
  * @note    Macro initializers are available for this structure
  */
 typedef struct {
-    uint8_t brp;                    /**< Baudrate prescaler (APB clock divider, even number from 2 to 128) */
+    uint32_t brp;                   /**< Baudrate prescaler (i.e., APB clock divider) can be any even number from 2 to 128.
+                                         For ESP32 Rev 2 or later, multiples of 4 from 132 to 256 are also supported */
     uint8_t tseg_1;                 /**< Timing segment 1 (Number of time quanta, between 1 to 16) */
     uint8_t tseg_2;                 /**< Timing segment 2 (Number of time quanta, 1 to 8) */
     uint8_t sjw;                    /**< Synchronization Jump Width (Max time quanta jump for synchronize from 1 to 4) */
@@ -391,6 +401,34 @@ esp_err_t can_initiate_recovery();
  *      - ESP_ERR_INVALID_STATE: CAN driver is not installed
  */
 esp_err_t can_get_status_info(can_status_info_t *status_info);
+
+/**
+ * @brief   Clear the transmit queue
+ *
+ * This function will clear the transmit queue of all messages.
+ *
+ * @note    The transmit queue is automatically cleared when can_stop() or
+ *          can_initiate_recovery() is called.
+ *
+ * @return
+ *      - ESP_OK: Transmit queue cleared
+ *      - ESP_ERR_INVALID_STATE: CAN driver is not installed or TX queue is disabled
+ */
+esp_err_t can_clear_transmit_queue();
+
+/**
+ * @brief   Clear the receive queue
+ *
+ * This function will clear the receive queue of all messages.
+ *
+ * @note    The receive queue is automatically cleared when can_start() is
+ *          called.
+ *
+ * @return
+ *      - ESP_OK: Transmit queue cleared
+ *      - ESP_ERR_INVALID_STATE: CAN driver is not installed
+ */
+esp_err_t can_clear_receive_queue();
 
 #ifdef __cplusplus
 }

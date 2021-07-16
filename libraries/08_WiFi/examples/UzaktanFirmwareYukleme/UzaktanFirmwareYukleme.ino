@@ -1,4 +1,4 @@
-#include <WiFiESP32.h>
+#include <WiFi.h>
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>

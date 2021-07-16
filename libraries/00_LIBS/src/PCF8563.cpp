@@ -125,7 +125,6 @@ getHours
 uint8_t PCF8563::getHours()
 {
     uint8_t hour;
-    bool flag;
 
     Wire.beginTransmission(PCF8563_ADDR);
     Wire.write(0x04);  // Hour Register
@@ -373,8 +372,9 @@ Taken from https://github.com/adafruit/RTClib/
 
 void PCF8563::setDateTime(char* date, char* time)
 {
-	uint8_t day, month, hour, minute, second;
+	uint8_t day, hour, minute, second;
 	uint16_t year;
+	uint8_t month = 0;
 	// sample input: date = "Dec 26 2009", time = "12:34:56"
 	year = atoi(date + 9);
 	setYear(year);

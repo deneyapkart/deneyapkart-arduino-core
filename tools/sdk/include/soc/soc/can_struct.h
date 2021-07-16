@@ -14,6 +14,8 @@
 #ifndef _SOC_CAN_STRUCT_H_
 #define _SOC_CAN_STRUCT_H_
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -91,7 +93,7 @@ typedef union {
         uint32_t tx: 1;                                     /* IER.1 Transmit Interrupt Enable */
         uint32_t err_warn: 1;                               /* IER.2 Error Interrupt Enable */
         uint32_t data_overrun: 1;                           /* IER.3 Data Overrun Interrupt Enable */
-        uint32_t reserved1: 1;                              /* Internal Reserved (Wake-up not supported) */
+        uint32_t brp_div: 1;                                /* THIS IS NOT AN INTERRUPT. brp_div will prescale BRP by 2. Only available on ESP32 Revision 2 or later. Reserved otherwise */
         uint32_t err_passive: 1;                            /* IER.5 Error Passive Interrupt Enable */
         uint32_t arb_lost: 1;                               /* IER.6 Arbitration Lost Interrupt Enable */
         uint32_t bus_err: 1;                                /* IER.7 Bus Error Interrupt Enable */
@@ -145,8 +147,8 @@ typedef struct {
 
 typedef union {
     struct {
-        uint32_t rx_message_counter: 5;                     /* RMC[4:0] RX Message Counter */
-        uint32_t reserved27: 27;                            /* Internal Reserved */
+        uint32_t rx_message_counter: 7;                     /* RMC[6:0] RX Message Counter */
+        uint32_t reserved25: 25;                            /* Internal Reserved */
     };
     uint32_t val;
 } can_rx_msg_cnt_reg_t;

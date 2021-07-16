@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include "deneyap.h"
 #include "lsm6dsm.h"
-#include "WiFiESP32.h"
+#include "WiFi.h"
 #include "esp_now.h"
 
 //uint8_t broadcastAddress[] = {0xC8, 0x2B, 0x96, 0x8B, 0x94, 0xA8};    // Yayin ya
