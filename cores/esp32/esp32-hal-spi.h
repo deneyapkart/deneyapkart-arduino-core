@@ -19,14 +19,22 @@
 extern "C" {
 #endif
 
+#include "sdkconfig.h"
 #include <stdint.h>
 #include <stdbool.h>
 
 #define SPI_HAS_TRANSACTION
 
+#if CONFIG_IDF_TARGET_ESP32C3
+#define FSPI  0
+#define HSPI  1
+#else
 #define FSPI  1 //SPI bus attached to the flash (can use the same data lines but different SS)
 #define HSPI  2 //SPI bus normally mapped to pins 12 - 15, but can be matrixed to any pins
+#if CONFIG_IDF_TARGET_ESP32
 #define VSPI  3 //SPI bus normally attached to pins 5, 18, 19 and 23, but can be matrixed to any pins
+#endif
+#endif
 
 // This defines are not representing the real Divider of the ESP32
 // the Defines match to an AVR Arduino on 16MHz for better compatibility
@@ -54,7 +62,7 @@ extern "C" {
 struct spi_struct_t;
 typedef struct spi_struct_t spi_t;
 
-spi_t * spiStartBus(uint8_t spi_num, uint32_t freq, uint8_t dataMode, uint8_t bitOrder);
+spi_t * spiStartBus(uint8_t spi_num, uint32_t clockDiv, uint8_t dataMode, uint8_t bitOrder);
 void spiStopBus(spi_t * spi);
 
 //Attach/Detach Signal Pins
@@ -96,7 +104,7 @@ void spiSetClockDiv(spi_t * spi, uint32_t clockDiv);
 void spiSetDataMode(spi_t * spi, uint8_t dataMode);
 void spiSetBitOrder(spi_t * spi, uint8_t bitOrder);
 
-void spiWrite(spi_t * spi, uint32_t *data, uint8_t len);
+void spiWrite(spi_t * spi, const uint32_t *data, uint8_t len);
 void spiWriteByte(spi_t * spi, uint8_t data);
 void spiWriteWord(spi_t * spi, uint16_t data);
 void spiWriteLong(spi_t * spi, uint32_t data);
@@ -105,7 +113,7 @@ void spiTransfer(spi_t * spi, uint32_t *out, uint8_t len);
 uint8_t spiTransferByte(spi_t * spi, uint8_t data);
 uint16_t spiTransferWord(spi_t * spi, uint16_t data);
 uint32_t spiTransferLong(spi_t * spi, uint32_t data);
-void spiTransferBytes(spi_t * spi, uint8_t * data, uint8_t * out, uint32_t size);
+void spiTransferBytes(spi_t * spi, const uint8_t * data, uint8_t * out, uint32_t size);
 void spiTransferBits(spi_t * spi, uint32_t data, uint32_t * out, uint8_t bits);
 
 /*
@@ -115,11 +123,11 @@ void spiTransaction(spi_t * spi, uint32_t clockDiv, uint8_t dataMode, uint8_t bi
 void spiSimpleTransaction(spi_t * spi);
 void spiEndTransaction(spi_t * spi);
 
-void spiWriteNL(spi_t * spi, const void * data, uint32_t len);
+void spiWriteNL(spi_t * spi, const void * data_in, uint32_t len);
 void spiWriteByteNL(spi_t * spi, uint8_t data);
 void spiWriteShortNL(spi_t * spi, uint16_t data);
 void spiWriteLongNL(spi_t * spi, uint32_t data);
-void spiWritePixelsNL(spi_t * spi, const void * data, uint32_t len);
+void spiWritePixelsNL(spi_t * spi, const void * data_in, uint32_t len);
 
 #define spiTransferNL(spi, data, len) spiTransferBytesNL(spi, data, data, len)
 uint8_t spiTransferByteNL(spi_t * spi, uint8_t data);
