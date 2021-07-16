@@ -10,6 +10,41 @@
         {
           "category": "Contributed", 
           "name": "Deneyap Gelistirme Kartlari", 
+          "url": "https://github.com/deneyapkart/deneyapkart-arduino-core/releases/download/1.1.0/deneyapkart-1.1.0.zip", 
+          "checksum": "SHA-256:22B4A82BE3B4E1C9009733851BDA788958AF096B6BFEB081994E1D3A20296A1E", 
+          "help": {
+            "online": ""
+          }, 
+          "version": "1.1.0", 
+          "architecture": "esp32", 
+          "archiveFileName": "deneyapkart-1.1.0.zip", 
+          "boards": [
+            {
+              "name": "Deneyap Kart"
+            }
+          ], 
+          "toolsDependencies": [
+            {
+              "packager": "esp32",
+              "name": "xtensa-esp32-elf-gcc",
+              "version": "1.22.0-97-gc752ad5-5.2.0"
+            },
+            {
+              "packager": "esp32",
+              "name": "esptool_py",
+              "version": "3.0.0"
+            },
+            {
+              "packager": "esp32",
+              "name": "mkspiffs",
+              "version": "0.2.3"
+            }
+          ], 
+          "size": "50152096"
+        },
+        {
+          "category": "Contributed", 
+          "name": "Deneyap Gelistirme Kartlari", 
           "url": "https://github.com/deneyapkart/deneyapkart-arduino-core/releases/download/1.0.1/deneyapkart-1.0.1.zip", 
           "checksum": "SHA-256:B0E4A4C493DD8D51277714A070A13A123A47232D264C6151D66B521688465D19", 
           "help": {
