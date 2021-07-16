@@ -1,6 +1,5 @@
 menu.UploadMode=Upload Mode
 menu.UploadSpeed=Upload Speed
-menu.SerialMode=Serial Connected To
 menu.CPUFreq=CPU Frequency
 menu.FlashFreq=Flash Frequency
 menu.FlashMode=Flash Mode
@@ -8,6 +7,7 @@ menu.FlashSize=Flash Size
 menu.PartitionScheme=Partition Scheme
 menu.DebugLevel=Core Debug Level
 menu.PSRAM=PSRAM
+menu.Revision=Board Revision
 
 ##############################################################
 
@@ -16,16 +16,11 @@ dydk_mpv10.name=Deneyap Kart
 dydk_mpv10.upload.tool=esptool_py
 dydk_mpv10.upload.maximum_size=1310720
 dydk_mpv10.upload.maximum_data_size=327680
-dydk_mpv10.upload.flags=
-dydk_mpv10.upload.extra_flags=
 dydk_mpv10.upload.wait_for_upload_port=true
 
 dydk_mpv10.serial.disableDTR=true
 dydk_mpv10.serial.disableRTS=true
 
-dydk_mpv10.build.tarch=xtensa
-dydk_mpv10.build.bootloader_addr=0x1000
-dydk_mpv10.build.target=esp32
 dydk_mpv10.build.mcu=esp32
 dydk_mpv10.build.core=esp32
 dydk_mpv10.build.variant=dydk_mpv10
@@ -37,8 +32,7 @@ dydk_mpv10.build.flash_freq=40m
 dydk_mpv10.build.flash_mode=dio
 dydk_mpv10.build.boot=dio
 dydk_mpv10.build.partitions=default
-esp32wrover.build.defines=-DBOARD_HAS_PSRAM -mfix-esp32-psram-cache-issue -mfix-esp32-psram-cache-strategy=memw
-esp32wrover.build.extra_libs=
+dydk_mpv10.build.defines=-DBOARD_HAS_PSRAM -mfix-esp32-psram-cache-issue
 
 dydk_mpv10.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
 dydk_mpv10.menu.PartitionScheme.default.build.partitions=default
@@ -133,6 +127,7 @@ dydk_mpv10.menu.DebugLevel.debug.build.code_debug=4
 dydk_mpv10.menu.DebugLevel.verbose=Verbose
 dydk_mpv10.menu.DebugLevel.verbose.build.code_debug=5
 
+<<<<<<< HEAD
 ##############################################################
 
 dym_mpv10.name=Deneyap Mini
@@ -282,4 +277,6 @@ dym_mpv10.menu.DebugLevel.debug.build.code_debug=4
 dym_mpv10.menu.DebugLevel.verbose=Verbose
 dym_mpv10.menu.DebugLevel.verbose.build.code_debug=5
 
+=======
+>>>>>>> parent of 890c6b1 (Add new board (Deneyap Mini))
 ##############################################################
