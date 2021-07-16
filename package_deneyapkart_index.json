@@ -7,7 +7,7 @@
       "email": "destek@deneyapkart.org",
 
       "platforms": [
-    		{
+        {
           "category": "Contributed", 
           "name": "Deneyap Gelistirme Kartlari", 
           "url": "https://github.com/deneyapkart/deneyapkart-arduino-core/releases/download/1.0.1/deneyapkart-1.0.1.zip", 
