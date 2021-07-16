@@ -1,9 +1,5 @@
 name=Deneyap Gelistirme Kartlari
-<<<<<<< HEAD
-version=1.1.0
-=======
 version=1.0.0
->>>>>>> parent of 928a7ba (Update core)
 
 tools.esptool_py.path={runtime.tools.esptool_py.path}
 tools.esptool_py.cmd=esptool
