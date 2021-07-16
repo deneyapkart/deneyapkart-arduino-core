@@ -87,7 +87,7 @@
           "category": "Contributed", 
           "name": "Deneyap Gelistirme Kartlari", 
           "url": "https://github.com/deneyapkart/deneyapkart-arduino-core/releases/download/1.1.0/deneyapkart-1.1.0.zip", 
-          "checksum": "SHA-256:0BCA802006CC6E068A27AECDA24FEE4EB5617B4C6554696321E898F77982A272", 
+          "checksum": "SHA-256:21AEEAC74F6BBC8727495D3A15D157316DAF41E0596C81AE884C387B3ECBF2BE", 
           "help": {
             "online": ""
           }, 
@@ -116,7 +116,7 @@
               "version": "0.2.3" 
             }
           ], 
-          "size": "107785216"
+          "size": "107785147"
         },
         {
           "category": "Contributed", 
