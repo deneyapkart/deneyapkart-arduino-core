@@ -154,7 +154,7 @@ void setup(void) {
       }
     } else if (upload.status == UPLOAD_FILE_END) {
       if (Update.end(true)) { //true to set the size to the current progress
-        Serial.printf("Guncelleme basarili: %u\nYeniden baslatiliyor...\n", upload.totalSize);
+        Serial.printf("Guncelleme basarili: %u\Yeniden baslatiliyor...\n", upload.totalSize);
       } else {
         Update.printError(Serial);
       }

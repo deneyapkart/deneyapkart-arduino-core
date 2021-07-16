@@ -23,7 +23,7 @@
 
 #if defined (ESP32)
 
-#include "AutoAnalogAudio.h"
+#include "../AutoAnalogAudio.h"
 #include "driver/i2s.h"
 #include "driver/adc.h"
 #include "freertos/FreeRTOS.h"
