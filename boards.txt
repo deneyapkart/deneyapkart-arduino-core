@@ -136,6 +136,7 @@ dydk_mpv10.menu.DebugLevel.verbose.build.code_debug=5
 ##############################################################
 
 dym_mpv10.name=Deneyap Mini
+
 dym_mpv10.vid.0=0x303a
 dym_mpv10.pid.0=0x0002
 

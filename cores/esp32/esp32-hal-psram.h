@@ -19,17 +19,6 @@
 extern "C" {
 #endif
 
-#include "sdkconfig.h"
-
-#ifndef BOARD_HAS_PSRAM
-#ifdef CONFIG_SPIRAM_SUPPORT
-#undef CONFIG_SPIRAM_SUPPORT
-#endif
-#ifdef CONFIG_SPIRAM
-#undef CONFIG_SPIRAM
-#endif
-#endif
-
 bool psramInit();
 bool psramFound();
 

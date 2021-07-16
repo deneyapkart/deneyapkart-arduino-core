@@ -18,58 +18,22 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
+#include "rom/ets_sys.h"
 #include "esp_attr.h"
+#include "esp_intr.h"
+#include "rom/uart.h"
 #include "soc/uart_reg.h"
 #include "soc/uart_struct.h"
 #include "soc/io_mux_reg.h"
 #include "soc/gpio_sig_map.h"
+#include "soc/dport_reg.h"
 #include "soc/rtc.h"
-#include "hal/uart_ll.h"
 #include "esp_intr_alloc.h"
 
-#include "esp_system.h"
-#ifdef ESP_IDF_VERSION_MAJOR // IDF 4+
-#if CONFIG_IDF_TARGET_ESP32 // ESP32/PICO-D4
-#include "soc/dport_reg.h"
-#include "esp32/rom/ets_sys.h"
-#include "esp32/rom/uart.h"
-#elif CONFIG_IDF_TARGET_ESP32S2
-#include "soc/dport_reg.h"
-#include "esp32s2/rom/ets_sys.h"
-#include "esp32s2/rom/uart.h"
-#include "soc/periph_defs.h"
-#elif CONFIG_IDF_TARGET_ESP32C3
-#include "esp32c3/rom/ets_sys.h"
-#include "esp32c3/rom/uart.h"
-#include "soc/periph_defs.h"
-#else 
-#error Target CONFIG_IDF_TARGET is not supported
-#endif
-#else // ESP32 Before IDF 4.0
-#include "rom/ets_sys.h"
-#include "rom/uart.h"
-#include "esp_intr.h"
-#endif
-
-#if CONFIG_IDF_TARGET_ESP32
-#define UART_PORTS_NUM 3
 #define UART_REG_BASE(u)    ((u==0)?DR_REG_UART_BASE:(      (u==1)?DR_REG_UART1_BASE:(    (u==2)?DR_REG_UART2_BASE:0)))
 #define UART_RXD_IDX(u)     ((u==0)?U0RXD_IN_IDX:(          (u==1)?U1RXD_IN_IDX:(         (u==2)?U2RXD_IN_IDX:0)))
 #define UART_TXD_IDX(u)     ((u==0)?U0TXD_OUT_IDX:(         (u==1)?U1TXD_OUT_IDX:(        (u==2)?U2TXD_OUT_IDX:0)))
 #define UART_INTR_SOURCE(u) ((u==0)?ETS_UART0_INTR_SOURCE:( (u==1)?ETS_UART1_INTR_SOURCE:((u==2)?ETS_UART2_INTR_SOURCE:0)))
-#elif CONFIG_IDF_TARGET_ESP32S2
-#define UART_PORTS_NUM 2
-#define UART_REG_BASE(u)    ((u==0)?DR_REG_UART_BASE:(      (u==1)?DR_REG_UART1_BASE:0))
-#define UART_RXD_IDX(u)     ((u==0)?U0RXD_IN_IDX:(          (u==1)?U1RXD_IN_IDX:0))
-#define UART_TXD_IDX(u)     ((u==0)?U0TXD_OUT_IDX:(         (u==1)?U1TXD_OUT_IDX:0))
-#define UART_INTR_SOURCE(u) ((u==0)?ETS_UART0_INTR_SOURCE:( (u==1)?ETS_UART1_INTR_SOURCE:0))
-#else
-#define UART_PORTS_NUM 2
-#define UART_REG_BASE(u)    ((u==0)?DR_REG_UART_BASE:(      (u==1)?DR_REG_UART1_BASE:0))
-#define UART_RXD_IDX(u)     ((u==0)?U0RXD_IN_IDX:(          (u==1)?U1RXD_IN_IDX:0))
-#define UART_TXD_IDX(u)     ((u==0)?U0TXD_OUT_IDX:(         (u==1)?U1TXD_OUT_IDX:0))
-#define UART_INTR_SOURCE(u) ((u==0)?ETS_UART0_INTR_SOURCE:( (u==1)?ETS_UART1_INTR_SOURCE:0))
-#endif
 
 static int s_uart_debug_nr = 0;
 
@@ -87,35 +51,31 @@ struct uart_struct_t {
 #define UART_MUTEX_LOCK()
 #define UART_MUTEX_UNLOCK()
 
-static uart_t _uart_bus_array[] = {
-    {&UART0, 0, NULL, NULL},
-    {&UART1, 1, NULL, NULL},
-#if CONFIG_IDF_TARGET_ESP32
-    {&UART2, 2, NULL, NULL}
-#endif
+static uart_t _uart_bus_array[3] = {
+    {(volatile uart_dev_t *)(DR_REG_UART_BASE), 0, NULL, NULL},
+    {(volatile uart_dev_t *)(DR_REG_UART1_BASE), 1, NULL, NULL},
+    {(volatile uart_dev_t *)(DR_REG_UART2_BASE), 2, NULL, NULL}
 };
 #else
 #define UART_MUTEX_LOCK()    do {} while (xSemaphoreTake(uart->lock, portMAX_DELAY) != pdPASS)
 #define UART_MUTEX_UNLOCK()  xSemaphoreGive(uart->lock)
 
-static uart_t _uart_bus_array[] = {
-    {&UART0, NULL, 0, NULL, NULL},
-    {&UART1, NULL, 1, NULL, NULL},
-#if CONFIG_IDF_TARGET_ESP32
-    {&UART2, NULL, 2, NULL, NULL}
-#endif
+static uart_t _uart_bus_array[3] = {
+    {(volatile uart_dev_t *)(DR_REG_UART_BASE), NULL, 0, NULL, NULL},
+    {(volatile uart_dev_t *)(DR_REG_UART1_BASE), NULL, 1, NULL, NULL},
+    {(volatile uart_dev_t *)(DR_REG_UART2_BASE), NULL, 2, NULL, NULL}
 };
 #endif
 
 static void uart_on_apb_change(void * arg, apb_change_ev_t ev_type, uint32_t old_apb, uint32_t new_apb);
 
-static void ARDUINO_ISR_ATTR _uart_isr(void *arg)
+static void IRAM_ATTR _uart_isr(void *arg)
 {
     uint8_t i, c;
     BaseType_t xHigherPriorityTaskWoken;
     uart_t* uart;
 
-    for(i=0;i<UART_PORTS_NUM;i++){
+    for(i=0;i<3;i++){
         uart = &_uart_bus_array[i];
         if(uart->intr_handle == NULL){
             continue;
@@ -123,15 +83,9 @@ static void ARDUINO_ISR_ATTR _uart_isr(void *arg)
         uart->dev->int_clr.rxfifo_full = 1;
         uart->dev->int_clr.frm_err = 1;
         uart->dev->int_clr.rxfifo_tout = 1;
-#if CONFIG_IDF_TARGET_ESP32
         while(uart->dev->status.rxfifo_cnt || (uart->dev->mem_rx_status.wr_addr != uart->dev->mem_rx_status.rd_addr)) {
             c = uart->dev->fifo.rw_byte;
-#else
-        uint32_t fifo_reg = UART_FIFO_AHB_REG(i);
-        while(uart->dev->status.rxfifo_cnt) {
-        	c = ESP_REG(fifo_reg);
-#endif
-            if(uart->queue != NULL) {
+            if(uart->queue != NULL && !xQueueIsQueueFullFromISR(uart->queue)) {
                 xQueueSendFromISR(uart->queue, &c, &xHigherPriorityTaskWoken);
             }
         }
@@ -142,26 +96,22 @@ static void ARDUINO_ISR_ATTR _uart_isr(void *arg)
     }
 }
 
-static void uartEnableInterrupt(uart_t* uart, uint8_t rxfifo_full_thrhd)
+void uartEnableInterrupt(uart_t* uart)
 {
     UART_MUTEX_LOCK();
-    uart->dev->conf1.rxfifo_full_thrhd = rxfifo_full_thrhd;
-#if CONFIG_IDF_TARGET_ESP32
+    uart->dev->conf1.rxfifo_full_thrhd = 112;
     uart->dev->conf1.rx_tout_thrhd = 2;
-#else
-    uart->dev->mem_conf.rx_tout_thrhd = 2;
-#endif
     uart->dev->conf1.rx_tout_en = 1;
     uart->dev->int_ena.rxfifo_full = 1;
     uart->dev->int_ena.frm_err = 1;
     uart->dev->int_ena.rxfifo_tout = 1;
     uart->dev->int_clr.val = 0xffffffff;
 
-    esp_intr_alloc(UART_INTR_SOURCE(uart->num), (int)ARDUINO_ISR_FLAG, _uart_isr, NULL, &uart->intr_handle);
+    esp_intr_alloc(UART_INTR_SOURCE(uart->num), (int)ESP_INTR_FLAG_IRAM, _uart_isr, NULL, &uart->intr_handle);
     UART_MUTEX_UNLOCK();
 }
 
-static void uartDisableInterrupt(uart_t* uart)
+void uartDisableInterrupt(uart_t* uart)
 {
     UART_MUTEX_LOCK();
     uart->dev->conf1.val = 0;
@@ -174,45 +124,45 @@ static void uartDisableInterrupt(uart_t* uart)
     UART_MUTEX_UNLOCK();
 }
 
-static void uartDetachRx(uart_t* uart, uint8_t rxPin)
+void uartDetachRx(uart_t* uart)
 {
     if(uart == NULL) {
         return;
     }
-    pinMatrixInDetach(rxPin, false, false);
+    pinMatrixInDetach(UART_RXD_IDX(uart->num), false, false);
     uartDisableInterrupt(uart);
 }
 
-static void uartDetachTx(uart_t* uart, uint8_t txPin)
+void uartDetachTx(uart_t* uart)
 {
     if(uart == NULL) {
         return;
     }
-    pinMatrixOutDetach(txPin, false, false);
+    pinMatrixOutDetach(UART_TXD_IDX(uart->num), false, false);
 }
 
-static void uartAttachRx(uart_t* uart, uint8_t rxPin, bool inverted, uint8_t rxfifo_full_thrhd)
+void uartAttachRx(uart_t* uart, uint8_t rxPin, bool inverted)
 {
-    if(uart == NULL || rxPin >= GPIO_PIN_COUNT) {
+    if(uart == NULL || rxPin > 39) {
         return;
     }
     pinMode(rxPin, INPUT);
-    uartEnableInterrupt(uart, rxfifo_full_thrhd);
     pinMatrixInAttach(rxPin, UART_RXD_IDX(uart->num), inverted);
+    uartEnableInterrupt(uart);
 }
 
-static void uartAttachTx(uart_t* uart, uint8_t txPin, bool inverted)
+void uartAttachTx(uart_t* uart, uint8_t txPin, bool inverted)
 {
-    if(uart == NULL || txPin >= GPIO_PIN_COUNT) {
+    if(uart == NULL || txPin > 39) {
         return;
     }
     pinMode(txPin, OUTPUT);
     pinMatrixOutAttach(txPin, UART_TXD_IDX(uart->num), inverted, false);
 }
 
-uart_t* uartBegin(uint8_t uart_nr, uint32_t baudrate, uint32_t config, int8_t rxPin, int8_t txPin, uint16_t queueLen, bool inverted, uint8_t rxfifo_full_thrhd)
+uart_t* uartBegin(uint8_t uart_nr, uint32_t baudrate, uint32_t config, int8_t rxPin, int8_t txPin, uint16_t queueLen, bool inverted)
 {
-    if(uart_nr >= UART_PORTS_NUM) {
+    if(uart_nr > 2) {
         return NULL;
     }
 
@@ -237,22 +187,16 @@ uart_t* uartBegin(uint8_t uart_nr, uint32_t baudrate, uint32_t config, int8_t rx
             return NULL;
         }
     }
-#if CONFIG_IDF_TARGET_ESP32C3
-
-#else
     if(uart_nr == 1){
         DPORT_SET_PERI_REG_MASK(DPORT_PERIP_CLK_EN_REG, DPORT_UART1_CLK_EN);
         DPORT_CLEAR_PERI_REG_MASK(DPORT_PERIP_RST_EN_REG, DPORT_UART1_RST);
-#if CONFIG_IDF_TARGET_ESP32
     } else if(uart_nr == 2){
         DPORT_SET_PERI_REG_MASK(DPORT_PERIP_CLK_EN_REG, DPORT_UART2_CLK_EN);
         DPORT_CLEAR_PERI_REG_MASK(DPORT_PERIP_RST_EN_REG, DPORT_UART2_RST);
-#endif
     } else {
         DPORT_SET_PERI_REG_MASK(DPORT_PERIP_CLK_EN_REG, DPORT_UART_CLK_EN);
         DPORT_CLEAR_PERI_REG_MASK(DPORT_PERIP_RST_EN_REG, DPORT_UART_RST);
     }
-#endif
     uartFlush(uart);
     uartSetBaudRate(uart, baudrate);
     UART_MUTEX_LOCK();
@@ -264,25 +208,21 @@ uart_t* uartBegin(uint8_t uart_nr, uint32_t baudrate, uint32_t config, int8_t rx
         uart->dev->conf0.stop_bit_num = ONE_STOP_BITS_CONF;
         uart->dev->rs485_conf.dl1_en = 1;
     }
-
-    // tx_idle_num : idle interval after tx FIFO is empty(unit: the time it takes to send one bit under current baudrate)
-    // Setting it to 0 prevents line idle time/delays when sending messages with small intervals
-    uart->dev->idle_conf.tx_idle_num = 0;  //
-
     UART_MUTEX_UNLOCK();
 
     if(rxPin != -1) {
-        uartAttachRx(uart, rxPin, inverted, rxfifo_full_thrhd);
+        uartAttachRx(uart, rxPin, inverted);
     }
 
     if(txPin != -1) {
         uartAttachTx(uart, txPin, inverted);
     }
+
     addApbChangeCallback(uart, uart_on_apb_change);
     return uart;
 }
 
-void uartEnd(uart_t* uart, uint8_t txPin, uint8_t rxPin)
+void uartEnd(uart_t* uart)
 {
     if(uart == NULL) {
         return;
@@ -299,8 +239,8 @@ void uartEnd(uart_t* uart, uint8_t txPin, uint8_t rxPin)
 
     UART_MUTEX_UNLOCK();
 
-    uartDetachRx(uart, rxPin);
-    uartDetachTx(uart, txPin);
+    uartDetachRx(uart);
+    uartDetachTx(uart);
 }
 
 size_t uartResizeRxBuffer(uart_t * uart, size_t new_size) {
@@ -313,8 +253,7 @@ size_t uartResizeRxBuffer(uart_t * uart, size_t new_size) {
         vQueueDelete(uart->queue);
         uart->queue = xQueueCreate(new_size, sizeof(uint8_t));
         if(uart->queue == NULL) {
-            UART_MUTEX_UNLOCK();
-            return 0;
+            return NULL;
         }
     }
     UART_MUTEX_UNLOCK();
@@ -322,27 +261,12 @@ size_t uartResizeRxBuffer(uart_t * uart, size_t new_size) {
     return new_size;
 }
 
-void uartSetRxInvert(uart_t* uart, bool invert)
-{
-    if (uart == NULL)
-        return;
-    
-    if (invert)
-        uart->dev->conf0.rxd_inv = 1;
-    else
-        uart->dev->conf0.rxd_inv = 0;
-}
-
 uint32_t uartAvailable(uart_t* uart)
 {
     if(uart == NULL || uart->queue == NULL) {
         return 0;
     }
-#ifdef UART_READ_RX_FIFO
-    return (uxQueueMessagesWaiting(uart->queue) + uart->dev->status.rxfifo_cnt) ;
-#else
     return uxQueueMessagesWaiting(uart->queue);
-#endif
 }
 
 uint32_t uartAvailableForWrite(uart_t* uart)
@@ -353,45 +277,12 @@ uint32_t uartAvailableForWrite(uart_t* uart)
     return 0x7f - uart->dev->status.txfifo_cnt;
 }
 
-#ifdef UART_READ_RX_FIFO
-void uartRxFifoToQueue(uart_t* uart)
-{
-	uint8_t c;
-    UART_MUTEX_LOCK();
-	//disable interrupts
-	uart->dev->int_ena.val = 0;
-	uart->dev->int_clr.val = 0xffffffff;
-#if CONFIG_IDF_TARGET_ESP32
-	while (uart->dev->status.rxfifo_cnt || (uart->dev->mem_rx_status.wr_addr != uart->dev->mem_rx_status.rd_addr)) {
-		c = uart->dev->fifo.rw_byte;
-#else
-	uint32_t fifo_reg = UART_FIFO_AHB_REG(uart->num);
-	while (uart->dev->status.rxfifo_cnt) {
-		c = ESP_REG(fifo_reg);
-#endif
-		xQueueSend(uart->queue, &c, 0);
-	}
-	//enable interrupts
-	uart->dev->int_ena.rxfifo_full = 1;
-	uart->dev->int_ena.frm_err = 1;
-	uart->dev->int_ena.rxfifo_tout = 1;
-	uart->dev->int_clr.val = 0xffffffff;
-    UART_MUTEX_UNLOCK();
-}
-#endif
-
 uint8_t uartRead(uart_t* uart)
 {
     if(uart == NULL || uart->queue == NULL) {
         return 0;
     }
     uint8_t c;
-#ifdef UART_READ_RX_FIFO
-    if ((uxQueueMessagesWaiting(uart->queue) == 0) && (uart->dev->status.rxfifo_cnt > 0))
-    {
-    	uartRxFifoToQueue(uart);
-    }
-#endif
     if(xQueueReceive(uart->queue, &c, 0)) {
         return c;
     }
@@ -404,12 +295,6 @@ uint8_t uartPeek(uart_t* uart)
         return 0;
     }
     uint8_t c;
-#ifdef UART_READ_RX_FIFO
-    if ((uxQueueMessagesWaiting(uart->queue) == 0) && (uart->dev->status.rxfifo_cnt > 0))
-    {
-    	uartRxFifoToQueue(uart);
-    }
-#endif
     if(xQueuePeek(uart->queue, &c, 0)) {
         return c;
     }
@@ -423,11 +308,7 @@ void uartWrite(uart_t* uart, uint8_t c)
     }
     UART_MUTEX_LOCK();
     while(uart->dev->status.txfifo_cnt == 0x7F);
-#if CONFIG_IDF_TARGET_ESP32
     uart->dev->fifo.rw_byte = c;
-#else
-    ESP_REG(UART_FIFO_AHB_REG(uart->num)) = c;
-#endif
     UART_MUTEX_UNLOCK();
 }
 
@@ -437,16 +318,9 @@ void uartWriteBuf(uart_t* uart, const uint8_t * data, size_t len)
         return;
     }
     UART_MUTEX_LOCK();
-#ifndef CONFIG_IDF_TARGET_ESP32
-    uint32_t fifo_reg = UART_FIFO_AHB_REG(uart->num);
-#endif
     while(len) {
         while(uart->dev->status.txfifo_cnt == 0x7F);
-#if CONFIG_IDF_TARGET_ESP32
         uart->dev->fifo.rw_byte = *data++;
-#else
-        ESP_REG(fifo_reg) = *data++;
-#endif
         len--;
     }
     UART_MUTEX_UNLOCK();
@@ -454,36 +328,23 @@ void uartWriteBuf(uart_t* uart, const uint8_t * data, size_t len)
 
 void uartFlush(uart_t* uart)
 {
-    uartFlushTxOnly(uart,true);
-}
-
-void uartFlushTxOnly(uart_t* uart, bool txOnly)
-{
     if(uart == NULL) {
         return;
     }
 
     UART_MUTEX_LOCK();
-#if CONFIG_IDF_TARGET_ESP32
     while(uart->dev->status.txfifo_cnt || uart->dev->status.st_utx_out);
-    
-    if( !txOnly ){
-        //Due to hardware issue, we can not use fifo_rst to reset uart fifo.
-        //See description about UART_TXFIFO_RST and UART_RXFIFO_RST in <<esp32_technical_reference_manual>> v2.6 or later.
 
-        // we read the data out and make `fifo_len == 0 && rd_addr == wr_addr`.
-        while(uart->dev->status.rxfifo_cnt != 0 || (uart->dev->mem_rx_status.wr_addr != uart->dev->mem_rx_status.rd_addr)) {
-            READ_PERI_REG(UART_FIFO_REG(uart->num));
-        }
+    //Due to hardware issue, we can not use fifo_rst to reset uart fifo.
+    //See description about UART_TXFIFO_RST and UART_RXFIFO_RST in <<esp32_technical_reference_manual>> v2.6 or later.
 
-        xQueueReset(uart->queue);
+    // we read the data out and make `fifo_len == 0 && rd_addr == wr_addr`.
+    while(uart->dev->status.rxfifo_cnt != 0 || (uart->dev->mem_rx_status.wr_addr != uart->dev->mem_rx_status.rd_addr)) {
+        READ_PERI_REG(UART_FIFO_REG(uart->num));
     }
-#else
-    while(uart->dev->status.txfifo_cnt);
-    uart->dev->conf0.txfifo_rst = 1;
-    uart->dev->conf0.txfifo_rst = 0;
-#endif
-    
+
+    xQueueReset(uart->queue);
+
     UART_MUTEX_UNLOCK();
 }
 
@@ -493,7 +354,9 @@ void uartSetBaudRate(uart_t* uart, uint32_t baud_rate)
         return;
     }
     UART_MUTEX_LOCK();
-    uart_ll_set_baudrate(uart->dev, baud_rate);
+    uint32_t clk_div = ((getApbFrequency()<<4)/baud_rate);
+    uart->dev->clk_div.div_int = clk_div>>4 ;
+    uart->dev->clk_div.div_frag = clk_div & 0xf;
     UART_MUTEX_UNLOCK();
 }
 
@@ -507,31 +370,18 @@ static void uart_on_apb_change(void * arg, apb_change_ev_t ev_type, uint32_t old
         uart->dev->int_clr.val = 0xffffffff;
         // read RX fifo
         uint8_t c;
-   //     BaseType_t xHigherPriorityTaskWoken;
-#if CONFIG_IDF_TARGET_ESP32
+        BaseType_t xHigherPriorityTaskWoken;
         while(uart->dev->status.rxfifo_cnt != 0 || (uart->dev->mem_rx_status.wr_addr != uart->dev->mem_rx_status.rd_addr)) {
             c = uart->dev->fifo.rw_byte;
-#else
-        uint32_t fifo_reg = UART_FIFO_AHB_REG(uart->num);
-        while(uart->dev->status.rxfifo_cnt != 0) {
-            c = ESP_REG(fifo_reg);
-#endif
-            if(uart->queue != NULL ) {
-                xQueueSend(uart->queue, &c, 1); //&xHigherPriorityTaskWoken);
+            if(uart->queue != NULL && !xQueueIsQueueFullFromISR(uart->queue)) {
+                xQueueSendFromISR(uart->queue, &c, &xHigherPriorityTaskWoken);
             }
         }
-        UART_MUTEX_UNLOCK();
- 
         // wait TX empty
-#if CONFIG_IDF_TARGET_ESP32
         while(uart->dev->status.txfifo_cnt || uart->dev->status.st_utx_out);
-#else
-        while(uart->dev->status.txfifo_cnt);
-#endif
     } else {
         //todo:
         // set baudrate
-        UART_MUTEX_LOCK();
         uint32_t clk_div = (uart->dev->clk_div.div_int << 4) | (uart->dev->clk_div.div_frag & 0x0F);
         uint32_t baud_rate = ((old_apb<<4)/clk_div);
         clk_div = ((new_apb<<4)/baud_rate);
@@ -560,35 +410,23 @@ uint32_t uartGetBaudRate(uart_t* uart)
     return ((getApbFrequency()<<4)/clk_div);
 }
 
-static void ARDUINO_ISR_ATTR uart0_write_char(char c)
+static void IRAM_ATTR uart0_write_char(char c)
 {
-#if CONFIG_IDF_TARGET_ESP32
     while(((ESP_REG(0x01C+DR_REG_UART_BASE) >> UART_TXFIFO_CNT_S) & 0x7F) == 0x7F);
     ESP_REG(DR_REG_UART_BASE) = c;
-#else
-    while(UART0.status.txfifo_cnt == 0x7F);
-    WRITE_PERI_REG(UART_FIFO_AHB_REG(0), c);
-#endif
 }
 
-static void ARDUINO_ISR_ATTR uart1_write_char(char c)
+static void IRAM_ATTR uart1_write_char(char c)
 {
-#if CONFIG_IDF_TARGET_ESP32
     while(((ESP_REG(0x01C+DR_REG_UART1_BASE) >> UART_TXFIFO_CNT_S) & 0x7F) == 0x7F);
     ESP_REG(DR_REG_UART1_BASE) = c;
-#else
-    while(UART1.status.txfifo_cnt == 0x7F);
-    WRITE_PERI_REG(UART_FIFO_AHB_REG(1), c);
-#endif
 }
 
-#if CONFIG_IDF_TARGET_ESP32
-static void ARDUINO_ISR_ATTR uart2_write_char(char c)
+static void IRAM_ATTR uart2_write_char(char c)
 {
     while(((ESP_REG(0x01C+DR_REG_UART2_BASE) >> UART_TXFIFO_CNT_S) & 0x7F) == 0x7F);
     ESP_REG(DR_REG_UART2_BASE) = c;
 }
-#endif
 
 void uart_install_putc()
 {
@@ -599,11 +437,9 @@ void uart_install_putc()
     case 1:
         ets_install_putc1((void (*)(char)) &uart1_write_char);
         break;
-#if CONFIG_IDF_TARGET_ESP32
     case 2:
         ets_install_putc1((void (*)(char)) &uart2_write_char);
         break;
-#endif
     default:
         ets_install_putc1(NULL);
         break;
@@ -612,7 +448,7 @@ void uart_install_putc()
 
 void uartSetDebug(uart_t* uart)
 {
-    if(uart == NULL || uart->num >= UART_PORTS_NUM) {
+    if(uart == NULL || uart->num > 2) {
         s_uart_debug_nr = -1;
         //ets_install_putc1(NULL);
         //return;
@@ -631,6 +467,9 @@ int uartGetDebug()
 
 int log_printf(const char *format, ...)
 {
+    if(s_uart_debug_nr < 0){
+        return 0;
+    }
     static char loc_buf[64];
     char * temp = loc_buf;
     int len;
@@ -648,7 +487,7 @@ int log_printf(const char *format, ...)
     }
     vsnprintf(temp, len+1, format, arg);
 #if !CONFIG_DISABLE_HAL_LOCKS
-    if(s_uart_debug_nr != -1 && _uart_bus_array[s_uart_debug_nr].lock){
+    if(_uart_bus_array[s_uart_debug_nr].lock){
         xSemaphoreTake(_uart_bus_array[s_uart_debug_nr].lock, portMAX_DELAY);
         ets_printf("%s", temp);
         xSemaphoreGive(_uart_bus_array[s_uart_debug_nr].lock);
@@ -690,17 +529,15 @@ unsigned long uartBaudrateDetect(uart_t *uart, bool flg)
 */
 void uartStartDetectBaudrate(uart_t *uart) {
   if(!uart) return;
-#ifndef CONFIG_IDF_TARGET_ESP32C3
+
   uart->dev->auto_baud.glitch_filt = 0x08;
   uart->dev->auto_baud.en = 0;
   uart->dev->auto_baud.en = 1;
-#endif
 }
 
 unsigned long
 uartDetectBaudrate(uart_t *uart)
 {
-#ifndef CONFIG_IDF_TARGET_ESP32C3
     static bool uartStateDetectingBaudrate = false;
 
     if(!uartStateDetectingBaudrate) {
@@ -735,18 +572,11 @@ uartDetectBaudrate(uart_t *uart)
     }
 
     return default_rates[i];
-#else
-    return 0;
-#endif
 }
 
 /*
  * Returns the status of the RX state machine, if the value is non-zero the state machine is active.
  */
 bool uartRxActive(uart_t* uart) {
-#if CONFIG_IDF_TARGET_ESP32
     return uart->dev->status.st_urx_out != 0;
-#else
-    return 0;
-#endif
 }
