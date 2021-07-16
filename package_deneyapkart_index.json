@@ -25,19 +25,19 @@
           ], 
           "toolsDependencies": [
             {
-              "packager": "esp32",
+              "packager": "deneyap", 
               "name": "xtensa-esp32-elf-gcc",
-              "version": "1.22.0-97-gc752ad5-5.2.0"
-            },
+              "version": "1.22.0-80-g6c4433a-5.2.0"              
+            }, 
             {
-              "packager": "esp32",
+              "packager": "deneyap", 
               "name": "esptool_py",
-              "version": "3.0.0"
-            },
+              "version": "2.6.1" 
+            }, 
             {
-              "packager": "esp32",
+              "packager": "deneyap", 
               "name": "mkspiffs",
-              "version": "0.2.3"
+              "version": "0.2.3" 
             }
           ], 
           "size": "50152096"
