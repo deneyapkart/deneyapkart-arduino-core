@@ -208,6 +208,7 @@ uint8_t readGenPurButton(void)
 //   return readPin(GPIO24);
 // }
 
+#if DENEYAP_KART
 /**
   * @brief  Configure and initialize camera
   * @param  None
@@ -258,3 +259,4 @@ void cameraInit(void)
   // Drop down frame size for higher initial frame rate
   s->set_framesize(s, FRAMESIZE_QVGA);
 }
+#endif

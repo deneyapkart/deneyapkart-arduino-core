@@ -186,5 +186,6 @@ long random(long);
 #define _max(a,b) ((a)>(b)?(a):(b))
 
 #include "pins_arduino.h"
+#include "deneyap.h"
 
 #endif /* _ESP32_CORE_ARDUINO_H_ */

@@ -584,7 +584,7 @@ static esp_err_t index_handler(httpd_req_t *req){
     sensor_t * s = esp_camera_sensor_get();    
     return httpd_resp_send(req, (const char *)index_ov2640_html_gz, index_ov2640_html_gz_len);
 }
-
+#if DENEYAP_KART
 void startCameraServer(){
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
 
@@ -657,3 +657,4 @@ void startCameraServer(){
         httpd_register_uri_handler(stream_httpd, &stream_uri);
     }
 }
+#endif
