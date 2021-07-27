@@ -40,7 +40,7 @@ public:
 
 }
 
-extern fs::SDFS SD;
+extern fs::SDFS SDCard;
 
 using namespace fs;
 typedef fs::File        SDFile;

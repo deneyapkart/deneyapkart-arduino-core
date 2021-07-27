@@ -1,4 +1,4 @@
-#include "deneyap.h"
+#if DENEYAP_KART
 #include "lsm6dsm.h"
 
 #define delayms 700
@@ -41,3 +41,6 @@ void loop() {
   Serial.println(IMU.readTempF());              // Sicaklik verisi okuma (Fahrenheit)
   delay(delayms);
 }
+#else
+#error Deneyap Mini ile bu uygulamayi yapabilmek icin harici IMU baglamali ve gerekli baglanti adresi bilgisini degistirmelisiniz!
+#endif

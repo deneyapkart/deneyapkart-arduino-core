@@ -1,3 +1,4 @@
+#if DENEYAP_KART
 #include "BluetoothSerial.h"
 
 BluetoothSerial SerialBT;                                                 // Bluetooth icin class tanimlama
@@ -20,3 +21,6 @@ void loop() {
   }
   delay(20);
 }
+#else
+#error Deneyap Mini ile bu uygulama gerceklestirilemez!
+#endif

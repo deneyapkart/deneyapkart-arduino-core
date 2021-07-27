@@ -1,5 +1,3 @@
-#include "deneyap.h"
-
 enum renkler
 {
   KIRMIZI,

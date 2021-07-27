@@ -1,7 +1,5 @@
 // Adafruit IO kullanarak IoT tabanli uzaktan led kontrol uygulamasi 
 
-#include <Arduino.h>
-#include "deneyap.h"
 #include "WiFi.h"
 #include <Adafruit_MQTT.h>
 #include <Adafruit_MQTT_Client.h>

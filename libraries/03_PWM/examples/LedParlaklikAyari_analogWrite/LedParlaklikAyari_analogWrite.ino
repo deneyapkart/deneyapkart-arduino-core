@@ -1,4 +1,3 @@
-#include "deneyap.h"
 #include "analogWrite.h"
 
 #define LED_PIN   LEDB                              // Led pini (PWM cikis pini) 

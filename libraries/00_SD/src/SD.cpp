@@ -114,4 +114,4 @@ bool SDFS::writeRAW(uint8_t* buffer, uint32_t sector)
 }
 
 
-SDFS SD = SDFS(FSImplPtr(new VFSImpl()));
+SDFS SDCard = SDFS(FSImplPtr(new VFSImpl()));

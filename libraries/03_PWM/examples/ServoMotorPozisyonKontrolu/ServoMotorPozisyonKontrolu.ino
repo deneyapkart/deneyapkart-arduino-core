@@ -1,7 +1,11 @@
-#include "deneyap.h"
 #include "ServoESP32.h"
 
+#if DENEYAP_KART
 #define servoPin PWM0                                           // PWM pini tanimlamasi
+#elif DENEYAP_MINI
+#define servoPin P0                                             // PWM pini tanimlamasi
+#endif
+
 #define potentiometerPin A0                                     // Analog giris pini tanimlamasi
 
 Servo servo1;                                                   // Class'tan nesne turetimi

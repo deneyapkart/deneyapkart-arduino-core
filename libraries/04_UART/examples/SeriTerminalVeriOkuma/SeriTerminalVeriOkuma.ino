@@ -1,5 +1,3 @@
-#include "deneyap.h"
-
 // ---->>>>>>>>>> SERİ TERMİNALDE VERİ GİRİŞİ İÇİN UYARI <<<<<<<<<<-----
 // Seri Termianal'de "No line ending (Satir sonu yok)" seceneği aktif olmalidir //       
 

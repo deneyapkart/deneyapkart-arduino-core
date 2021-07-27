@@ -1,7 +1,5 @@
 // Adafruit IO kullanarak IoT tabanli sicaklik gozlem uygulamasi 
 
-#include <Arduino.h>
-#include "deneyap.h"
 #include "lsm6dsm.h"
 #include "WiFi.h"
 #include <Adafruit_MQTT.h>

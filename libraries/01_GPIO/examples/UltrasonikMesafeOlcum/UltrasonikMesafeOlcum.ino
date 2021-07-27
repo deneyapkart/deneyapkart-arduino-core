@@ -1,4 +1,3 @@
-#include "deneyap.h"
 #include "hcsr04ESP32.h"
 
 #define trigPin D0

@@ -1,8 +1,5 @@
 // Basit saksi sulayan su pompasi calistirma uygulamasi
 
-#include <Arduino.h>
-#include "deneyap.h"
-
 #define NEM_SENSORU   A0
 #define SU_POMPASI    D0
 #define SULAMA_ESIGI  450  

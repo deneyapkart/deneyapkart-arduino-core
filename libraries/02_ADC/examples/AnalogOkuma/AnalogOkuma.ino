@@ -1,5 +1,3 @@
-#include "deneyap.h"
-
 uint16_t adcHamVeri = 0;                                // Ham veri icin degisken
 float adcVolDeg = 0;                                    // Voltaj donusumu icin degisken
 

@@ -1,4 +1,3 @@
-#include "deneyap.h"
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WiFiAP.h>

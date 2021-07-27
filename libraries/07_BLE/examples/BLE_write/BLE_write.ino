@@ -1,3 +1,4 @@
+#if DENEYAP_KART
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
@@ -59,3 +60,6 @@ void loop() {
  
   delay(2000);
 }
+#else
+#error Deneyap Mini ile bu uygulama gerceklestirilemez!
+#endif

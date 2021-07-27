@@ -1,7 +1,5 @@
 // Iki farkli Deneyap Kart'in esp-now protokolunu kulanarak birbirleriyle haberlesmesi (akselerometre tarafi)
 
-#include <Arduino.h>
-#include "deneyap.h"
 #include "lsm6dsm.h"
 #include "WiFi.h"
 #include "esp_now.h"

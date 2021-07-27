@@ -1,7 +1,5 @@
 // Iki farkli Deneyap Kart'in esp-now protokolunu kulanarak birbirleriyle haberlesmesi (motor surcu tarafi)
 
-#include <Arduino.h>
-#include "deneyap.h"
 #include "WiFi.h"
 #include "esp_now.h"
 
