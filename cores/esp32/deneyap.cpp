@@ -57,9 +57,17 @@ April 08, 2020
 void writeRedLed(uint8_t state)
 {
 	if(state == HIGH || state == PIN_HIGH)
+#if DENEYAP_KART
 		digitalWrite(LEDR, PIN_LOW);
+#elif DENEYAP_MINI
+    digitalWrite(LEDR, PIN_HIGH);
+#endif
 	else if(state == LOW || state == PIN_LOW)
+#if DENEYAP_KART
 		digitalWrite(LEDR, PIN_HIGH);
+#elif DENEYAP_MINI
+    digitalWrite(LEDR, PIN_LOW);
+#endif
 }
 
 /**
@@ -69,10 +77,18 @@ void writeRedLed(uint8_t state)
   */
 void writeGreenLed(uint8_t state)
 {
-	if(state == HIGH || state == PIN_HIGH)
-		digitalWrite(LEDG, PIN_LOW);
-	else if(state == LOW || state == PIN_LOW)
-		digitalWrite(LEDG, PIN_HIGH);
+  if(state == HIGH || state == PIN_HIGH)
+#if DENEYAP_KART
+    digitalWrite(LEDG, PIN_LOW);
+#elif DENEYAP_MINI
+    digitalWrite(LEDG, PIN_HIGH);
+#endif
+  else if(state == LOW || state == PIN_LOW)
+#if DENEYAP_KART
+    digitalWrite(LEDG, PIN_HIGH);
+#elif DENEYAP_MINI
+    digitalWrite(LEDG, PIN_LOW);
+#endif
 }
 
 /**
@@ -82,10 +98,18 @@ void writeGreenLed(uint8_t state)
   */
 void writeBlueLed(uint8_t state)
 {
-	if(state == HIGH || state == PIN_HIGH)
-		digitalWrite(LEDB, PIN_LOW);
-	else if(state == LOW || state == PIN_LOW)
-		digitalWrite(LEDB, PIN_HIGH);
+  if(state == HIGH || state == PIN_HIGH)
+#if DENEYAP_KART
+    digitalWrite(LEDB, PIN_LOW);
+#elif DENEYAP_MINI
+    digitalWrite(LEDB, PIN_HIGH);
+#endif
+  else if(state == LOW || state == PIN_LOW)
+#if DENEYAP_KART
+    digitalWrite(LEDB, PIN_HIGH);
+#elif DENEYAP_MINI
+    digitalWrite(LEDB, PIN_LOW);
+#endif
 }
 
 /**

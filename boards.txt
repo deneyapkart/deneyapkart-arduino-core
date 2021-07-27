@@ -144,8 +144,8 @@ dym_mpv10.upload.maximum_size=1310720
 dym_mpv10.upload.maximum_data_size=327680
 dym_mpv10.upload.flags=
 dym_mpv10.upload.extra_flags=
-dym_mpv10.upload.use_1200bps_touch=true
-dym_mpv10.upload.wait_for_upload_port=true
+dym_mpv10.upload.use_1200bps_touch=false
+dym_mpv10.upload.wait_for_upload_port=false
 
 dym_mpv10.serial.disableDTR=false
 dym_mpv10.serial.disableRTS=false
@@ -253,10 +253,14 @@ dym_mpv10.menu.FlashSize.2M.build.partitions=minimal
 dym_mpv10.menu.FlashSize.16M=16MB (128Mb)
 dym_mpv10.menu.FlashSize.16M.build.flash_size=16MB
 
-dym_mpv10.menu.UploadMode.Auto=Auto
-dym_mpv10.menu.UploadMode.Auto.upload.mode=default_reset
-dym_mpv10.menu.UploadMode.Manual=Manual
-dym_mpv10.menu.UploadMode.Manual.upload.mode=no_reset
+dym_mpv10.menu.UploadMode.default=Internal USB
+dym_mpv10.menu.UploadMode.default.upload.use_1200bps_touch=true
+dym_mpv10.menu.UploadMode.default.upload.wait_for_upload_port=true
+dym_mpv10.menu.UploadMode.default.upload.mode=default_reset
+dym_mpv10.menu.UploadMode.cdc=UART0
+dym_mpv10.menu.UploadMode.cdc.upload.use_1200bps_touch=false
+dym_mpv10.menu.UploadMode.cdc.upload.wait_for_upload_port=false
+dym_mpv10.menu.UploadMode.cdc.upload.mode=default_reset
 
 dym_mpv10.menu.UploadSpeed.921600=921600
 dym_mpv10.menu.UploadSpeed.921600.upload.speed=921600
