@@ -1,4 +1,4 @@
-#include "deneyap.h"
+#if DENEYAP_KART
 #include <WiFi.h>
 
 // ---------->>>>>>>>>> YUKLEME YAPILAMDAN DIKKAT EDILMESI GEREKEN HUSUS <<<<<<<<<<----------
@@ -35,3 +35,6 @@ void setup() {
 void loop() {
   delay(10000);
 }
+#else
+#error Bu uygulama kamera baglantisi olmadigi icin Deneyap Mini ile gerceklesitirilemez!
+#endif
