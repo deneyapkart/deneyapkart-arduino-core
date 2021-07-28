@@ -165,5 +165,5 @@ void drawStatusBar(int t) {
   _display.print(" fps");
 }
 #else
-#error Bu uygulama dahili mikrofon olmadigi icin Deneyap Mini ile gerceklesitirilemez!
+#error Bu uygulama dahili mikrofon olmadigi icin Deneyap Mini ile gerceklestirilemez!
 #endif

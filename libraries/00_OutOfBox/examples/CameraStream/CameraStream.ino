@@ -34,5 +34,5 @@ void loop() {
   delay(10000);
 }
 #else
-#error Bu uygulama kamera baglantisi olmadigi icin Deneyap Mini ile gerceklesitirilemez!
+#error Bu uygulama kamera baglantisi olmadigi icin Deneyap Mini ile gerceklestirilemez!
 #endif
