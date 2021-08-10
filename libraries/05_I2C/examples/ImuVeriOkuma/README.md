@@ -1,0 +1,2 @@
+ImuVeriOkuma uygulama örneği Deneyap kartı desteklemektedir. Deneyap Mini kart ile bu uygulamayı gerçekleştirmek istenirse harici IMU bağlanmalıdır ve gerekli bağlantı adres bilgileri değiştirilmelidir.
+Uygulamada Deneyap kart üzerinde yer alan IMU ile Ortamın sıcaklığı Derece ve Fahrenhayt cinsinde seri terminale yazdırmaktadır. Daha sonra akselerometre ile X-eksen, Y-eksen ve Z-eksen verileri seri terminale yazdırmaktadır. Jirometre (Gyrometer) ile X-eksen, Y-eksen ve Z-eksen bilgileri seri terminale yazdırmaktadır.
