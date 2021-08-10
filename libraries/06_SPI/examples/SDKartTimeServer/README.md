@@ -1,2 +1,2 @@
-SDKartTimeServer Deneyap Kart ve Deneyap Mini Kartı desteklemektedir. Seri terminalde tarih ve saati yazdırmaktadır. SDKartServer uygulamada SD karta bir tane "mydir" isimli bir boş klasör ve holle.txt uzantılı dosya açmaktadır. Dosyada hello world! yazmaktadır. Seri terminale hızını ve kaç bayt okunduğu yazmaktadır.
+SDKartTimeServer Deneyap Kart ve Deneyap Mini Kartı desteklemektedir. Seri terminalde tarih ve saati yazdırmaktadır. SDKartTimeServer uygulamada SD karta bir tane "mydir" isimli bir boş klasör ve holle.txt uzantılı dosya açmaktadır. Dosyada hello world! yazmaktadır. Seri terminale hızını ve kaç bayt okunduğu yazmaktadır.
 ![SDKartTest](https://github.com/deneyapkart/deneyapkart-arduino-core/blob/master/docs/SDKartTest.png)
