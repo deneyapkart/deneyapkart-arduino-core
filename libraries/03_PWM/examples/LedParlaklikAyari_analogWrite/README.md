@@ -1,0 +1,1 @@
+LedParlaklikAyari_analogWrite örneği Deneyap Kart ve Deneyap Mini Kartını da desteklemektedir. Bu örnek Arduino kütüphanesi analogWrite fonksiyonu kullanarak yazılmıştır. Bu örnekte kartın üzerinde yer alan led parlaklığı bir döngü içinde sürekli olarak artıp azalmaktadır.
