@@ -1,0 +1,1 @@
+UzaktanLedKontrolu hem Deneyap Kart hemde Deneyap Mini Kartını desteklemektedir. Bu uygulama örneğinde bilgisayarınız veya telefonunuzda WiFi ayarlarından DeneyapKart bağlanılması ve "dydkmpv10" şifresini girilmesi gerekmektedir. Daha sonra tarayıcıdan "192.168.4.1" bu adrese girilmesi gerekmektedir. Açılan ekranda ile led yanıp ve söndürme işlemlerinin kontrolü sağlanmaktadır.
