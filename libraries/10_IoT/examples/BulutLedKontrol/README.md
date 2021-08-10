@@ -1,2 +1,2 @@
-BulutSicaklikGozlem uygulama örneğinde Deneyap kartı desteklemektedir.
-Bu örnekte Adafruit io web uygulaması kullanılmaktadır. Adafruit io web uygulamasıda Deneyap kart ile alınan ortam sıcaklık anlık olarak webde eklenen textte gözlenebilmektedir. Bununla web ile birlikte karttaki led kontrol edilebilmektedir.
+BulutLedKontrol uygulama örneği hem Deneyap hem de Deneyap Mini Kartı desteklemektedir.
+Bu örnekte Adafruit io web uygulaması kullanılmaktadır. Adafruit io web uygulamasında 3 tane buton eklenmesi gerekmektedir. Uygulama yazılımı karta yüklendikten sonra Adafruit io'daki butonlar ile kartlardaki ledler kontrol edilmektedir. Aynı zamanda buton durumları seri terminalde yazdırmaktadır.
