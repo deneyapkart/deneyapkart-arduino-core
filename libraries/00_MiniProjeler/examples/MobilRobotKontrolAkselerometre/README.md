@@ -1,0 +1,1 @@
+MobilRobotSurucu örnek uygulaması Deneyap Kartı ve Deneyap Mini Kartı desteklemektedir. Bu örnek uygulama ile MobilRobotKontrolAkselerometre örneği ile iki Deneyap Kart birbiriyle haberleşmektedir. MobilRobotSurucu örneği ile diğer Deneyaptan gelen verilere göre motor harekete geçmektedir.
