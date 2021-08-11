@@ -1,0 +1,1 @@
+WebtenFirmwareGuncelleme hem Deneyap Kart hem de Deneyap Mini Kartı desteklemektedir. Bu uygulamada seri terminala yazan IP adresini tarayıcı yazılması gerekmektedir. Açılan ekranda kullanıcı adına "admin" şifre yerine "admin" yazarak giriş yapılmaktadır. Daha sonra açılan ekran ile güncelleme işlemi gerçekleştirilmektedir.
