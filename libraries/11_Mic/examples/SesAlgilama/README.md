@@ -1,0 +1,1 @@
+SesAlgilama uygulama örneği Deneyap kartı desteklemektedir. Karta yer alan mikrofon ile kullanıcı ortamdaki ses değişimini Seri Portta gözlemleyebilmektedir. 
