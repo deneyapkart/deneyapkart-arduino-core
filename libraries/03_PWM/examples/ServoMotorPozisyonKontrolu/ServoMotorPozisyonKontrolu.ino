@@ -6,8 +6,6 @@
 #define servoPin P0                                             // PWM pini tanimlamasi
 #endif
 
-#define potentiometerPin A0                                     // Analog giris pini tanimlamasi
-
 Servo servo1;                                                   // Class'tan nesne turetimi
 int incomingByte = 0;                                           // Gelen veriyi tutacak degisken tanimi
 
