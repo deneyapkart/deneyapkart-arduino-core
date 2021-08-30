@@ -46,7 +46,13 @@ static uint8_t __analogVRefPin = 0;
 #endif
 
 static uint8_t __analogAttenuation = 3;//11db
+
+#if CONFIG_IDF_TARGET_ESP32
 static uint8_t __analogWidth = 3;//12 bits
+#elif CONFIG_IDF_TARGET_ESP32S2
+static uint8_t __analogWidth = 4;//13 bits
+#endif
+
 static uint8_t __analogClockDiv = 1;
 
 void __analogSetClockDiv(uint8_t clockDiv){
