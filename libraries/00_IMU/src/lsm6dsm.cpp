@@ -28,7 +28,7 @@ status_t LSM6DSMCore::beginCore(void)
 	status_t returnError = IMU_SUCCESS;
 #if DENEYAP_KART
 	Wire.begin(IMUSD, IMUSC, 0);
-#elif DENEYAP_KART
+#elif DENEYAP_MINI
 	Wire.begin(SD, SC, 0);
 #endif
 
