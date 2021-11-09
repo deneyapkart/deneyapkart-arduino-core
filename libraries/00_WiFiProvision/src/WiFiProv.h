@@ -17,7 +17,7 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "WiFi.h"
+#include "WiFiEsp32.h"
 #include "wifi_provisioning/manager.h"
 //Select the scheme using which you want to provision
 typedef enum {

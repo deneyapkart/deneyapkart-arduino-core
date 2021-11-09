@@ -18,7 +18,7 @@
 */
 
 #include "WiFiClient.h"
-#include "WiFi.h"
+#include "WiFiEsp32.h"
 #include <lwip/sockets.h>
 #include <lwip/netdb.h>
 #include <errno.h>

@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include "deneyap.h"
 #include "lsm6dsm.h"
-#include "WiFi.h"
+#include "WiFiEsp32.h"
 #include <Adafruit_MQTT.h>
 #include <Adafruit_MQTT_Client.h>
 

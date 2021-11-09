@@ -39,7 +39,7 @@ License (MIT license):
 #endif
 
 #include "ESPmDNS.h"
-#include "WiFi.h"
+#include "WiFiEsp32.h"
 #include <functional>
 #include "esp_wifi.h"
 

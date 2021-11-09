@@ -1,5 +1,5 @@
 #if DENEYAP_KART
-#include <WiFi.h>
+#include <WiFiEsp32.h>
 
 // ---------->>>>>>>>>> YUKLEME YAPILAMDAN DIKKAT EDILMESI GEREKEN HUSUS <<<<<<<<<<----------
 // "Araclar->Partition Scheme->Huge APP" secilmeli //

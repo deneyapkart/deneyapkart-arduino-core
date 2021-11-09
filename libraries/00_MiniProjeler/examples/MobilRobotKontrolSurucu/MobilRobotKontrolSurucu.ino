@@ -1,6 +1,6 @@
 // Iki farkli Deneyap Kart'in esp-now protokolunu kulanarak birbirleriyle haberlesmesi (motor surcu tarafi)
 
-#include "WiFi.h"
+#include "WiFiEsp32.h"
 #include "esp_now.h"
 
 #define MOT1_DIRA D0

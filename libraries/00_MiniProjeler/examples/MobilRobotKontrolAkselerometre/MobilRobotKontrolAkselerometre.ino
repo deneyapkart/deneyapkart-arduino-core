@@ -1,7 +1,7 @@
 // Iki farkli Deneyap Kart'in esp-now protokolunu kulanarak birbirleriyle haberlesmesi (akselerometre tarafi)
 
 #include "lsm6dsm.h"
-#include "WiFi.h"
+#include "WiFiEsp32.h"
 #include "esp_now.h"
 
 //uint8_t broadcastAddress[] = {0xC8, 0x2B, 0x96, 0x8B, 0x94, 0xA8};    // Yayin ya

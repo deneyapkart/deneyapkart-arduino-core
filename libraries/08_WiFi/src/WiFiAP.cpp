@@ -22,7 +22,7 @@
 
  */
 
-#include "WiFi.h"
+#include "WiFiEsp32.h"
 #include "WiFiGeneric.h"
 #include "WiFiAP.h"
 

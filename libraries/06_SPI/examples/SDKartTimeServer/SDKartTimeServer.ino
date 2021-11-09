@@ -17,7 +17,7 @@
 #include "SD.h"
 #include "SPI.h"
 #include <time.h> 
-#include <WiFi.h>
+#include <WiFiEsp32.h>
 
 const char* ssid     = "wifi-ag-adi";
 const char* password = "wifi-sifresi";
@@ -209,5 +209,3 @@ void setup(){
 void loop(){
 
 }
-
-
