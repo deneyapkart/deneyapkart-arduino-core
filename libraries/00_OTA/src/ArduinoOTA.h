@@ -1,7 +1,7 @@
 #ifndef __ARDUINO_OTA_H
 #define __ARDUINO_OTA_H
 
-#include <WiFiEsp32.h>
+#include <WiFi.h>
 #include <functional>
 #include "Update.h"
 

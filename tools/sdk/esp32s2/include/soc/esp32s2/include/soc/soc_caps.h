@@ -53,8 +53,12 @@
 #define SOC_HMAC_SUPPORTED              1
 #define SOC_ASYNC_MEMCPY_SUPPORTED      1
 #define SOC_EFUSE_SECURE_BOOT_KEY_DIGESTS 3
-
+#define SOC_EFUSE_REVOKE_BOOT_KEY_DIGESTS 1
+#define SOC_TEMP_SENSOR_SUPPORTED       1
 #define SOC_CACHE_SUPPORT_WRAP          1
+#define SOC_FLASH_ENCRYPTION_XTS_AES      1
+#define SOC_FLASH_ENCRYPTION_XTS_AES_256 1
+#define SOC_PSRAM_DMA_CAPABLE           1
 
 /*-------------------------- ADC CAPS ----------------------------------------*/
 #define SOC_ADC_PERIPH_NUM              (2)
@@ -149,7 +153,7 @@
 /*-------------------------- MPU CAPS ----------------------------------------*/
 //TODO: correct the caller and remove unsupported lines
 #define SOC_MPU_CONFIGURABLE_REGIONS_SUPPORTED    0
-#define SOC_MPU_MIN_REGION_SIZE                   0x20000000
+#define SOC_MPU_MIN_REGION_SIZE                   0x20000000U
 #define SOC_MPU_REGIONS_MAX_NUM                   8
 #define SOC_MPU_REGION_RO_SUPPORTED               0
 #define SOC_MPU_REGION_WO_SUPPORTED               0
@@ -210,10 +214,9 @@
 
 #define SOC_MEMSPI_IS_INDEPENDENT 1
 
-/*-------------------------- SYS TIMER CAPS ----------------------------------*/
-#define SOC_SYSTIMER_COUNTER_NUM (1)   // Number of counter units
-#define SOC_SYSTIMER_ALARM_NUM (3)     // Number of alarm units
-
+/*-------------------------- SYSTIMER CAPS ----------------------------------*/
+#define SOC_SYSTIMER_COUNTER_NUM  (1)  // Number of counter units
+#define SOC_SYSTIMER_ALARM_NUM    (3)  // Number of alarm units
 #define SOC_SYSTIMER_BIT_WIDTH_LO (32) // Bit width of systimer low part
 #define SOC_SYSTIMER_BIT_WIDTH_HI (32) // Bit width of systimer high part
 
@@ -290,6 +293,9 @@
 /*-------------------------- AES CAPS -----------------------------------------*/
 #define SOC_AES_SUPPORT_DMA     (1)
 #define SOC_AES_SUPPORT_GCM     (1)
+
+/*-------------------------- Flash Encryption CAPS----------------------------*/
+#define SOC_FLASH_ENCRYPTED_XTS_AES_BLOCK_MAX   (64)
 
 /* Has "crypto DMA", which is shared with SHA */
 #define SOC_AES_CRYPTO_DMA      (1)

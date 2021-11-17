@@ -1,16 +1,8 @@
-// Copyright 2010-2019 Espressif Systems (Shanghai) PTE LTD
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * SPDX-FileCopyrightText: 2010-2021 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 #pragma once
 
@@ -113,7 +105,7 @@ typedef struct {
 #define SPI_TRANS_VARIABLE_ADDR       (1<<6)  ///< Use the ``address_bits`` in ``spi_transaction_ext_t`` rather than default value in ``spi_device_interface_config_t``.
 #define SPI_TRANS_VARIABLE_DUMMY      (1<<7)  ///< Use the ``dummy_bits`` in ``spi_transaction_ext_t`` rather than default value in ``spi_device_interface_config_t``.
 #define SPI_TRANS_SET_CD              (1<<7)  ///< Set the CD pin
-
+#define SPI_TRANS_CS_KEEP_ACTIVE      (1<<8)  ///< Keep CS active after data transfer
 /**
  * This structure describes one SPI transaction. The descriptor should not be modified until the transaction finishes.
  */
@@ -202,7 +194,8 @@ esp_err_t spi_bus_remove_device(spi_device_handle_t handle);
  * @param ticks_to_wait Ticks to wait until there's room in the queue; use portMAX_DELAY to
  *                      never time out.
  * @return
- *         - ESP_ERR_INVALID_ARG   if parameter is invalid
+ *         - ESP_ERR_INVALID_ARG   if parameter is invalid. This can happen if SPI_DEVICE_CS_KEEP_LOW flag is specified while
+ *                                 the bus was not acquired (`spi_device_acquire_bus()` should be called first)
  *         - ESP_ERR_TIMEOUT       if there was no room in the queue before ticks_to_wait expired
  *         - ESP_ERR_NO_MEM        if allocating DMA-capable temporary buffer failed
  *         - ESP_ERR_INVALID_STATE if previous transactions are not finished
@@ -265,7 +258,8 @@ esp_err_t spi_device_transmit(spi_device_handle_t handle, spi_transaction_t *tra
  *              currently only portMAX_DELAY is supported.
  *
  * @return
- *         - ESP_ERR_INVALID_ARG   if parameter is invalid
+ *         - ESP_ERR_INVALID_ARG   if parameter is invalid. This can happen if SPI_DEVICE_CS_KEEP_LOW flag is specified while
+ *                                 the bus was not acquired (`spi_device_acquire_bus()` should be called first)
  *         - ESP_ERR_TIMEOUT       if the device cannot get control of the bus before ``ticks_to_wait`` expired
  *         - ESP_ERR_NO_MEM        if allocating DMA-capable temporary buffer failed
  *         - ESP_ERR_INVALID_STATE if previous transactions are not finished

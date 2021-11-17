@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <string>
 #include "ssl_client.h"
-#include "WiFiEsp32.h"
+#include "WiFi.h"
 
 #ifndef MBEDTLS_KEY_EXCHANGE__SOME__PSK_ENABLED
 #  warning "Please configure IDF framework to include mbedTLS -> Enable pre-shared-key ciphersuites and activate at least one cipher"

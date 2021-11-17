@@ -1,13 +1,16 @@
 menu.UploadMode=Upload Mode
 menu.UploadSpeed=Upload Speed
+menu.CDCOnBoot=USB CDC On Boot
 menu.SerialMode=Serial Connected To
 menu.CPUFreq=CPU Frequency
 menu.FlashFreq=Flash Frequency
 menu.FlashMode=Flash Mode
-menu.FlashSize=Flash Size
 menu.PartitionScheme=Partition Scheme
-menu.DebugLevel=Core Debug Level
 menu.PSRAM=PSRAM
+menu.DebugLevel=Core Debug Level
+menu.LoopCore=Arduino Runs On
+menu.EventsCore=Events Run On
+
 
 ##############################################################
 
@@ -16,6 +19,7 @@ dydk_mpv10.name=Deneyap Kart
 dydk_mpv10.upload.tool=esptool_py
 dydk_mpv10.upload.maximum_size=1310720
 dydk_mpv10.upload.maximum_data_size=327680
+dydk_mpv10.upload.wait_for_upload_port=true
 dydk_mpv10.upload.flags=
 dydk_mpv10.upload.extra_flags=
 
@@ -167,10 +171,20 @@ dym_mpv10.build.boot=qio
 dym_mpv10.build.partitions=default
 dym_mpv10.build.defines=
 
-dym_mpv10.menu.SerialMode.default=USB_CDC
-dym_mpv10.menu.SerialMode.default.build.serial=1
-dym_mpv10.menu.SerialMode.uart=UART0
-dym_mpv10.menu.SerialMode.uart.build.serial=0
+dym_mpv10.menu.CDCOnBoot.default=Enabled
+dym_mpv10.menu.CDCOnBoot.default.build.cdc_on_boot=1
+dym_mpv10.menu.CDCOnBoot.cdc=Disabled
+dym_mpv10.menu.CDCOnBoot.cdc.build.cdc_on_boot=0
+
+dym_mpv10.menu.MSCOnBoot.default=Disabled
+dym_mpv10.menu.MSCOnBoot.default.build.msc_on_boot=0
+dym_mpv10.menu.MSCOnBoot.msc=Enabled
+dym_mpv10.menu.MSCOnBoot.msc.build.msc_on_boot=1
+
+dym_mpv10.menu.DFUOnBoot.default=Disabled
+dym_mpv10.menu.DFUOnBoot.default.build.dfu_on_boot=0
+dym_mpv10.menu.DFUOnBoot.dfu=Enabled
+dym_mpv10.menu.DFUOnBoot.dfu.build.dfu_on_boot=1
 
 dym_mpv10.menu.PSRAM.disabled=Disabled
 dym_mpv10.menu.PSRAM.disabled.build.defines=
