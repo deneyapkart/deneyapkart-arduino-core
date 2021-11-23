@@ -1,6 +1,6 @@
 #if DENEYAP_KART
 
-//Esp32'de dahili hall sensöründen veri okuma
+//Esp32'de dahili manyetik sensöründen veri okuma
 //değerler düşük olabilir.
 int deger = 0;
 void setup() {
