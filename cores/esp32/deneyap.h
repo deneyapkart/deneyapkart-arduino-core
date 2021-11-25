@@ -142,7 +142,7 @@
 #define MO 					GPIO40
 #define MI 					GPIO39
 #define MC 					GPIO38
-#define CS 				  GPIO26
+#define CS 				  GPIO21
 #endif
 
 // UART pins
