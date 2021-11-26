@@ -4,7 +4,6 @@ menu.CDCOnBoot=USB CDC On Boot
 menu.SerialMode=Serial Connected To
 menu.MSCOnBoot=USB Firmware MSC On Boot
 menu.DFUOnBoot=USB DFU On Boot
-menu.UploadMode=Upload Mode
 menu.CPUFreq=CPU Frequency
 menu.FlashFreq=Flash Frequency
 menu.FlashMode=Flash Mode
@@ -14,7 +13,6 @@ menu.PSRAM=PSRAM
 menu.DebugLevel=Core Debug Level
 menu.LoopCore=Arduino Runs On
 menu.EventsCore=Events Run On
-menu.PSRAM=PSRAM
 
 
 ##############################################################
