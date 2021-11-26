@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include "esp_camera.h"
 
-#define DENEYAP_KART CONFIG_IDF_TARGET_ESP32			
-#define DENEYAP_MINI CONFIG_IDF_TARGET_ESP32S2		
+#define DENEYAP_KART CONFIG_IDF_TARGET_ESP32
+#define DENEYAP_MINI CONFIG_IDF_TARGET_ESP32S2
 
 /* PIN DEFINITIONS */
 // All pins
@@ -30,8 +30,10 @@
 #define	GPIO18			(uint8_t)(5)
 #define	GPIO19			(uint8_t)(0)
 #define	GPIO20			(uint8_t)(2)
-#define USB_TX			(uint8_t)(1)
-#define USB_RX			(uint8_t)(3)
+#define GPIO21      (uint8_t)(4)
+#define	GPIO22			(uint8_t)(15)
+#define GPIO23			(uint8_t)(1)
+#define GPIO24			(uint8_t)(3)
 #elif DENEYAP_MINI
 #define GPIO0 			(uint8_t)(0)
 #define GPIO8 			(uint8_t)(8)
@@ -57,24 +59,22 @@
 #define GPIO42 			(uint8_t)(42)
 #define GPIO43			(uint8_t)(43)
 #define GPIO44			(uint8_t)(44)
-#define TX 					GPIO43
-#define RX 					GPIO44
 #endif
 
 // Digital pins
 #if DENEYAP_KART
 #define D0 					GPIO13
 #define D1 			  	GPIO14
-#define D2 			  	USB_TX
-#define D3 			  	USB_RX
+#define D2 			  	GPIO23
+#define D3 			    GPIO24
 #define D4  		 		GPIO15
 #define D5 			  	GPIO16
 #define D6 			  	GPIO17
 #define D7 			  	GPIO18
 #define D8 			  	GPIO19
 #define D9 			  	GPIO20
-#define D10			  	(uint8_t)(4)
-#define D11			  	(uint8_t)(15)
+#define D10			  	GPIO21
+#define D11			  	GPIO22
 #define D12 				GPIO12
 #define D13			  	GPIO11
 #define D14 				GPIO10
@@ -95,6 +95,7 @@
 #define D12 				GPIO17
 #define D13 				GPIO0
 #endif
+
 // Analog input pins
 #if DENEYAP_KART
 #define A0 			  	GPIO1
@@ -111,7 +112,8 @@
 #define A4			  	GPIO12
 #define A5			  	GPIO13
 #define A6 			  	GPIO16
-#endif 
+#endif
+
 // Analog output pins
 #if DENEYAP_KART
 #define DAC1			  GPIO7
@@ -120,16 +122,16 @@
 #define DA0			  	GPIO17
 #define DA1			  	GPIO18
 #endif
+
 // I2C pins
 #if DENEYAP_KART
-#define COMMON_SDA  (uint8_t)(4)
-#define COMMON_SCL  (uint8_t)(15)
-#define SDA 			  COMMON_SDA
-#define SCL 			  COMMON_SCL
+#define SDA 			  GPIO21
+#define SCL 			  GPIO22
 #elif DENEYAP_MINI
-#define SD 					GPIO36		
+#define SD 					GPIO36
 #define SC 					GPIO37
 #endif
+
 // SPI pins
 #if DENEYAP_KART
 #define MOSI			  GPIO18
@@ -140,30 +142,53 @@
 #define MO 					GPIO40
 #define MI 					GPIO39
 #define MC 					GPIO38
+#define CS 				  GPIO21
 #endif
+
 // UART pins
 #if DENEYAP_KART
-#define TX 				  USB_TX
-#define RX 				  USB_RX
+#define TX 				  GPIO23
+#define RX 				  GPIO24
 #elif DENEYAP_MINI
 #define TX 					GPIO43
 #define RX 					GPIO44
 #endif
+
 // PWM pins
 #if DENEYAP_KART
-#define PWM0			  D0
-#define PWM1			  D1
+#define PWM0			  GPIO13
+#define PWM1			  GPIO14
 #elif DENEYAP_MINI
 #define P0			  	GPIO42
 #define P1			  	GPIO41
 #endif
+
+// Capacitive-Sensing pins
+#if DENEYAP_KART
+#define T0 			  	GPIO5
+#define T1			  	GPIO6
+#define T2			  	GPIO9
+#define T3			  	GPIO10
+#define T4			  	GPIO11
+#define T5			  	GPIO12
+#elif DENEYAP_MINI
+#define T0 			  	GPIO8
+#define T1			  	GPIO9
+#define T2			  	GPIO10
+#define T3			  	GPIO11
+#define T4			  	GPIO12
+#define T5			  	GPIO13
+#endif
+
 #if DENEYAP_KART
 // Microphone pins
 #define MICD				GPIO11
 #define MICC				GPIO12
+
 // IMU pins
-#define IMUSD				COMMON_SDA
-#define IMUSC				COMMON_SCL
+#define IMUSD				GPIO21
+#define IMUSC			  GPIO22
+
 // Camera pins
 #define CAMSD 			GPIO6
 #define CAMSC				GPIO7
@@ -180,19 +205,20 @@
 #define CAMH				GPIO2
 #define CAMV				GPIO1
 #endif
+
 // Built-in leds and button
 #if DENEYAP_KART
-#define LEDR				USB_RX
-#define LEDG				USB_TX
-#define LEDB				COMMON_SDA
-#define BUILTIN_KEY	GPIO19
+#define LEDR				GPIO24
+#define LEDG				GPIO23
+#define LEDB				GPIO21
+#define GPKEY       GPIO19
 #elif DENEYAP_MINI
 #define LEDR				GPIO34
 #define LEDG				GPIO33
 #define LEDB				GPIO35
-#define BUILTIN_KEY	GPIO0
+#define GPKEY	      GPIO0
 #endif
-#define GPKEY				BUILTIN_KEY
+#define BUILTIN_KEY GPKEY
 
 /* GPIO MODES */
 #define GPIO_INPUT      (0x01)
@@ -207,6 +233,7 @@ void writeRedLed(uint8_t state);
 void writeGreenLed(uint8_t state);
 void writeBlueLed(uint8_t state);
 uint8_t readGenPurButton(void);
+
 #if DENEYAP_KART
 void cameraInit(void);
 // Function declaration for CameraStream sketch defined in "app_httpd.cpp"

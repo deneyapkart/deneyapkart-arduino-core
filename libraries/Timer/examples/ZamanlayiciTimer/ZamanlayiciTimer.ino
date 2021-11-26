@@ -1,12 +1,9 @@
 /*
-  Zamanlayıcı örneğini Timer
-
-  Bu örnek, ESP32'de donanım Timer'ın nasıl kullanılacağını gösterir. Zamanlayıcı onTimer'ı çağırır
-  her saniye işlev görür. Zamanlayıcı, (IO0)'a bağalanan BUT butonu ile durdurulabilir
-  (IO0).
-
-  */
-  
+ * Zamanlayıcı örneğini Timer
+ * Bu örnek, ESP32'de donanım Timer'ın nasıl kullanılacağını gösterir. Zamanlayıcı onTimer'ı çağırır
+ * her saniye işlev görür. Zamanlayıcı, (IO0)'a bağalanan BUT butonu ile durdurulabilir 
+*/
+ 
 #define BTN_STOP_ALARM  0  //Durdur butonunun tanımlanması
 
 hw_timer_t * timer = NULL;

@@ -1,6 +1,6 @@
 #include <Ticker.h>
 
-#define LED_PIN LEDG
+#define LED_PIN LEDB
 
 Ticker tickerSetHigh;
 Ticker tickerSetLow;
@@ -16,8 +16,8 @@ void setup() {
   // her 25 ms'de setPin(0) çağır
   tickerSetLow.attach_ms(25, setPin, 0);
   
-  // her 25 ms'de setPin(0) çağır
-  tickerSetHigh.attach_ms(25, setPin, 1);
+  // her 26 ms'de setPin(0) çağır
+  tickerSetHigh.attach_ms(26, setPin, 1);
 }
 
 void loop() {

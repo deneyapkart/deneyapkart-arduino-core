@@ -7,7 +7,6 @@ void setup() {
 }
 
 void loop() {
-#if DENEYAP_KART
   // Kirmizi 
   digitalWrite(LEDR, LOW);       
   digitalWrite(LEDG, HIGH);      
@@ -49,47 +48,4 @@ void loop() {
   digitalWrite(LEDG, LOW);      
   digitalWrite(LEDB, LOW);      
   delay(gecikme_suresi);
-#elif DENEYAP_MINI
-  // Kirmizi 
-  digitalWrite(LEDR, HIGH);       
-  digitalWrite(LEDG, LOW);      
-  digitalWrite(LEDB, LOW);      
-  delay(gecikme_suresi);
-
-  // Yesil 
-  digitalWrite(LEDR, LOW);       
-  digitalWrite(LEDG, HIGH);      
-  digitalWrite(LEDB, LOW);     
-  delay(gecikme_suresi);
-
-  // Mavi 
-  digitalWrite(LEDR, LOW);     
-  digitalWrite(LEDG, LOW);     
-  digitalWrite(LEDB, HIGH);      
-  delay(gecikme_suresi);
-
-  // Sari 
-  digitalWrite(LEDR, HIGH);      
-  digitalWrite(LEDG, HIGH);      
-  digitalWrite(LEDB, LOW);     
-  delay(gecikme_suresi);
-
-  // Magenta 
-  digitalWrite(LEDR, HIGH);      
-  digitalWrite(LEDG, LOW);     
-  digitalWrite(LEDB, HIGH);      
-  delay(gecikme_suresi);
-
-  // Cyan
-  digitalWrite(LEDR, LOW);     
-  digitalWrite(LEDG, HIGH);      
-  digitalWrite(LEDB, HIGH);      
-  delay(gecikme_suresi);
-
-  // Beyaz
-  digitalWrite(LEDR, HIGH);      
-  digitalWrite(LEDG, HIGH);      
-  digitalWrite(LEDB, HIGH);      
-  delay(gecikme_suresi);
-#endif
 }
