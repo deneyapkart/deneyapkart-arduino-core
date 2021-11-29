@@ -1,11 +1,19 @@
-# Deneyap Kart and Deneyap Mini Arduino Core 
+# Deneyap Development Boards Arduino Core
 [FOR TURKISH VERSION](docs/README_tr.md) ![trflag](docs/tr.png)
+
+[![](https://img.shields.io/badge/OfficialWebsite-passing-880414)](https://deneyapkart.org/)  [![](https://img.shields.io/badge/docs-passing-487c17)](https://docs.deneyapkart.org/en/) 
+
+Need help or have a question? [![](https://img.shields.io/badge/forum-passing-167cc9)](https://forum.deneyapkart.org/) 
 
 Deneyap Kart, designed and manufactured in Turkey, is a powerful development board with its strong MCU, robust design and flexible GPIOs. It allows the users in all levels (beginners to professionals) to create, design and develop projects in the fields of Electronics, Internet of Things (IoT) and Artificial Intelligence (AI). 
 
 Deneyap Mini, the tiny member of Deneyap Family, is a little but powerful development board with WiFi capability especially for entry-level makers. It can be easily used for Electronics, Robotics and IoT based applications.
 
 For more information, please visit [Deneyap Kart Technical Guide](https://docs.deneyapkart.org/#deneyap-kart) and [Deneyap Kart Official Website](https://deneyapkart.org).
+
+### Development Status
+
+ [![Release Version](https://img.shields.io/github/v/release/deneyapkart/deneyapkart-arduino-core?color=880414)](https://github.com/deneyapkart/deneyapkart-arduino-core/releases/latest/) [![Release Date](https://img.shields.io/github/release-date/deneyapkart/deneyapkart-arduino-core?color=487c17)](https://github.com/deneyapkart/deneyapkart-arduino-core/releases/latest/) [![Downloads](https://img.shields.io/github/downloads/deneyapkart/deneyapkart-arduino-core/latest/total?color=167cc9)](https://github.com/deneyapkart/deneyapkart-arduino-core/releases/latest/) [![Downloads](https://img.shields.io/github/downloads/deneyapkart/deneyapkart-arduino-core/total?color=167cc9)](https://github.com/deneyapkart/deneyapkart-arduino-core/releases/latest/) 
 
 ## Contents
 - [Installation Instructions](#installation-instructions)
