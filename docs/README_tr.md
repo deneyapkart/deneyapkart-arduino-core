@@ -1,9 +1,18 @@
-# Deneyap Kart ve Deneyap Mini Arduino Core
+# Deneyap Geliştirme Kartları Arduino Core
+
+[![](https://img.shields.io/badge/ResmiWebsitesi-Geçiş-880414)](https://deneyapkart.org/)  [![](https://img.shields.io/badge/TeknikRehber-Geçiş-487c17)](https://docs.deneyapkart.org/) 
+
+Yardıma ihtiyacınız var mı veya bir sorunuz mu var? [![](https://img.shields.io/badge/Forum-Geçiş-167cc9)](https://forum.deneyapkart.org/) 
+
 Güçlü işlemcisi, dayanıklı tasarımı ve esnek giriş/çıkış pinleri ile Türkiye'de tasarlanıp üretilen Deneyap Kart; Elektronik Programlama, Nesnelerin İnterneti (IoT) ve Yapay Zeka alanlarında başlangıç seviyesinden endüstriyel uygulamalara kadar her seviyede proje geliştirilmesine imkan tanır.
 
 Deneyap Ailesi'nin en küçük üyesi Deneyap Mini, boyutları küçük ama kabiliyetli bir geliştirme kartıdır. Kablosuz haberleşme (WiFi) arayüzüne sahiptir ve özellikle giriş seviyesindeki kullanıcılar için oldukça uygun bir çözüm olarak sunulmuştur. Elektronik, Robotik ve Nesnelerin İnterneti (IoT) projelerinde rahatlıkla kullanılabilir.
 
 Kartlar hakkında detaylı bilgiye erişmek için, lütfen [Deneyap Kart Teknik Rehberi'ni](https://docs.deneyapkart.org/#deneyap-kart) ve [Deneyap Kart Resmi İnternet Sitesi'ni](https://deneyapkart.org) ziyaret ediniz. 
+
+### Geliştirme Durumu
+
+ [![Release Version](https://img.shields.io/github/v/release/deneyapkart/deneyapkart-arduino-core?color=880414)](https://github.com/deneyapkart/deneyapkart-arduino-core/releases/latest/) [![Release Date](https://img.shields.io/github/release-date/deneyapkart/deneyapkart-arduino-core?color=487c17)](https://github.com/deneyapkart/deneyapkart-arduino-core/releases/latest/) [![Downloads](https://img.shields.io/github/downloads/deneyapkart/deneyapkart-arduino-core/latest/total?color=167cc9)](https://github.com/deneyapkart/deneyapkart-arduino-core/releases/latest/) [![Downloads](https://img.shields.io/github/downloads/deneyapkart/deneyapkart-arduino-core/total?color=167cc9)](https://github.com/deneyapkart/deneyapkart-arduino-core/releases/latest/) 
 
 ## İçindekiler
 - [Yükleme Talimatları](#yükleme-talimatları)
