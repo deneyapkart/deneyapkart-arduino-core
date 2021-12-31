@@ -19,8 +19,8 @@
 #include <time.h> 
 #include <WiFi.h>
 
-const char* ssid     = "wifi-ag-adi";
-const char* password = "wifi-sifresi";
+const char* ssid     = "dicle";
+const char* password = "dicle123";
 
 long timezone = 1; 
 byte daysavetime = 1;
@@ -172,11 +172,11 @@ void setup(){
 	Serial.printf("\nSu an : %d-%02d-%02d %02d:%02d:%02d\n",(tmstruct.tm_year)+1900,( tmstruct.tm_mon)+1, tmstruct.tm_mday,tmstruct.tm_hour , tmstruct.tm_min, tmstruct.tm_sec);
     Serial.println("");
     
-    if(!SDCard.begin()){
+    if(!SD.begin()){
         Serial.println("SD Kart baglantisi basarisiz");
         return;
     }
-    uint8_t cardType = SDCard.cardType();
+    uint8_t cardType = SD.cardType();
 
     if(cardType == CARD_NONE){
         Serial.println("SD Kart bagli degil");
@@ -194,20 +194,17 @@ void setup(){
         Serial.println("TANIMSIZ");
     }
 
-    uint64_t cardSize = SDCard.cardSize() / (1024 * 1024);
+    uint64_t cardSize = SD.cardSize() / (1024 * 1024);
     Serial.printf("SD Kart Boytu: %lluMB\n", cardSize);
 
-    listDir(SDCard, "/", 0);
-    removeDir(SDCard, "/mydir");
-    createDir(SDCard, "/mydir");
-    deleteFile(SDCard, "/hello.txt");
-    writeFile(SDCard, "/hello.txt", "Hello ");
-    appendFile(SDCard, "/hello.txt", "World!\n");
-	listDir(SDCard, "/", 0);
+    listDir(SD, "/", 0);
+    removeDir(SD, "/mydir");
+    createDir(SD, "/mydir");
+    deleteFile(SD, "/hello.txt");
+    writeFile(SD, "/hello.txt", "Hello ");
+    appendFile(SD, "/hello.txt", "World!\n");
+	listDir(SD, "/", 0);
 }
 
 void loop(){
-
 }
-
-
