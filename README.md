@@ -38,11 +38,11 @@ To report any issue/bug/problem etc., please make sure you have searched the sim
 ### Deneyap Kart Pinout
 ![PinoutDYDK_ENG](docs/DeneyapKartPinoutENG_mpv1.0.png)
 
-### Deneyap Mini Pinout
-![PinoutDYM_ENG](docs/DeneyapMiniPinoutENG_mpv1.0.png)
-
 ### Deneyap Kart Extended Pinout
 ![PinoutDYDK_ENG](docs/DeneyapKartExtendedPinOutENG_mpv1.0.png)
+
+### Deneyap Mini Pinout
+![PinoutDYM_ENG](docs/DeneyapMiniPinoutENG_mpv1.0.png)
 
 ### Deneyap Mini Extended Pinout
 ![PinoutDYM_ENG](docs/DeneyapMiniExtendedPinOutENG_mpv1.0.png)
