@@ -1,1 +1,0 @@
-BulutSicaklikGozlem uygulama örneği Deneyap Kartı desteklemektedir. Bu örnekte Adafruit io web uygulaması kullanılmaktadır. Adafruit io web uygulamasıda Deneyap kart ile alınan ortam sıcaklık anlık olarak webde eklenen textte gözlenebilmektedir. Bununla birlikte webte eklenen buton ile karttaki led kontrol edilebilmektedir.
