@@ -1,11 +1,8 @@
 /*
-  Prefence kütüphanesi ile ESP32 başlatma sayacı örneği.
-
-  Bu basit örnek, kaç kez depolamak için Prefence kütüphanesinin kullanıldığını gösterir.
-  ESP32 modülü önyüklendi. Prefence kütüphanesi, Uçucu Olmayan'ın etrafındaki bir sarmalayıcıdır.
-  ESP32 işlemcide depolama.
-
-*/
+ * FlashOkumaYazma örneği
+ * Bu örnekte kaç kez depolamak için Prefence kütüphanesinin kullanıldığını göstermektedir.
+ * 
+ */
 
 #include <Preferences.h>
 

@@ -1,6 +1,6 @@
 /******************************************************************************
 LSM6DSM.cpp
-LSM6DSM Deneyap DevKit Library
+LSM6DSMDeneyap Development Boards Library
 
 Library for LSM6DSM 6-axis Inertial Measurement Unit (IMU)
 --> Configuration functions
@@ -26,10 +26,12 @@ April 25, 2020
 status_t LSM6DSMCore::beginCore(void)
 {
 	status_t returnError = IMU_SUCCESS;
-#if DENEYAP_KART
+#if defined (ARDUINO_DYDK)
 	Wire.begin(IMUSD, IMUSC, 0);
-#elif DENEYAP_MINI
+#elif defined (ARDUINO_DYM)
 	Wire.begin(SD, SC, 0);
+#else 
+	Wire.begin(SDA, SCL, 0);
 #endif
 
 	// Spin for a few ms

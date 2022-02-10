@@ -4,9 +4,8 @@
 #include "driver/i2s.h"
 #include "dsps_fft2r.h"
 
-#define READ_DELAY 3000 // millisec
 #define I2S_PORT I2S_NUM_0
-#define BLOCK_SIZE 512
+#define BUFFER_SIZE 512
 #define SAMPLE_RATE 24000
 
 // http://www.schwietering.com/jayduino/filtuino/index.php?characteristic=be&passmode=hp&order=2&usesr=usesr&sr=24000&frequencyLow=100&noteLow=&noteHigh=&pw=pw&calctype=float&run=Send
@@ -37,6 +36,6 @@ public:
 
 void micBegin();
 void micRead(size_t *dataReadNumber, void *dataRead);
-float dataFilter(FilterBeHp2 filter, size_t num_bytes_read, int *samples);
+int16_t dataFilter(FilterBeHp2 filter, size_t num_bytes_read, int *samples);
 
 #endif // _MP34DT05_H_

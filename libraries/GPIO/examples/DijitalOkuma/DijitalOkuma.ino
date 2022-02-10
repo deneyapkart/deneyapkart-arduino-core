@@ -1,3 +1,12 @@
+/*
+ *   Dijital okuma örneği,
+ *   Kartın üzerinde yer alan "But" butonuna basıldığında karta bulunan RGB led sırasıyla Kırmızı, Yeşil, Mavi, Turuncu, Magenta, 
+ *   Cyan, Beyaz renklerinde yanacaktır ve sonraki buton basımında led sönmektedir. 
+ *   Bu işlem bir döngü şekilde her butona basımında devam etmektedir.
+ *   
+ *   Deneyap Kart 1A ile bu uygulamayı gerçekleştirilmek istenirse harici ledler bağlanmalıdır.
+ *   
+ */
 enum renkler
 {
   KIRMIZI,

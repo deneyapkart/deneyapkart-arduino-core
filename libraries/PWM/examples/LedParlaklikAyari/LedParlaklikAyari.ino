@@ -1,3 +1,8 @@
+/*
+ *  LedParlaklikAyari örneği,
+ *  Bu örnekte kartın üzerinde yer alan led parlaklığı bir döngü içinde sürekli olarak artıp azalmaktadır.
+ * 
+ */
 #define PWM_FREQ  5000                                  // PWM frekansi
 #define PWM_CH    0                                     // PWM kanal secimi (0-15)
 #define LED_PIN   LEDB                                  // Led pini (PWM cikis pini) (PWM0-PWM1)

@@ -1,10 +1,12 @@
+/*
+ *  ServoMotorPozisyonKontrolu örneği,
+ *  Bu örnekte 180 derece açıyla çalışan servo motor seri terminale yazılan derece açısı kadar motor dönüş yapmaktadır.
+ *  "ServoESP32" kütüphanesi Deneyap Kart ve Deneyap Kart 1A ile çalışmaktadır. 
+ * 
+ */
 #include "ServoESP32.h"
 
-#if DENEYAP_KART
-#define servoPin PWM0                                           // PWM pini tanimlamasi
-#elif DENEYAP_MINI
-#define servoPin P0                                             // PWM pini tanimlamasi
-#endif
+#define servoPin PWM0                                           // DENAYAP KART ve DENEYAP KART 1A için PWM pini tanimlamasi
 
 Servo servo1;                                                   // Class'tan nesne turetimi
 int incomingByte = 0;                                           // Gelen veriyi tutacak degisken tanimi

@@ -1,6 +1,6 @@
 /******************************************************************************
 deneyap.cpp
-Main Deneyap DevKit Library
+Main Deneyap Development Boards Library
 
 Main functions used for read, write, pin mode etc. operations
 
@@ -54,18 +54,21 @@ April 08, 2020
   * @param  Pin state (HIGH/PIN_HIGH, LOW/PIN_LOW)
   * @retval None
   */
+
+#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYM)
+
 void writeRedLed(uint8_t state)
 {
 	if(state == HIGH || state == PIN_HIGH)
-#if DENEYAP_KART
+#if ARDUINO_DYDK
 		digitalWrite(LEDR, PIN_LOW);
-#elif DENEYAP_MINI
+#elif ARDUINO_DYM
     digitalWrite(LEDR, PIN_HIGH);
 #endif
 	else if(state == LOW || state == PIN_LOW)
-#if DENEYAP_KART
+#if ARDUINO_DYDK
 		digitalWrite(LEDR, PIN_HIGH);
-#elif DENEYAP_MINI
+#elif ARDUINO_DYM
     digitalWrite(LEDR, PIN_LOW);
 #endif
 }
@@ -78,15 +81,15 @@ void writeRedLed(uint8_t state)
 void writeGreenLed(uint8_t state)
 {
   if(state == HIGH || state == PIN_HIGH)
-#if DENEYAP_KART
+#if ARDUINO_DYDK
     digitalWrite(LEDG, PIN_LOW);
-#elif DENEYAP_MINI
+#elif ARDUINO_DYM
     digitalWrite(LEDG, PIN_HIGH);
 #endif
   else if(state == LOW || state == PIN_LOW)
-#if DENEYAP_KART
+#if ARDUINO_DYDK
     digitalWrite(LEDG, PIN_HIGH);
-#elif DENEYAP_MINI
+#elif ARDUINO_DYM
     digitalWrite(LEDG, PIN_LOW);
 #endif
 }
@@ -99,18 +102,20 @@ void writeGreenLed(uint8_t state)
 void writeBlueLed(uint8_t state)
 {
   if(state == HIGH || state == PIN_HIGH)
-#if DENEYAP_KART
+#if ARDUINO_DYDK
     digitalWrite(LEDB, PIN_LOW);
-#elif DENEYAP_MINI
+#elif ARDUINO_DYM
     digitalWrite(LEDB, PIN_HIGH);
 #endif
   else if(state == LOW || state == PIN_LOW)
-#if DENEYAP_KART
+#if ARDUINO_DYDK
     digitalWrite(LEDB, PIN_HIGH);
-#elif DENEYAP_MINI
+#elif ARDUINO_DYM
     digitalWrite(LEDB, PIN_LOW);
 #endif
 }
+
+#endif
 
 /**
   * @brief  Read built-in general purpose button state
@@ -232,7 +237,7 @@ uint8_t readGenPurButton(void)
 //   return readPin(GPIO24);
 // }
 
-#if DENEYAP_KART
+#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A)
 /**
   * @brief  Configure and initialize camera
   * @param  None

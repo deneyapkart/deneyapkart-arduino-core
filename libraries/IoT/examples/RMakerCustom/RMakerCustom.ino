@@ -1,11 +1,15 @@
+// ---------->>>>>>>>>> YUKLEME YAPILMADAN DIKKAT EDILMESI GEREKEN HUSUS <<<<<<<<<<----------
+// "Araçlar -> Partition Scheme -> RainMaker" secilmeli //
+// "Tools -> Partition Scheme -> RainMaker" secilmeli //
+
 /*
- * Arduino IDE'deki bölüm şemasını RainMaker olarak değiştirin 
- * Araçlar -> Partition Scheme -> RainMaker
- * Tools -> Partition Scheme -> RainMaker
- */
-
-
-//Bu örnek, standart bir Custom cihazı ile Deneyap Kart ile RainMaker'ı göstermektedir.
+ *   RMaker örneği,
+ *   Bu örnek yüklendikten sonra seri terminale bir QR kodu yazdırılmaktadır. 
+ *   Bu QR kodu ile ESPRainMaker mobil uygulamasıyla ve Deneyap Kart eşleşmektedir.
+ *   Daha sonra seri terminalde ve mobil uygulamada buton durumu takip edilebilmektedir.
+ *   Hem kartta hemde mobil uygulamada buton durumu değiştirilebilmektedir. 
+ * 
+*/
 #include "RMaker.h"
 #include "WiFi.h"
 #include "WiFiProv.h"

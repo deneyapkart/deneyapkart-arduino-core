@@ -1,11 +1,16 @@
+/*
+ *  GPIOKesme (interrupt) örneği,
+ *  Bu örnekte karttaki butona veya harici bağlanan bir botuna basıldığında interrupt ile butona kaç defa basıldığı bilgisi seri terminale yazdırmaktadır. 
+ *  
+ */
 struct Button {
     const uint8_t PIN;        
     uint32_t numberKeyPresses;
     bool pressed;
 };
 
-Button button1 = {0, 0, false};  
-Button button2 = {18, 0, false};  
+Button button1 = {0, 0, false};  //Kartlardaki dahili buton 
+Button button2 = {18, 0, false}; //GPIO18 bağlı pin
 
 void ARDUINO_ISR_ATTR isr(void* arg) {
     Button* s = static_cast<Button*>(arg);
@@ -28,11 +33,11 @@ void setup() {
 
 void loop() {
     if (button1.pressed) {
-        Serial.printf("1. Düğmeye %u kez basıldı\n", button1.numberKeyPresses);
+        Serial.printf("1. Butona %u kez basıldı\n", button1.numberKeyPresses);
         button1.pressed = false;
     }
     if (button2.pressed) {
-        Serial.printf("2. Düğmeye %u kez basıldı\n", button2.numberKeyPresses);
+        Serial.printf("2. Butona %u kez basıldı\n", button2.numberKeyPresses);
         button2.pressed = false;
     }
     static uint32_t lastMillis = 0;

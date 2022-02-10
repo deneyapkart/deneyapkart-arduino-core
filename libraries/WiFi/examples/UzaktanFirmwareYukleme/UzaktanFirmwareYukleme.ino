@@ -1,3 +1,9 @@
+/*
+ *  UzaktanFirmwareYukleme örneği,
+ *  Bu örnek yüklendikten sonra porttan network ports seçeneğinden uygun port seçimi yapılmalıdır. 
+ *  Yazılım tekrar yüklenmelidir. Seri terminalde güncelleme gözlemlenebilmektedir.
+ * 
+ */
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>

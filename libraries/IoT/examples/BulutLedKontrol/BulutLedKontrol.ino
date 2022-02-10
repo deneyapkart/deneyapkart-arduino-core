@@ -1,5 +1,9 @@
-// Adafruit IO kullanarak IoT tabanli uzaktan led kontrol uygulamasi 
-
+/*
+ *   BulutLedKontrol örneği,
+ *   Bu örnekte Adafruit io web uygulaması kullanılmaktadır. Adafruit io web uygulamasıda Deneyap kart ile alınan ortam sıcaklık anlık olarak webde eklenen textte gözlenebilmektedir. 
+ *   Bununla birlikte webte eklenen buton ile karttaki led kontrol edilebilmektedir.
+ *   
+ */
 #include <Arduino.h>
 #include "WiFi.h"
 #include <Adafruit_MQTT.h>

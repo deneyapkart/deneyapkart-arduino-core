@@ -1,3 +1,9 @@
+/*
+ *   DNSServer örneği,
+ *   Örnek yüklendikten sonra "DNS Sunucu Ornegi" kablosuz ağına bağlanmaya uygun herhangi bir cihaz(mobil, tablet, bilgisayar vb.) kullanılarak bu ağa dahil olunur.
+ *   www.DNSSunucuOrnek.com adresine gidilir. 
+ * 
+*/ 
 #include <WiFi.h>
 #include <DNSServer.h>
 #include <WebServer.h>

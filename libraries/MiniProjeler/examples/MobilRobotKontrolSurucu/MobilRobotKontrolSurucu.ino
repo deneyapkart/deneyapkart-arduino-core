@@ -1,5 +1,9 @@
-// Iki farkli Deneyap Kart'in esp-now protokolunu kulanarak birbirleriyle haberlesmesi (motor surcu tarafi)
-
+/*
+ * MobilRobotSurucu örneği
+ * u örnek uygulama ile MobilRobotKontrolAkselerometre örneği ile iki Deneyap Kart birbiriyle haberleşmektedir. 
+ * MobilRobotSurucu örneğinde diğer Deneyap Karttan gelen verilere göre motorlar hareket etmektedir.
+ * 
+ */
 #include "WiFi.h"
 #include "esp_now.h"
 

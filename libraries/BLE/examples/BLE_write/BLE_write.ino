@@ -1,4 +1,12 @@
-#if DENEYAP_KART
+/*
+ *  Bluetooth BLE_write örneği,
+ *  Bu uygulama örneği için telefona BLE Scanner, nRF Connect veya LightBlue gibi bir uygulama indirilmesi gerekmektedir. 
+ *  Yazılım karta yüklendikten sonra telefondaki uygulama ile DeneyapKart ile bağlantısını gerçekleştirilmelidir. 
+ *  Seri terminala yazılan karakterler telefon uygulamasında görünmektedir.
+ *  
+ *  Deneyap Mini Kartında dahili Bluetooth bulunmamaktadır.
+ *    
+ */
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
@@ -60,6 +68,3 @@ void loop() {
  
   delay(2000);
 }
-#else
-#error Deneyap Mini ile bu uygulama gerceklestirilemez!
-#endif

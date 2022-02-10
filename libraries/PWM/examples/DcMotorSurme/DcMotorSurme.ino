@@ -1,14 +1,15 @@
-// L298N Motor surme ornegi 
-
+/*
+ *  DCMotorSurme örneği,
+ *  Bu örnek uygulamada L298N motor sürücü ile dc motor önce hızlanacak daha sonra yavaşlayarak yön değiştirmektedir. 
+ *  Bir ileri bir geri olarak döngü içinde bu işlemleri devam ettirmektedir. 
+ * 
+ */
 #define PWM_FREQ  5000                                  // PWM frekansi
 #define PWM_CH    0                                     // PWM kanali (0-15)
 #define PWM_RES   8                                     // PWM cozunurlugu (1-16 bits)
 
-#if DENEYAP_KART
-#define MOT_PIN   PWM0                                  // Motor PWM pini (PWM0-PWM1) 
-#elif DENEYAP_MINI
-#define MOT_PIN   P0                                  // Motor PWM pini (PWM0-PWM1) 
-#endif
+#define MOT_PIN   PWM0                                  // DENEYAP KART ve DENEYAP KART 1A için   Motor PWM pini (PWM0-PWM1) 
+//#define MOT_PIN   P0                                  // DENEYAP MİNİ için                      Motor PWM pini (PWM0-PWM1) 
 #define MOT_DIR1  D4                                    // Motor yon secme pin1
 #define MOT_DIR2  D5                                    // Motor yon secme pin2
 

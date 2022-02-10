@@ -1,5 +1,11 @@
-// Iki farkli Deneyap Kart'in esp-now protokolunu kulanarak birbirleriyle haberlesmesi (akselerometre tarafi)
-
+/*
+ *  MobilRobotKontrolAkselerometre örneği
+ *  Bu örnek uygulama ile MobilRobotSurucu örneği ile iki Deneyap Kart birbiriyle haberleşmektedir. 
+ *  MobilRobotKontrolAkselerometre örneğinde yer alan IMU ile akselerometreden veriler alınıp diğer Deneyap Karta göndermektedir.
+ *  
+ *  Deneyap Kart 1A ve Deneyap Mini Kart ile gerçekleşmesi için harici IMU bağlanmalıdır.
+ * 
+ */
 #include "lsm6dsm.h"
 #include "WiFi.h"
 #include "esp_now.h"

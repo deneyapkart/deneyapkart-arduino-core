@@ -1,5 +1,10 @@
-// Adafruit IO kullanarak IoT tabanli sicaklik gozlem uygulamasi 
-
+/*
+ *   BulutSicaklikGozlem örneği,
+ *   Bu örnekte Adafruit io web uygulaması kullanılmaktadır. Adafruit io web uygulamasıda Deneyap kart ile alınan ortam sıcaklık anlık olarak webde eklenen textte gözlenebilmektedir. 
+ *   Bununla birlikte webte eklenen buton ile karttaki led kontrol edilebilmektedir.
+ * 
+ *  Deneyap Kart 1A ve Deneyap Mini kart ile gerçekleştirmek için harici sıcaklık sensörü bağlanmalıdır.
+ */
 #include "lsm6dsm.h"
 #include "WiFi.h"
 #include <Adafruit_MQTT.h>

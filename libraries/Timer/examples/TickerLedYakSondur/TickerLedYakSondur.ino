@@ -1,3 +1,10 @@
+/*
+ *   TickerLedYakSondur örneği,
+ *   Bu örnekte Timer ile LED yanıp sönmektedir.
+ *   
+ *   Deneyap Kart 1A ile bu uygulamayı gerçekleştirilmek istenirse harici ledler bağlanmalıdır.
+ * 
+*/
 #include <Ticker.h>
 
 #define LED_PIN LEDB

@@ -1,3 +1,9 @@
+/*
+ *   I2CAdresTespiti örneği,
+ *   Bu örnekte, karta bağlanan I2C ile haberleşen modül veya sensörlerin adresinin tespit edilmektedir. 
+ *   Tespit adres seri terminale yazdırılmaktadır. 
+ *   
+ */
 #include <Wire.h> 
 
 void setup()

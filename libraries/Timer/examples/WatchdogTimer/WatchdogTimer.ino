@@ -1,3 +1,7 @@
+/*
+ *   WatcgdogTimer örneği, 
+ * 
+*/
 #include "esp_system.h"
 
 const int wdtTimeout = 3000;  //watchdog'u tetiklemek için ms cinsinden süre

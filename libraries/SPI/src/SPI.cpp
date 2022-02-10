@@ -61,10 +61,10 @@ void SPIClass::begin(int8_t sck, int8_t miso, int8_t mosi, int8_t ss)
         _mosi = MOSI;
         _ss = SS;
 #else
-        _sck = (_spi_num == VSPI) ? SCK : 14;
-        _miso = (_spi_num == VSPI) ? MISO : 12;
-        _mosi = (_spi_num == VSPI) ? MOSI : 13;
-        _ss = (_spi_num == VSPI) ? SS : 15;
+        _sck = (_spi_num == VSPI) ? SCK : 19;
+        _miso = (_spi_num == VSPI) ? MISO : 18;
+        _mosi = (_spi_num == VSPI) ? MOSI : 5;
+        _ss = (_spi_num == VSPI) ? SS : 21;
 #endif
     } else {
         _sck = sck;

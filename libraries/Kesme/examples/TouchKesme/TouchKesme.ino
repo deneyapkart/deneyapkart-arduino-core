@@ -1,8 +1,9 @@
 /*
-Bu, Touch Interrupt nasıl kullanılacağına bir örnektir.
-Eşik ne kadar büyük olursa, dokunma o kadar mantıklı olur
+ *  TouchKesme (interrupt) örneği,
+ *  Bu örnekte Deneyap Kart 1A veya Deneyap karttaki D15(GPIO27) dokunulduğunda seri terminale Touch algılandı yazdırmaktadır. 
+ *  Eşik(threshold) ne kadar büyük olursa, dokunma o kadar mantıklı olur.
+ *  
 */
-
 int threshold = 40;
 bool touch1detected = false;
 

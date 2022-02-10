@@ -1,3 +1,8 @@
+/*
+ *  LedParlaklikAyari_analogWrite örneği,
+ *  Bu örnekte kartın üzerinde yer alan led parlaklığı bir döngü içinde sürekli olarak artıp azalmaktadır.
+ * 
+ */
 #include "analogWrite.h"
 
 #define LED_PIN   LEDB                              // Led pini (PWM cikis pini) 

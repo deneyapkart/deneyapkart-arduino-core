@@ -1,5 +1,10 @@
-#if DENEYAP_KART
-
+/*
+ *  SesKaydetmeSD örneği,
+ *  Deneyap Karttaki dahili mikrofon ile kullanıcı Deneyap Karttaki dahili butona bastıktan sonra ortamdaki sesleri SD kartta belirlenen SURE boyunca ses kaydetmekte ve kayıt boyunca karttaki mavi ledi yakmaktadır.
+ * 
+ *  Bu uygulama Deneyap Kart 1A ve Deneyap Mini Kartları ile gerçekleştirilmek istenirse harici mikrofon bağlanmalıdır ve gerekli bağlantı bilgileri değiştirilmelidir. 
+ *  
+*/
 #include <driver/i2s.h>
 #include "FS.h"
 #include "SD.h"
@@ -24,7 +29,7 @@ bool I2S_Init()
     };
     
   i2s_pin_config_t pin_config = {  //Kanal seçimi
-    .bck_io_num           = GPIO_NUM_32,
+    .bck_io_num           = I2S_PIN_NO_CHANGE,
     .ws_io_num            = MICC,
     .data_out_num         = I2S_PIN_NO_CHANGE,
     .data_in_num          = MICD,
@@ -195,7 +200,3 @@ void loop() {
     digitalWrite(LEDB,HIGH);
     }
 }
-
-#else
-#error Bu uygulama dahili mikrofon olmadigi icin Deneyap Mini ile gerceklestirilemez!
-#endif

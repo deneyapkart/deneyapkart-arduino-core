@@ -1,11 +1,11 @@
 /*
- 
-Deep Sleep Touch ile uyandırma
-====================================================
-Bu kod, derin uykunun nasıl kullanılacağını gösterir.
-uyandırma kaynağı olarak bir touch ve verilerin nasıl depolanacağı
-Yeniden başlatmalarda kullanmak için RTC belleği
-
+ *  TouchUyandırma örneği,
+ *  Deep Sleep Touch ile uyandırma
+ *  ====================================================
+ *  Bu kod, derin uykunun nasıl kullanılacağını gösterir. Uyandırma kaynağı touch.
+ *  Karttaki touch pinlerinden birine dokunulduğunda resetlenerek ön yükleme yapılır.
+ *  İşlemleri kaç defa yapıldığı seri terminale yazdırılmaktadır.
+ *  
 */
 
 #define Threshold 40 /* Değer arttıkça hassasiyet artar */
@@ -70,7 +70,7 @@ void setup(){
   print_wakeup_reason();
   print_wakeup_touchpad();
 
-  ///Touchpad 2'te kurulum kesintisi D9 (GPIO2)
+  //Touchpad 2'te kurulum kesintisi D9 (GPIO2)
   touchAttachInterrupt(T2, callback, Threshold);
 
   // Touchpad'i uyandırma kaynağı olarak yapılandır

@@ -1,3 +1,10 @@
+/*
+ *  SeriTerminalVeriOkuma örneği,
+ *  Uygulama kullanıcıdan birinci sayı ve ikinci sayıyı girmesini istemektedir. Daha sonra işlem seçilmesi beklenmektedir. 1'a basınca toplama, 2'a basınca çıkarma, 3'a basınca çarpma ve 4'a basınca bölme işlemlerini gerçekleştirmektedir. 
+ *  Daha sonra herhangi bir karaktere basınca hesaplama işlemleri baştan başlamaktadır.
+ * 
+ */
+
 // ---->>>>>>>>>> SERİ TERMİNALDE VERİ GİRİŞİ İÇİN UYARI <<<<<<<<<<-----
 // Seri Termianal'de "No line ending (Satir sonu yok)" seceneği aktif olmalidir //       
 

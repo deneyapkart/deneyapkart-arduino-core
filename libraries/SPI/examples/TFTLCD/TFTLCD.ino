@@ -1,3 +1,8 @@
+/*
+ *  TFTLCD örneği,
+ *  TFTLCD ekrana yazı ve şekiller yazdırmaktadır.
+ * 
+ */
 #include <Adafruit_ST7735.h>   //ST7735 için donanıma özel kütüphane
 //#include <Adafruit_ST7789.h> //ST7789 için donanıma özel kütüphane
 #include <SPI.h>

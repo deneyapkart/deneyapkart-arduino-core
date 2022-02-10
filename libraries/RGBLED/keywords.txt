@@ -1,0 +1,32 @@
+####################################################
+# Syntax Coloring Map For RGB5050
+####################################################
+
+####################################################
+# Datatypes (KEYWORD1)
+####################################################
+RGB5050	                KEYWORD1   RGB5050	
+
+####################################################
+# Methods and Functions (KEYWORD2)
+####################################################
+begin				KEYWORD2
+setLedsCount			KEYWORD2
+setLedType			KEYWORD2
+setBrightness			KEYWORD2
+setLedColorData			KEYWORD2
+setLedColor			KEYWORD2
+setAllLedsColorData		KEYWORD2
+setAllLedsColor			KEYWORD2
+show				KEYWORD2
+
+####################################################
+# Instances (KEYWORD2)
+####################################################
+
+
+
+####################################################
+# Constants (LITERAL1)
+####################################################
+

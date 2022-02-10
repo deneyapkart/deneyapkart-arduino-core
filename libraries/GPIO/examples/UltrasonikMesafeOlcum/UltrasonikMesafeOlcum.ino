@@ -1,3 +1,8 @@
+/*
+ *   UltrasonikMesafeörneği,
+ *   Ultrasonik mesafe sensörü ile mesafe ölçülmektedir. Ölçülen mesafe seri terminale yazdırılmaktadır. 
+ *    
+ */
 #include "hcsr04ESP32.h"
 
 #define trigPin D0

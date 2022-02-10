@@ -1,3 +1,8 @@
+/*
+ *   LCD örneği,
+ *   LCD ekranın ilk satırında Deneyap kart ikinci satırında T3 Vakfı 2022 yazdırmaktadır.
+ *    
+ */
 #include "Adafruit_LiquidCrystal.h"
 
 /*
@@ -12,7 +17,7 @@ void setup()
      lcd.clear();
      lcd.print("DENEYAP KART");
      lcd.setCursor(0,1); 
-     lcd.print ("T3 VAKFI 2021");
+     lcd.print ("T3 VAKFI 2022");
 }
 void loop() {
     

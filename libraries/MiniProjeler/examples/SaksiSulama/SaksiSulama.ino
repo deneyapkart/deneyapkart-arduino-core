@@ -1,5 +1,8 @@
-// Basit saksi sulayan su pompasi calistirma uygulamasi
-
+/*
+ *  SaksiSulama örneği,
+ *  Toprak nem sensörü ile sulama eşiği nem oranına göre otomatik sulama gerçekleştirmektedir.
+ *  
+*/
 #define NEM_SENSORU   A0
 #define SU_POMPASI    D0
 #define SULAMA_ESIGI  450  

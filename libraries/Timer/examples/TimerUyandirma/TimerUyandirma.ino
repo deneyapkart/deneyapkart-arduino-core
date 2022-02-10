@@ -1,15 +1,10 @@
 /*
-Timer ile Deep Sleep uyandırma 
-====================================
-ESP32, etkili güç için Deep Sleep modu sunar
-güç olarak tasarruf, IoT uygulamaları için önemli bir faktördür
-Bu modda CPU'lar, RAM'in çoğu ve saatli tüm dijital çevre birimleri 
-APB_CLK'ten gelenler kapatılır. 
-Çipin hala açılabilen parçalar: RTC denetleyicisi, RTC çevre birimleri ve RTC bellekleri
-
-Bu kod, Timer ile en temel Deep Sleep uyandırma örnek uygulaması
-yeniden başlatmalarda kullanmak için verilerin 
-RTC belleğinde nasıl saklanacağını görüntüler.
+ *   TimerUyandirma örneği, 
+ *   
+ *   Timer ile Deep Sleep uyandırma 
+ *   ====================================
+ *   Bu örnekte Timer ile 10 saniyede bir kart önyükleme yapıp uyku moduna geçmektedir.
+ *   
 */
 
 #define uS_TO_S_FACTOR 1000000ULL   /* Mikro saniyeyi saniyeye çevirme faktörü */

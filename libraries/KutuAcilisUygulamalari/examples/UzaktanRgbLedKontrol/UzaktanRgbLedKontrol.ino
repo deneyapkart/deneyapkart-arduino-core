@@ -1,5 +1,9 @@
 /*
- * Deneyap Mini Elektronik Geliştirme Kartı'nın kutu açılış uygulamasıdır.
+ *   Deneyap Mini Elektronik Geliştirme Kartı'nın kutu açılış uygulamasıdır.
+ *   Bu örnek yüklendikten sonra "DeneyapMiniSunucu" ismi ile ağ yayını yapmaya başlar. 
+ *   Kablosuz ağa bağlanmaya uygun herhangi bir cihaz(mobil, tablet, bilgisayar vb.) kullanılarak bu ağa dahil olunur. 
+ *   Seri terminale yazılan adrese tarayıcıdan girilir ve RGB LED konrol edilmektedir.
+ * 
  */
  
 #include <WiFi.h> // Wifi.h kutuphanesi eklendi

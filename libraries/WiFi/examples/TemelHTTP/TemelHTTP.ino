@@ -1,3 +1,8 @@
+/*
+ *   TemelHTTP örneği,
+ *   Bu örnek https://deneyapkart.org/ sitesindeki html kodlarını seri terminale yazdırmaktadır. 
+ * 
+*/ 
 #include <WiFi.h>
 #include <WiFiMulti.h>
 
@@ -62,7 +67,7 @@ void setup() {
         USE_SERIAL.print("[HTTP] Başla...\n");
         // traged sunucuyu ve url'yi yapılandır
         //http.begin("https://www.howsmyssl.com/a/check", ca); //HTTPS
-        http.begin("https://tr.wikipedia.org/wiki/Deneyap_Kart"); //HTTP -> Deneyap Kart - Vikipedi
+        http.begin("https://deneyapkart.org/"); //HTTP -> deneyapkart.org
 
         USE_SERIAL.print("[HTTP] Erişin...\n");
         // bağlantıyı başlat ve HTTP başlığını gönder

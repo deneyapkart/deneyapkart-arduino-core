@@ -1,0 +1,27 @@
+####################################
+# Syntax Coloring Map LSM6DSM
+####################################
+
+####################################
+# Datatypes (KEYWORD1)
+####################################
+LSM6DSM	       KEYWORD1   LSM6DSM
+
+####################################
+# Methods and Functions (KEYWORD2)
+####################################
+readFloatAccelX	KEYWORD2
+readFloatAccelY	KEYWORD2
+readFloatAccelZ	KEYWORD2
+readFloatGyroX	KEYWORD2
+readFloatGyroY	KEYWORD2
+readFloatGyroZ	KEYWORD2
+readTempC	KEYWORD2
+readTempF	KEYWORD2
+####################################
+# Instances (KEYWORD2)
+####################################
+
+####################################
+# Constants (LITERAL1)
+####################################

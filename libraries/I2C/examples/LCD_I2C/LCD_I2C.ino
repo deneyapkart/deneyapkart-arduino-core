@@ -1,3 +1,8 @@
+/*
+ *   LCD_I2C örneği,
+ *   LCD ekranın ilk satırındaMerhaba Dunya!!! ikinci satırında Deneyap Kart yazdırmaktadır.
+ *    
+ */
 #include <LiquidCrystal_I2C.h>
 
 LiquidCrystal_I2C lcd(0x27,16,2);   // 16 karakter ve 2 satır ekran için LCD adresini 0x27 olarak ayarlayın
@@ -11,7 +16,6 @@ void setup(){
    lcd.setCursor(2,1);
    lcd.print("Deneyap Kart");
 }
-
 
 void loop(){
 

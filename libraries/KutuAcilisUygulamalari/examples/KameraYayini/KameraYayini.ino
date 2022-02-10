@@ -1,13 +1,15 @@
-/*
- * Deneyap Elektronik Geliştirme Seti'nin kutu açılış uygulamasıdır.
- */
-
-#if DENEYAP_KART
-#include <WiFi.h>
 
 // ---------->>>>>>>>>> YUKLEME YAPILAMDAN DIKKAT EDILMESI GEREKEN HUSUS <<<<<<<<<<----------
 // "Araclar->Partition Scheme->Huge APP" secilmeli //
 // "Tools->Partition Scheme->Huge APP" secilmeli //
+
+/*
+ *   Deneyap Elektronik Geliştirme Seti'nin kutu açılış uygulamasıdır.
+ *   Bu örnek yüklendikten sonra kablosuz ağa bağlanmaya uygun herhangi bir cihaz(mobil, tablet, bilgisayar vb.) kullanılarak bu ağa dahil olunur. 
+ *   Seri terminale yazılan adrese tarayıcıdan girilir ve görüntü başlatılır.
+ * 
+ */
+#include <WiFi.h>
 
 const char* ssidAP      = "DeneyapKart";      // Wi-Fi ag adi
 const char* passwordAP  = NULL;               // Wi-Fi ag sifresi
@@ -37,6 +39,3 @@ void setup() {
 void loop() {
   delay(10000);
 }
-#else
-#error Bu uygulama kamera baglantisi olmadigi icin Deneyap Mini ile gerceklestirilemez!
-#endif
