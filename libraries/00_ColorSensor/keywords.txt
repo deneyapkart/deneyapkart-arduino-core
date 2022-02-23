@@ -1,25 +1,21 @@
 #######################################
-# Syntax Coloring Map For DeneyapDevKit
+# Syntax Coloring Map ColorConverter
 #######################################
 
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
-
-TensorFlowLite_ESP32   KEYWORD1 TensorFlowLite_ESP32
+ColorConverter	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
-
-
-#######################################
-# Instances (KEYWORD2)
-#######################################
-
-
+RgbToHsl	KEYWORD2
+HslToRgb	KEYWORD2
+RgbToHsv	KEYWORD2
+HsvToRgb	KEYWORD2
+TemperatureToRgb	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
-

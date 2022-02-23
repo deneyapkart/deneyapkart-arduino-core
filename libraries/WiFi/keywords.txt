@@ -2,7 +2,7 @@
 # Syntax Coloring Map For DeneyapDevKit
 #######################################
 
-WiFi   KEYWORD1
+WiFi   KEYWORD1   WiFi
 WiFiClient   KEYWORD1
 WiFiAP   KEYWORD1
 

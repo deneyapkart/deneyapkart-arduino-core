@@ -1,25 +1,16 @@
 #######################################
-# Syntax Coloring Map For DeneyapDevKit
+# Syntax Coloring Map For Deneyap Kart
 #######################################
 
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
-
-ServoESP32	KEYWORD1	ServoServoESP32
-Servo	KEYWORD1
+Tone32   KEYWORD1   Tone32
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-attach	KEYWORD2
-detach	KEYWORD2
-write	KEYWORD2
-read	KEYWORD2
-attached	KEYWORD2
-writeMicroseconds	KEYWORD2
-readMicroseconds	KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)

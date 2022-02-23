@@ -6,6 +6,7 @@
 # Datatypes (KEYWORD1)
 #######################################
 
+SD	KEYWORD1	SD
 SDCard	KEYWORD1	SDCard
 File	KEYWORD1	SD
 SDFile	KEYWORD1	SD

@@ -16,11 +16,11 @@ void micBegin() {
   i2s_config_t audio_in_i2s_config = {
        .mode                    = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_PDM),
        .sample_rate             = SAMPLE_RATE,
-       .bits_per_sample         = I2S_BITS_PER_SAMPLE_32BIT,
+       .bits_per_sample         = I2S_BITS_PER_SAMPLE_16BIT,
        .channel_format          = I2S_CHANNEL_FMT_ONLY_LEFT, // although the SEL config should be left, it seems to transmit on right
-       .communication_format    = i2s_comm_format_t(I2S_COMM_FORMAT_STAND_I2S | I2S_COMM_FORMAT_STAND_MSB),
+       .communication_format    = i2s_comm_format_t(I2S_COMM_FORMAT_I2S),
        .intr_alloc_flags        = ESP_INTR_FLAG_LEVEL1, // high interrupt priority
-       .dma_buf_count           = 4,
+       .dma_buf_count           = 2,
        .dma_buf_len             = BUFFER_SIZE
       };
   
@@ -69,7 +69,6 @@ int16_t dataFilter(FilterBeHp2 filter, size_t num_bytes_read, int *samples) {
   
   for(int i=0; i < samples_read; i++) {
     data = filter.step((float)samples[i] / INT_MAX);
-    Serial.println((short)(data * SHRT_MAX));
     total_data += (short)(data * SHRT_MAX);
   }
 
