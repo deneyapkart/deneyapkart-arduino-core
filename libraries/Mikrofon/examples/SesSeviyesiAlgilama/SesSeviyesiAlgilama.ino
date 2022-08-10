@@ -2,6 +2,7 @@
  *  SesSeviyesiAlgilama örneği,
  *  Deneyap Karttaki dahili mikrofon ile kullanıcı ortamdaki ses verisini seri terminalde gözlemlemektedir. 
  *  Karttaki mavi led ve D0 harici bağlanan ledler belirlenen değere göre yanıp sönmektedir. 
+ *  Ses değişimini SERİ PORT ekranında grafiksel olarak izlenmelidir.
  * 
  *  Bu uygulama Deneyap Kart 1A ve Deneyap Mini Kartları ile gerçekleştirilmek istenirse harici mikrofon bağlanmalıdır ve gerekli bağlantı bilgileri değiştirilmelidir.  
  *  

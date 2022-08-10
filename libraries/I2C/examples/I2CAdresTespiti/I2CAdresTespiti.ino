@@ -20,7 +20,7 @@ void loop()
  
    Serial.println("taranıyor...");
    nDevices = 0;
-   for(address = 1; address < 127; address++ ) 
+   for(address = 1; address <= 127; address++ ) 
   {
      Wire.beginTransmission(address);
      error = Wire.endTransmission();

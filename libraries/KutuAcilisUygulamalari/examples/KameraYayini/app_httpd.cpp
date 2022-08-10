@@ -584,7 +584,7 @@ static esp_err_t index_handler(httpd_req_t *req){
     sensor_t * s = esp_camera_sensor_get();    
     return httpd_resp_send(req, (const char *)index_ov2640_html_gz, index_ov2640_html_gz_len);
 }
-#if defined (ARDUINO_DYDK)
+#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A)
 void startCameraServer(){
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
 
