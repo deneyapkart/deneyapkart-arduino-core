@@ -39,6 +39,9 @@
 #define D11 			(uint8_t)(18)
 #define D12 			(uint8_t)(17)
 #define D13 			(uint8_t)(0)
+#define D14 			(uint8_t)(35)
+#define D15 			(uint8_t)(34)
+#define D16 			(uint8_t)(33)
 #endif
 
 // Analog input pins

@@ -15,43 +15,49 @@ void setup() {
 }
 
 void loop() {
-  // Kirmizi 
+  // Cyan
   digitalWrite(LEDR, LOW);       
   digitalWrite(LEDG, HIGH);      
   digitalWrite(LEDB, HIGH);      
   delay(gecikme_suresi);
 
-  // Yesil 
+  // Meganta
   digitalWrite(LEDR, HIGH);       
   digitalWrite(LEDG, LOW);      
   digitalWrite(LEDB, HIGH);     
   delay(gecikme_suresi);
 
-  // Mavi 
+  // Sarı
   digitalWrite(LEDR, HIGH);     
   digitalWrite(LEDG, HIGH);     
   digitalWrite(LEDB, LOW);      
   delay(gecikme_suresi);
 
-  // Sari 
+  // Mavi
   digitalWrite(LEDR, LOW);      
   digitalWrite(LEDG, LOW);      
   digitalWrite(LEDB, HIGH);     
   delay(gecikme_suresi);
 
-  // Magenta 
+  // Yeşil
   digitalWrite(LEDR, LOW);      
   digitalWrite(LEDG, HIGH);     
   digitalWrite(LEDB, LOW);      
   delay(gecikme_suresi);
 
-  // Cyan
+  // Kırmızı
   digitalWrite(LEDR, HIGH);     
   digitalWrite(LEDG, LOW);      
   digitalWrite(LEDB, LOW);      
   delay(gecikme_suresi);
 
   // Beyaz
+  digitalWrite(LEDR, HIGH);      
+  digitalWrite(LEDG, HIGH);      
+  digitalWrite(LEDB, HIGH);      
+  delay(gecikme_suresi);
+  
+  // Renk yok
   digitalWrite(LEDR, LOW);      
   digitalWrite(LEDG, LOW);      
   digitalWrite(LEDB, LOW);      

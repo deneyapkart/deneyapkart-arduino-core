@@ -9,7 +9,7 @@ float adcVolDeg = 0;                                    // Voltaj donusumu icin 
 
 void setup() {
   Serial.begin(115200);                                 // Seri haberlesme baslatildi
-  pinMode(A5, INPUT);                                   // AO pini giris olarak ayarlandi
+  pinMode(A5, INPUT);                                   // A5 pini giris olarak ayarlandi
 }
 
 void loop() {
