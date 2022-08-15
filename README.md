@@ -32,22 +32,22 @@ JSON index file: `https://raw.githubusercontent.com/deneyapkart/deneyapkart-ardu
 - Start Arduino IDE and open Preferences window.
 - Copy the JSON index file link above into Additional Board Manager URLs field.
 - Open Boards Manager from Tools > Board menu and install "Deneyap Gelistirme Kartlari".
-- Select Deneyap Kart or Deneyap Mini from Tools > Board menu after installation.
+- Select Deneyap Kart or Deneyap Kart 1A or Deneyap Mini from Tools > Board menu after installation.
 
 ### Troubleshooting
 To report any issue/bug/problem etc., please make sure you have searched the similar encountered problems first. After that, if you are sure no on else had the same issue, use the [issue template](.github/ISSUE_TEMPLATE/bug_report.md) while reporting.  
 
 ### Deneyap Kart Pinout
-![PinoutDYDK_ENG](docs/DeneyapKartPinoutENG_mpv1.0.png)
+![PinoutDYDK_ENG](docs/DeneyapKart_PinoutEng_mpv1.0.png)
 
 ### Deneyap Kart Extended Pinout
-![PinoutDYDK_ENG](docs/DeneyapKartExtendedPinOutENG_mpv1.0.png)
+![PinoutDYDK_ENG](docs/DeneyapKart_ExtendedPinOutEng_mpv1.0.png)
 
 ### Deneyap Mini Pinout
-![PinoutDYM_ENG](docs/DeneyapMiniPinoutENG_mpv1.0.png)
+![PinoutDYM_ENG](docs/DeneyapMini_PinOutEng_mpv1.0.png)
 
 ### Deneyap Mini Extended Pinout
-![PinoutDYM_ENG](docs/DeneyapMiniExtendedPinOutENG_mpv1.0.png)
+![PinoutDYM_ENG](docs/DeneyapMini_ExtendedPinOutEng_mpv1.0.png)
 
 ### Deneyap Kart 1A Pinout
 ![PinoutDYDK_ENG](docs/DeneyapKart1A_PinOutEng_mpv1.0.png)

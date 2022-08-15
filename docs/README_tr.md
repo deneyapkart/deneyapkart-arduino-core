@@ -31,22 +31,22 @@ JSON index dosyası: `https://raw.githubusercontent.com/deneyapkart/deneyapkart-
 - Arduino IDE'yi başlatın ve **Tercihler** pencerisini açın.
 - Yukarıda paylaşılan JSON index dosyasına ait adresi, **Ek Devre Kartları Yöneticisi URL'leri** kısmına yapıştırın.
 - **Ayarlar > Kart** adımını takip ederek **Kart Yöneticisi**'ni açın ve *Deneyap Gelistirme Kartlari*'nı yükleyin.
-- Yükleme tamamlandıktan sonra, **Ayarlar > Kart** adımından *Deneyap Kart*'ı veya **Deneyap Mini**'yi seçin.
+- Yükleme tamamlandıktan sonra, **Ayarlar > Kart** adımından *Deneyap Kart*'ı veya ***Deneyap Kart 1A**'ı veya **Deneyap Mini**'yi seçin.
 
 ### Sorun Giderme
 Herhangi bir hata/sorun bildirmeden önce, lütfen karşılaşılan benzer bir hata/sorun olup olmadığını araştırın. Araştırmanız neticesinde; benzer bir sorunla karşılaşan başka biri olmadığına emin olduğunuz takdirde, [örnek hata bildirme şablonunu](../.github/ISSUE_TEMPLATE/bug_report_tr.md) kullanarak bildirimde bulunabilirsiniz.  
 
 ### Deneyap Kart Pin Diyagramı
-![PinoutDYDK_TR](DeneyapKartPinout_mpv1.0.png)
+![PinoutDYDK_TR](DeneyapKart_PinDiyagramı_mpv1.0.png)
 
 ### Deneyap Kart Genişletilmiş Pin Diyagramı
-![PinoutDYDK_TR](DeneyapKartPinDefinitions_mpv1.0.png)
+![PinoutDYDK_TR](DeneyapKart_GenişletilmişPinDiyagramı_mpv1.0.png)
 
 ### Deneyap Mini Pin Diyagramı
-![PinoutDYM_TR](DeneyapMiniPinout_mpv1.0.png)
+![PinoutDYM_TR](DeneyapMini_PinDiyagrami_mpv1.0.png)
 
 ### Deneyap Mini Genişletilmiş Pin Diyagramı
-![PinoutDYM_TR](DeneyapMiniPinDefinitions_mpv1.0.png)
+![PinoutDYM_TR](DeneyapMini_GenisletilmisPinDiyagrami_mpv1.0.png)
 
 ### Deneyap Kart 1A Pin Diyagramı
 ![PinoutDYDK_TR](DeneyapKart1A_PinDiyagramı_mpv1.0.png)
