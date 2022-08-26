@@ -1,8 +1,8 @@
 /*
  *   BulutSicaklikGozlem örneği,
- *   Bu örnekte Adafruit io web uygulaması kullanılmaktadır. Adafruit io web uygulamasıda Deneyap kart ile alınan ortam sıcaklık anlık olarak webde eklenen textte gözlenebilmektedir. 
+ *   Bu örnekte Adafruit io web uygulaması kullanılmaktadır. Adafruit io web uygulamasıda DENEYAP KART'taki dahili IMU'dan alınan sıcaklık anlık olarak webde eklenen textte gözlenebilmektedir. 
  *   Bununla birlikte webte eklenen buton ile karttaki led kontrol edilebilmektedir.
- *   Bu uygulama Deneyap Kart 1A ve Deneyap Mini Kartları ile gerçekleştirilmek istenirse harici sıcaklık sensörü bağlanmalıdır ve gerekli değişiklikler yapılmalıdır.
+ *   Bu uygulama DENEYAP KART 1A, DENEYAP MİNİ ve DENEYAP G Kartları ile gerçekleştirilmek istenirse harici sıcaklık sensörü bağlanmalıdır ve kodda gerekli değişiklikler yapılmalıdır.
  *    
  */
 #include <Arduino.h>

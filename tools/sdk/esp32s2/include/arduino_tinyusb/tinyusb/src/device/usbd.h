@@ -43,14 +43,26 @@ bool tud_init (uint8_t rhport);
 // Check if device stack is already initialized
 bool tud_inited(void);
 
-// Task function should be called in main/rtos loop
-void tud_task (void);
+// Task function should be called in main/rtos loop, extended version of tud_task()
+// - timeout_ms: millisecond to wait, zero = no wait, 0xFFFFFFFF = wait forever
+// - in_isr: if function is called in ISR
+void tud_task_ext(uint32_t timeout_ms, bool in_isr);
 
-// Check if there is pending events need proccessing by tud_task()
+// Task function should be called in main/rtos loop
+TU_ATTR_ALWAYS_INLINE static inline
+void tud_task (void)
+{
+  tud_task_ext(UINT32_MAX, false);
+}
+
+// Check if there is pending events need processing by tud_task()
 bool tud_task_event_ready(void);
 
-// Interrupt handler, name alias to DCD
+#ifndef _TUSB_DCD_H_
 extern void dcd_int_handler(uint8_t rhport);
+#endif
+
+// Interrupt handler, name alias to DCD
 #define tud_int_handler   dcd_int_handler
 
 // Get current bus speed
@@ -100,10 +112,6 @@ bool tud_control_status(uint8_t rhport, tusb_control_request_t const * request);
 // Application return pointer to descriptor
 uint8_t const * tud_descriptor_device_cb(void);
 
-// Invoked when received GET BOS DESCRIPTOR request
-// Application return pointer to descriptor
-TU_ATTR_WEAK uint8_t const * tud_descriptor_bos_cb(void);
-
 // Invoked when received GET CONFIGURATION DESCRIPTOR request
 // Application return pointer to descriptor, whose contents must exist long enough for transfer to complete
 uint8_t const * tud_descriptor_configuration_cb(uint8_t index);
@@ -112,9 +120,20 @@ uint8_t const * tud_descriptor_configuration_cb(uint8_t index);
 // Application return pointer to descriptor, whose contents must exist long enough for transfer to complete
 uint16_t const* tud_descriptor_string_cb(uint8_t index, uint16_t langid);
 
+// Invoked when received GET BOS DESCRIPTOR request
+// Application return pointer to descriptor
+TU_ATTR_WEAK uint8_t const * tud_descriptor_bos_cb(void);
+
 // Invoked when received GET DEVICE QUALIFIER DESCRIPTOR request
-// Application return pointer to descriptor, whose contents must exist long enough for transfer to complete
+// Application return pointer to descriptor, whose contents must exist long enough for transfer to complete.
+// device_qualifier descriptor describes information about a high-speed capable device that would
+// change if the device were operating at the other speed. If not highspeed capable stall this request.
 TU_ATTR_WEAK uint8_t const* tud_descriptor_device_qualifier_cb(void);
+
+// Invoked when received GET OTHER SEED CONFIGURATION DESCRIPTOR request
+// Application return pointer to descriptor, whose contents must exist long enough for transfer to complete
+// Configuration descriptor in the other speed e.g if high speed then this is for full speed and vice versa
+TU_ATTR_WEAK uint8_t const* tud_descriptor_other_speed_configuration_cb(uint8_t index);
 
 // Invoked when device is mounted (configured)
 TU_ATTR_WEAK void tud_mount_cb(void);
@@ -171,17 +190,18 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
   0x9C, 0xD2, 0x65, 0x9D, 0x9E, 0x64, 0x8A, 0x9F
 
 //--------------------------------------------------------------------+
-// Configuration & Interface Descriptor Templates
+// Configuration Descriptor Templates
 //--------------------------------------------------------------------+
 
-//------------- Configuration -------------//
 #define TUD_CONFIG_DESC_LEN   (9)
 
 // Config number, interface count, string index, total length, attribute, power in mA
 #define TUD_CONFIG_DESCRIPTOR(config_num, _itfcount, _stridx, _total_len, _attribute, _power_ma) \
   9, TUSB_DESC_CONFIGURATION, U16_TO_U8S_LE(_total_len), _itfcount, config_num, _stridx, TU_BIT(7) | _attribute, (_power_ma)/2
 
-//------------- CDC -------------//
+//--------------------------------------------------------------------+
+// CDC Descriptor Templates
+//--------------------------------------------------------------------+
 
 // Length of template descriptor: 66 bytes
 #define TUD_CDC_DESC_LEN  (8+9+5+5+4+5+7+9+7+7)
@@ -210,7 +230,9 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
   /* Endpoint In */\
   7, TUSB_DESC_ENDPOINT, _epin, TUSB_XFER_BULK, U16_TO_U8S_LE(_epsize), 0
 
-//------------- MSC -------------//
+//--------------------------------------------------------------------+
+// MSC Descriptor Templates
+//--------------------------------------------------------------------+
 
 // Length of template descriptor: 23 bytes
 #define TUD_MSC_DESC_LEN    (9 + 7 + 7)
@@ -224,7 +246,10 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
   /* Endpoint In */\
   7, TUSB_DESC_ENDPOINT, _epin, TUSB_XFER_BULK, U16_TO_U8S_LE(_epsize), 0
 
-//------------- HID -------------//
+
+//--------------------------------------------------------------------+
+// HID Descriptor Templates
+//--------------------------------------------------------------------+
 
 // Length of template descriptor: 25 bytes
 #define TUD_HID_DESC_LEN    (9 + 9 + 7)
@@ -254,8 +279,10 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
   /* Endpoint In */\
   7, TUSB_DESC_ENDPOINT, _epin, TUSB_XFER_INTERRUPT, U16_TO_U8S_LE(_epsize), _ep_interval
 
-//------------- MIDI -------------//
-// MIDI v1.0 is based on Audio v1.0
+//--------------------------------------------------------------------+
+// MIDI Descriptor Templates
+// Note: MIDI v1.0 is based on Audio v1.0
+//--------------------------------------------------------------------+
 
 #define TUD_MIDI_DESC_HEAD_LEN (9 + 9 + 9 + 7)
 #define TUD_MIDI_DESC_HEAD(_itfnum,  _stridx, _numcables) \
@@ -312,7 +339,9 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
   TUD_MIDI_DESC_EP(_epin, _epsize, 1),\
   TUD_MIDI_JACKID_OUT_EMB(1)
 
-//------------- AUDIO -------------//
+//--------------------------------------------------------------------+
+// Audio v2.0 Descriptor Templates
+//--------------------------------------------------------------------+
 
 /* Standard Interface Association Descriptor (IAD) */
 #define TUD_AUDIO_DESC_IAD_LEN 8
@@ -436,7 +465,7 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
   /* Type I Format Type Descriptor(2.3.1.6 - Audio Formats) */\
   TUD_AUDIO_DESC_TYPE_I_FORMAT(_nBytesPerSample, _nBitsUsedPerSample),\
   /* Standard AS Isochronous Audio Data Endpoint Descriptor(4.10.1.1) */\
-  TUD_AUDIO_DESC_STD_AS_ISO_EP(/*_ep*/ _epin, /*_attr*/ (TUSB_XFER_ISOCHRONOUS | TUSB_ISO_EP_ATT_ASYNCHRONOUS | TUSB_ISO_EP_ATT_DATA), /*_maxEPsize*/ _epsize, /*_interval*/ (CFG_TUSB_RHPORT0_MODE & OPT_MODE_HIGH_SPEED) ? 0x04 : 0x01),\
+  TUD_AUDIO_DESC_STD_AS_ISO_EP(/*_ep*/ _epin, /*_attr*/ (TUSB_XFER_ISOCHRONOUS | TUSB_ISO_EP_ATT_ASYNCHRONOUS | TUSB_ISO_EP_ATT_DATA), /*_maxEPsize*/ _epsize, /*_interval*/ TUD_OPT_HIGH_SPEED ? 0x04 : 0x01),\
   /* Class-Specific AS Isochronous Audio Data Endpoint Descriptor(4.10.1.2) */\
   TUD_AUDIO_DESC_CS_AS_ISO_EP(/*_attr*/ AUDIO_CS_AS_ISO_DATA_EP_ATT_NON_MAX_PACKETS_OK, /*_ctrl*/ AUDIO_CTRL_NONE, /*_lockdelayunit*/ AUDIO_CS_AS_ISO_DATA_EP_LOCK_DELAY_UNIT_UNDEFINED, /*_lockdelay*/ 0x0000)
 
@@ -485,7 +514,7 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
   /* Type I Format Type Descriptor(2.3.1.6 - Audio Formats) */\
   TUD_AUDIO_DESC_TYPE_I_FORMAT(_nBytesPerSample, _nBitsUsedPerSample),\
   /* Standard AS Isochronous Audio Data Endpoint Descriptor(4.10.1.1) */\
-  TUD_AUDIO_DESC_STD_AS_ISO_EP(/*_ep*/ _epin, /*_attr*/ (TUSB_XFER_ISOCHRONOUS | TUSB_ISO_EP_ATT_ASYNCHRONOUS | TUSB_ISO_EP_ATT_DATA), /*_maxEPsize*/ _epsize, /*_interval*/ (CFG_TUSB_RHPORT0_MODE & OPT_MODE_HIGH_SPEED) ? 0x04 : 0x01),\
+  TUD_AUDIO_DESC_STD_AS_ISO_EP(/*_ep*/ _epin, /*_attr*/ (TUSB_XFER_ISOCHRONOUS | TUSB_ISO_EP_ATT_ASYNCHRONOUS | TUSB_ISO_EP_ATT_DATA), /*_maxEPsize*/ _epsize, /*_interval*/ TUD_OPT_HIGH_SPEED ? 0x04 : 0x01),\
   /* Class-Specific AS Isochronous Audio Data Endpoint Descriptor(4.10.1.2) */\
   TUD_AUDIO_DESC_CS_AS_ISO_EP(/*_attr*/ AUDIO_CS_AS_ISO_DATA_EP_ATT_NON_MAX_PACKETS_OK, /*_ctrl*/ AUDIO_CTRL_NONE, /*_lockdelayunit*/ AUDIO_CS_AS_ISO_DATA_EP_LOCK_DELAY_UNIT_UNDEFINED, /*_lockdelay*/ 0x0000)
 
@@ -533,7 +562,7 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
   /* Type I Format Type Descriptor(2.3.1.6 - Audio Formats) */\
   TUD_AUDIO_DESC_TYPE_I_FORMAT(_nBytesPerSample, _nBitsUsedPerSample),\
   /* Standard AS Isochronous Audio Data Endpoint Descriptor(4.10.1.1) */\
-  TUD_AUDIO_DESC_STD_AS_ISO_EP(/*_ep*/ _epout, /*_attr*/ (TUSB_XFER_ISOCHRONOUS | TUSB_ISO_EP_ATT_ASYNCHRONOUS | TUSB_ISO_EP_ATT_DATA), /*_maxEPsize*/ _epsize, /*_interval*/ (CFG_TUSB_RHPORT0_MODE & OPT_MODE_HIGH_SPEED) ? 0x04 : 0x01),\
+  TUD_AUDIO_DESC_STD_AS_ISO_EP(/*_ep*/ _epout, /*_attr*/ (TUSB_XFER_ISOCHRONOUS | TUSB_ISO_EP_ATT_ASYNCHRONOUS | TUSB_ISO_EP_ATT_DATA), /*_maxEPsize*/ _epsize, /*_interval*/ TUD_OPT_HIGH_SPEED ? 0x04 : 0x01),\
   /* Class-Specific AS Isochronous Audio Data Endpoint Descriptor(4.10.1.2) */\
   TUD_AUDIO_DESC_CS_AS_ISO_EP(/*_attr*/ AUDIO_CS_AS_ISO_DATA_EP_ATT_NON_MAX_PACKETS_OK, /*_ctrl*/ AUDIO_CTRL_NONE, /*_lockdelayunit*/ AUDIO_CS_AS_ISO_DATA_EP_LOCK_DELAY_UNIT_UNDEFINED, /*_lockdelay*/ 0x0000),\
   /* Standard AS Isochronous Feedback Endpoint Descriptor(4.10.2.1) */\
@@ -541,10 +570,13 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
 
 //   Calculate wMaxPacketSize of Endpoints
 #define TUD_AUDIO_EP_SIZE(_maxFrequency, _nBytesPerSample, _nChannels) \
-    ((((_maxFrequency + ((CFG_TUSB_RHPORT0_MODE & OPT_MODE_HIGH_SPEED) ? 7999 : 999)) / ((CFG_TUSB_RHPORT0_MODE & OPT_MODE_HIGH_SPEED) ? 8000 : 1000)) + 1) * _nBytesPerSample * _nChannels)
+    ((((_maxFrequency + (TUD_OPT_HIGH_SPEED ? 7999 : 999)) / (TUD_OPT_HIGH_SPEED ? 8000 : 1000)) + 1) * _nBytesPerSample * _nChannels)
 
 
-//------------- TUD_USBTMC/USB488 -------------//
+//--------------------------------------------------------------------+
+// USBTMC/USB488 Descriptor Templates
+//--------------------------------------------------------------------+
+
 #define TUD_USBTMC_APP_CLASS    (TUSB_CLASS_APPLICATION_SPECIFIC)
 #define TUD_USBTMC_APP_SUBCLASS 0x03u
 
@@ -574,8 +606,10 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
 
 #define TUD_USBTMC_INT_DESCRIPTOR_LEN (7u)
 
+//--------------------------------------------------------------------+
+// Vendor Descriptor Templates
+//--------------------------------------------------------------------+
 
-//------------- Vendor -------------//
 #define TUD_VENDOR_DESC_LEN  (9+7+7)
 
 // Interface number, string index, EP Out & IN address, EP size
@@ -587,7 +621,10 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
   /* Endpoint In */\
   7, TUSB_DESC_ENDPOINT, _epin, TUSB_XFER_BULK, U16_TO_U8S_LE(_epsize), 0
 
-//------------- DFU Runtime -------------//
+//--------------------------------------------------------------------+
+// DFU Runtime Descriptor Templates
+//--------------------------------------------------------------------+
+
 #define TUD_DFU_APP_CLASS    (TUSB_CLASS_APPLICATION_SPECIFIC)
 #define TUD_DFU_APP_SUBCLASS (APP_SUBCLASS_DFU_RUNTIME)
 
@@ -601,6 +638,10 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
   9, TUSB_DESC_INTERFACE, _itfnum, 0, 0, TUD_DFU_APP_CLASS, TUD_DFU_APP_SUBCLASS, DFU_PROTOCOL_RT, _stridx, \
   /* Function */ \
   9, DFU_DESC_FUNCTIONAL, _attr, U16_TO_U8S_LE(_timeout), U16_TO_U8S_LE(_xfer_size), U16_TO_U8S_LE(0x0101)
+
+//--------------------------------------------------------------------+
+// DFU Descriptor Templates
+//--------------------------------------------------------------------+
 
 // Length of template descriptor: 9 bytes + number of alternatives * 9
 #define TUD_DFU_DESC_LEN(_alt_count)    (9 + (_alt_count) * 9)
@@ -647,8 +688,9 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
   _TUD_DFU_ALT(_itfnum, _alt_count, _stridx),      \
   _TUD_DFU_ALT_7(_itfnum, _alt_count+1, _stridx+1)
 
-
-//------------- CDC-ECM -------------//
+//--------------------------------------------------------------------+
+// CDC-ECM Descriptor Templates
+//--------------------------------------------------------------------+
 
 // Length of template descriptor: 71 bytes
 #define TUD_CDC_ECM_DESC_LEN  (8+9+5+5+13+7+9+9+7+7)
@@ -677,8 +719,9 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
   /* Endpoint Out */\
   7, TUSB_DESC_ENDPOINT, _epout, TUSB_XFER_BULK, U16_TO_U8S_LE(_epsize), 0
 
-
-//------------- RNDIS -------------//
+//--------------------------------------------------------------------+
+// RNDIS Descriptor Templates
+//--------------------------------------------------------------------+
 
 #if 0
 /* Windows XP */
@@ -719,7 +762,10 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
   /* Endpoint Out */\
   7, TUSB_DESC_ENDPOINT, _epout, TUSB_XFER_BULK, U16_TO_U8S_LE(_epsize), 0
 
-//------------- BT Radio -------------//
+//--------------------------------------------------------------------+
+// Bluetooth Radio Descriptor Templates
+//--------------------------------------------------------------------+
+
 #define TUD_BT_APP_CLASS                    (TUSB_CLASS_WIRELESS_CONTROLLER)
 #define TUD_BT_APP_SUBCLASS                 0x01
 #define TUD_BT_PROTOCOL_PRIMARY_CONTROLLER  0x01
@@ -729,12 +775,12 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
 #define CFG_TUD_BTH_ISO_ALT_COUNT 0
 #endif
 
-// Length of template descriptor: 30 bytes + number of ISO alternatives * 23
-#define TUD_BTH_DESC_LEN (9 + 7 + 7 + 7 + (CFG_TUD_BTH_ISO_ALT_COUNT) * (9 + 7 + 7))
+// Length of template descriptor: 38 bytes + number of ISO alternatives * 23
+#define TUD_BTH_DESC_LEN (8 + 9 + 7 + 7 + 7 + (CFG_TUD_BTH_ISO_ALT_COUNT) * (9 + 7 + 7))
 
 /* Primary Interface */
 #define TUD_BTH_PRI_ITF(_itfnum, _stridx, _ep_evt, _ep_evt_size, _ep_evt_interval, _ep_in, _ep_out, _ep_size) \
-  9, TUSB_DESC_INTERFACE, _itfnum, _stridx, 3, TUD_BT_APP_CLASS, TUD_BT_APP_SUBCLASS, TUD_BT_PROTOCOL_PRIMARY_CONTROLLER, 0, \
+  9, TUSB_DESC_INTERFACE, _itfnum, 0, 3, TUD_BT_APP_CLASS, TUD_BT_APP_SUBCLASS, TUD_BT_PROTOCOL_PRIMARY_CONTROLLER, _stridx, \
   /* Endpoint In for events */ \
   7, TUSB_DESC_ENDPOINT, _ep_evt, TUSB_XFER_INTERRUPT, U16_TO_U8S_LE(_ep_evt_size), _ep_evt_interval, \
   /* Endpoint In for ACL data */ \
@@ -770,9 +816,45 @@ TU_ATTR_WEAK bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb
 
 // BT Primary controller descriptor
 // Interface number, string index, attributes, event endpoint, event endpoint size, interval, data in, data out, data endpoint size, iso endpoint sizes
+// TODO BTH should also use IAD like CDC for composite device
 #define TUD_BTH_DESCRIPTOR(_itfnum, _stridx, _ep_evt, _ep_evt_size, _ep_evt_interval, _ep_in, _ep_out, _ep_size,...) \
+  /* Interface Associate */\
+  8, TUSB_DESC_INTERFACE_ASSOCIATION, _itfnum, 2, TUD_BT_APP_CLASS, TUD_BT_APP_SUBCLASS, TUD_BT_PROTOCOL_PRIMARY_CONTROLLER, 0,\
   TUD_BTH_PRI_ITF(_itfnum, _stridx, _ep_evt, _ep_evt_size, _ep_evt_interval, _ep_in, _ep_out, _ep_size) \
   TUD_BTH_ISO_ITFS(_itfnum + 1, _ep_in + 1, _ep_out + 1, __VA_ARGS__)
+
+//--------------------------------------------------------------------+
+// CDC-NCM Descriptor Templates
+//--------------------------------------------------------------------+
+
+// Length of template descriptor
+#define TUD_CDC_NCM_DESC_LEN  (8+9+5+5+13+6+7+9+9+7+7)
+
+// CDC-ECM Descriptor Template
+// Interface number, description string index, MAC address string index, EP notification address and size, EP data address (out, in), and size, max segment size.
+#define TUD_CDC_NCM_DESCRIPTOR(_itfnum, _desc_stridx, _mac_stridx, _ep_notif, _ep_notif_size, _epout, _epin, _epsize, _maxsegmentsize) \
+  /* Interface Association */\
+  8, TUSB_DESC_INTERFACE_ASSOCIATION, _itfnum, 2, TUSB_CLASS_CDC, CDC_COMM_SUBCLASS_NETWORK_CONTROL_MODEL, 0, 0,\
+  /* CDC Control Interface */\
+  9, TUSB_DESC_INTERFACE, _itfnum, 0, 1, TUSB_CLASS_CDC, CDC_COMM_SUBCLASS_NETWORK_CONTROL_MODEL, 0, _desc_stridx,\
+  /* CDC-NCM Header */\
+  5, TUSB_DESC_CS_INTERFACE, CDC_FUNC_DESC_HEADER, U16_TO_U8S_LE(0x0110),\
+  /* CDC-NCM Union */\
+  5, TUSB_DESC_CS_INTERFACE, CDC_FUNC_DESC_UNION, _itfnum, (uint8_t)((_itfnum) + 1),\
+  /* CDC-NCM Functional Descriptor */\
+  13, TUSB_DESC_CS_INTERFACE, CDC_FUNC_DESC_ETHERNET_NETWORKING, _mac_stridx, 0, 0, 0, 0, U16_TO_U8S_LE(_maxsegmentsize), U16_TO_U8S_LE(0), 0, \
+  /* CDC-NCM Functional Descriptor */\
+  6, TUSB_DESC_CS_INTERFACE, CDC_FUNC_DESC_NCM, U16_TO_U8S_LE(0x0100), 0, \
+  /* Endpoint Notification */\
+  7, TUSB_DESC_ENDPOINT, _ep_notif, TUSB_XFER_INTERRUPT, U16_TO_U8S_LE(_ep_notif_size), 50,\
+  /* CDC Data Interface (default inactive) */\
+  9, TUSB_DESC_INTERFACE, (uint8_t)((_itfnum)+1), 0, 0, TUSB_CLASS_CDC_DATA, 0, NCM_DATA_PROTOCOL_NETWORK_TRANSFER_BLOCK, 0,\
+  /* CDC Data Interface (alternative active) */\
+  9, TUSB_DESC_INTERFACE, (uint8_t)((_itfnum)+1), 1, 2, TUSB_CLASS_CDC_DATA, 0, NCM_DATA_PROTOCOL_NETWORK_TRANSFER_BLOCK, 0,\
+  /* Endpoint In */\
+  7, TUSB_DESC_ENDPOINT, _epin, TUSB_XFER_BULK, U16_TO_U8S_LE(_epsize), 0,\
+  /* Endpoint Out */\
+  7, TUSB_DESC_ENDPOINT, _epout, TUSB_XFER_BULK, U16_TO_U8S_LE(_epsize), 0
 
 #ifdef __cplusplus
 }

@@ -148,137 +148,6 @@ dydk_mpv10.menu.DebugLevel.verbose.build.code_debug=5
 
 ##############################################################
 
-dydk1a_mpv10.name=Deneyap Kart 1A
-
-dydk1a_mpv10.upload.tool=esptool_py
-dydk1a_mpv10.upload.maximum_size=1310720
-dydk1a_mpv10.upload.maximum_data_size=327680
-dydk1a_mpv10.upload.wait_for_upload_port=true
-dydk1a_mpv10.upload.flags=
-dydk1a_mpv10.upload.extra_flags=
-
-dydk1a_mpv10.serial.disableDTR=true
-dydk1a_mpv10.serial.disableRTS=true
-
-dydk1a_mpv10.build.tarch=xtensa
-dydk1a_mpv10.build.bootloader_addr=0x1000
-dydk1a_mpv10.build.target=esp32
-dydk1a_mpv10.build.mcu=esp32
-dydk1a_mpv10.build.core=esp32
-dydk1a_mpv10.build.variant=dydk1a_mpv10
-dydk1a_mpv10.build.board=DYDK1A
-
-dydk1a_mpv10.build.f_cpu=240000000L
-dydk1a_mpv10.build.flash_size=4MB
-dydk1a_mpv10.build.flash_freq=40m
-dydk1a_mpv10.build.flash_mode=dio
-dydk1a_mpv10.build.boot=dio
-dydk1a_mpv10.build.partitions=default
-dydk1a_mpv10.build.defines=-DBOARD_HAS_PSRAM -mfix-esp32-psram-cache-issue -mfix-esp32-psram-cache-strategy=memw
-dydk1a_mpv10.build.extra_libs=
-
-dydk1a_mpv10.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
-dydk1a_mpv10.menu.PartitionScheme.default.build.partitions=default
-dydk1a_mpv10.menu.PartitionScheme.defaultffat=Default 4MB with ffat (1.2MB APP/1.5MB FATFS)
-dydk1a_mpv10.menu.PartitionScheme.defaultffat.build.partitions=default_ffat
-dydk1a_mpv10.menu.PartitionScheme.default_8MB=8M Flash (3MB APP/1.5MB FAT)
-dydk1a_mpv10.menu.PartitionScheme.default_8MB.build.partitions=default_8MB
-dydk1a_mpv10.menu.PartitionScheme.minimal=Minimal (1.3MB APP/700KB SPIFFS)
-dydk1a_mpv10.menu.PartitionScheme.minimal.build.partitions=minimal
-dydk1a_mpv10.menu.PartitionScheme.no_ota=No OTA (2MB APP/2MB SPIFFS)
-dydk1a_mpv10.menu.PartitionScheme.no_ota.build.partitions=no_ota
-dydk1a_mpv10.menu.PartitionScheme.no_ota.upload.maximum_size=2097152
-dydk1a_mpv10.menu.PartitionScheme.noota_3g=No OTA (1MB APP/3MB SPIFFS)
-dydk1a_mpv10.menu.PartitionScheme.noota_3g.build.partitions=noota_3g
-dydk1a_mpv10.menu.PartitionScheme.noota_3g.upload.maximum_size=1048576
-dydk1a_mpv10.menu.PartitionScheme.noota_ffat=No OTA (2MB APP/2MB FATFS)
-dydk1a_mpv10.menu.PartitionScheme.noota_ffat.build.partitions=noota_ffat
-dydk1a_mpv10.menu.PartitionScheme.noota_ffat.upload.maximum_size=2097152
-dydk1a_mpv10.menu.PartitionScheme.noota_3gffat=No OTA (1MB APP/3MB FATFS)
-dydk1a_mpv10.menu.PartitionScheme.noota_3gffat.build.partitions=noota_3gffat
-dydk1a_mpv10.menu.PartitionScheme.noota_3gffat.upload.maximum_size=1048576
-dydk1a_mpv10.menu.PartitionScheme.huge_app=Huge APP (3MB No OTA/1MB SPIFFS)
-dydk1a_mpv10.menu.PartitionScheme.huge_app.build.partitions=huge_app
-dydk1a_mpv10.menu.PartitionScheme.huge_app.upload.maximum_size=3145728
-dydk1a_mpv10.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)
-dydk1a_mpv10.menu.PartitionScheme.min_spiffs.build.partitions=min_spiffs
-dydk1a_mpv10.menu.PartitionScheme.min_spiffs.upload.maximum_size=1966080
-dydk1a_mpv10.menu.PartitionScheme.fatflash=16M Flash (2MB APP/12.5MB FAT)
-dydk1a_mpv10.menu.PartitionScheme.fatflash.build.partitions=ffat
-dydk1a_mpv10.menu.PartitionScheme.fatflash.upload.maximum_size=2097152
-dydk1a_mpv10.menu.PartitionScheme.app3M_fat9M_16MB=16M Flash (3MB APP/9MB FATFS)
-dydk1a_mpv10.menu.PartitionScheme.app3M_fat9M_16MB.build.partitions=app3M_fat9M_16MB
-dydk1a_mpv10.menu.PartitionScheme.app3M_fat9M_16MB.upload.maximum_size=3145728
-dydk1a_mpv10.menu.PartitionScheme.rainmaker=RainMaker
-dydk1a_mpv10.menu.PartitionScheme.rainmaker.build.partitions=rainmaker
-dydk1a_mpv10.menu.PartitionScheme.rainmaker.upload.maximum_size=3145728
-
-dydk1a_mpv10.menu.CPUFreq.240=240MHz (WiFi/BT)
-dydk1a_mpv10.menu.CPUFreq.240.build.f_cpu=240000000L
-dydk1a_mpv10.menu.CPUFreq.160=160MHz (WiFi/BT)
-dydk1a_mpv10.menu.CPUFreq.160.build.f_cpu=160000000L
-dydk1a_mpv10.menu.CPUFreq.80=80MHz (WiFi/BT)
-dydk1a_mpv10.menu.CPUFreq.80.build.f_cpu=80000000L
-dydk1a_mpv10.menu.CPUFreq.40=40MHz
-dydk1a_mpv10.menu.CPUFreq.40.build.f_cpu=40000000L
-dydk1a_mpv10.menu.CPUFreq.20=20MHz 
-dydk1a_mpv10.menu.CPUFreq.20.build.f_cpu=20000000L
-dydk1a_mpv10.menu.CPUFreq.10=10MHz
-dydk1a_mpv10.menu.CPUFreq.10.build.f_cpu=10000000L
-
-dydk1a_mpv10.menu.FlashMode.qio=QIO
-dydk1a_mpv10.menu.FlashMode.qio.build.flash_mode=dio
-dydk1a_mpv10.menu.FlashMode.qio.build.boot=qio
-dydk1a_mpv10.menu.FlashMode.dio=DIO
-dydk1a_mpv10.menu.FlashMode.dio.build.flash_mode=dio
-dydk1a_mpv10.menu.FlashMode.dio.build.boot=dio
-dydk1a_mpv10.menu.FlashMode.qout=QOUT
-dydk1a_mpv10.menu.FlashMode.qout.build.flash_mode=dout
-dydk1a_mpv10.menu.FlashMode.qout.build.boot=qout
-dydk1a_mpv10.menu.FlashMode.dout=DOUT
-dydk1a_mpv10.menu.FlashMode.dout.build.flash_mode=dout
-dydk1a_mpv10.menu.FlashMode.dout.build.boot=dout
-
-dydk1a_mpv10.menu.FlashFreq.80=80MHz
-dydk1a_mpv10.menu.FlashFreq.80.build.flash_freq=80m
-dydk1a_mpv10.menu.FlashFreq.40=40MHz
-dydk1a_mpv10.menu.FlashFreq.40.build.flash_freq=40m
-
-dydk1a_mpv10.menu.UploadMode.Auto=Auto
-dydk1a_mpv10.menu.UploadMode.Auto.upload.mode=default_reset
-dydk1a_mpv10.menu.UploadMode.Manual=Manual
-dydk1a_mpv10.menu.UploadMode.Manual.upload.mode=no_reset
-
-dydk1a_mpv10.menu.UploadSpeed.921600=921600
-dydk1a_mpv10.menu.UploadSpeed.921600.upload.speed=921600
-dydk1a_mpv10.menu.UploadSpeed.115200=115200
-dydk1a_mpv10.menu.UploadSpeed.115200.upload.speed=115200
-dydk1a_mpv10.menu.UploadSpeed.256000.windows=256000
-dydk1a_mpv10.menu.UploadSpeed.256000.upload.speed=256000
-dydk1a_mpv10.menu.UploadSpeed.230400.windows.upload.speed=256000
-dydk1a_mpv10.menu.UploadSpeed.230400=230400
-dydk1a_mpv10.menu.UploadSpeed.230400.upload.speed=230400
-dydk1a_mpv10.menu.UploadSpeed.460800.linux=460800
-dydk1a_mpv10.menu.UploadSpeed.460800.macosx=460800
-dydk1a_mpv10.menu.UploadSpeed.460800.upload.speed=460800
-dydk1a_mpv10.menu.UploadSpeed.512000.windows=512000
-dydk1a_mpv10.menu.UploadSpeed.512000.upload.speed=512000
-
-dydk1a_mpv10.menu.DebugLevel.none=None
-dydk1a_mpv10.menu.DebugLevel.none.build.code_debug=0
-dydk1a_mpv10.menu.DebugLevel.error=Error
-dydk1a_mpv10.menu.DebugLevel.error.build.code_debug=1
-dydk1a_mpv10.menu.DebugLevel.warn=Warn
-dydk1a_mpv10.menu.DebugLevel.warn.build.code_debug=2
-dydk1a_mpv10.menu.DebugLevel.info=Info
-dydk1a_mpv10.menu.DebugLevel.info.build.code_debug=3
-dydk1a_mpv10.menu.DebugLevel.debug=Debug
-dydk1a_mpv10.menu.DebugLevel.debug.build.code_debug=4
-dydk1a_mpv10.menu.DebugLevel.verbose=Verbose
-dydk1a_mpv10.menu.DebugLevel.verbose.build.code_debug=5
-
-##############################################################
-
 dym_mpv10.name=Deneyap Mini
 
 dym_mpv10.vid.0=0x303a
@@ -444,5 +313,286 @@ dym_mpv10.menu.DebugLevel.debug=Debug
 dym_mpv10.menu.DebugLevel.debug.build.code_debug=4
 dym_mpv10.menu.DebugLevel.verbose=Verbose
 dym_mpv10.menu.DebugLevel.verbose.build.code_debug=5
+
+##############################################################
+
+dydk1a_mpv10.name=Deneyap Kart 1A
+
+dydk1a_mpv10.upload.tool=esptool_py
+dydk1a_mpv10.upload.maximum_size=1310720
+dydk1a_mpv10.upload.maximum_data_size=327680
+dydk1a_mpv10.upload.wait_for_upload_port=true
+dydk1a_mpv10.upload.flags=
+dydk1a_mpv10.upload.extra_flags=
+
+dydk1a_mpv10.serial.disableDTR=true
+dydk1a_mpv10.serial.disableRTS=true
+
+dydk1a_mpv10.build.tarch=xtensa
+dydk1a_mpv10.build.bootloader_addr=0x1000
+dydk1a_mpv10.build.target=esp32
+dydk1a_mpv10.build.mcu=esp32
+dydk1a_mpv10.build.core=esp32
+dydk1a_mpv10.build.variant=dydk1a_mpv10
+dydk1a_mpv10.build.board=DYDK1A
+
+dydk1a_mpv10.build.f_cpu=240000000L
+dydk1a_mpv10.build.flash_size=4MB
+dydk1a_mpv10.build.flash_freq=40m
+dydk1a_mpv10.build.flash_mode=dio
+dydk1a_mpv10.build.boot=dio
+dydk1a_mpv10.build.partitions=default
+dydk1a_mpv10.build.defines=-DBOARD_HAS_PSRAM -mfix-esp32-psram-cache-issue -mfix-esp32-psram-cache-strategy=memw
+dydk1a_mpv10.build.extra_libs=
+
+dydk1a_mpv10.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
+dydk1a_mpv10.menu.PartitionScheme.default.build.partitions=default
+dydk1a_mpv10.menu.PartitionScheme.defaultffat=Default 4MB with ffat (1.2MB APP/1.5MB FATFS)
+dydk1a_mpv10.menu.PartitionScheme.defaultffat.build.partitions=default_ffat
+dydk1a_mpv10.menu.PartitionScheme.default_8MB=8M Flash (3MB APP/1.5MB FAT)
+dydk1a_mpv10.menu.PartitionScheme.default_8MB.build.partitions=default_8MB
+dydk1a_mpv10.menu.PartitionScheme.minimal=Minimal (1.3MB APP/700KB SPIFFS)
+dydk1a_mpv10.menu.PartitionScheme.minimal.build.partitions=minimal
+dydk1a_mpv10.menu.PartitionScheme.no_ota=No OTA (2MB APP/2MB SPIFFS)
+dydk1a_mpv10.menu.PartitionScheme.no_ota.build.partitions=no_ota
+dydk1a_mpv10.menu.PartitionScheme.no_ota.upload.maximum_size=2097152
+dydk1a_mpv10.menu.PartitionScheme.noota_3g=No OTA (1MB APP/3MB SPIFFS)
+dydk1a_mpv10.menu.PartitionScheme.noota_3g.build.partitions=noota_3g
+dydk1a_mpv10.menu.PartitionScheme.noota_3g.upload.maximum_size=1048576
+dydk1a_mpv10.menu.PartitionScheme.noota_ffat=No OTA (2MB APP/2MB FATFS)
+dydk1a_mpv10.menu.PartitionScheme.noota_ffat.build.partitions=noota_ffat
+dydk1a_mpv10.menu.PartitionScheme.noota_ffat.upload.maximum_size=2097152
+dydk1a_mpv10.menu.PartitionScheme.noota_3gffat=No OTA (1MB APP/3MB FATFS)
+dydk1a_mpv10.menu.PartitionScheme.noota_3gffat.build.partitions=noota_3gffat
+dydk1a_mpv10.menu.PartitionScheme.noota_3gffat.upload.maximum_size=1048576
+dydk1a_mpv10.menu.PartitionScheme.huge_app=Huge APP (3MB No OTA/1MB SPIFFS)
+dydk1a_mpv10.menu.PartitionScheme.huge_app.build.partitions=huge_app
+dydk1a_mpv10.menu.PartitionScheme.huge_app.upload.maximum_size=3145728
+dydk1a_mpv10.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)
+dydk1a_mpv10.menu.PartitionScheme.min_spiffs.build.partitions=min_spiffs
+dydk1a_mpv10.menu.PartitionScheme.min_spiffs.upload.maximum_size=1966080
+dydk1a_mpv10.menu.PartitionScheme.fatflash=16M Flash (2MB APP/12.5MB FAT)
+dydk1a_mpv10.menu.PartitionScheme.fatflash.build.partitions=ffat
+dydk1a_mpv10.menu.PartitionScheme.fatflash.upload.maximum_size=2097152
+dydk1a_mpv10.menu.PartitionScheme.app3M_fat9M_16MB=16M Flash (3MB APP/9MB FATFS)
+dydk1a_mpv10.menu.PartitionScheme.app3M_fat9M_16MB.build.partitions=app3M_fat9M_16MB
+dydk1a_mpv10.menu.PartitionScheme.app3M_fat9M_16MB.upload.maximum_size=3145728
+dydk1a_mpv10.menu.PartitionScheme.rainmaker=RainMaker
+dydk1a_mpv10.menu.PartitionScheme.rainmaker.build.partitions=rainmaker
+dydk1a_mpv10.menu.PartitionScheme.rainmaker.upload.maximum_size=3145728
+
+dydk1a_mpv10.menu.CPUFreq.240=240MHz (WiFi/BT)
+dydk1a_mpv10.menu.CPUFreq.240.build.f_cpu=240000000L
+dydk1a_mpv10.menu.CPUFreq.160=160MHz (WiFi/BT)
+dydk1a_mpv10.menu.CPUFreq.160.build.f_cpu=160000000L
+dydk1a_mpv10.menu.CPUFreq.80=80MHz (WiFi/BT)
+dydk1a_mpv10.menu.CPUFreq.80.build.f_cpu=80000000L
+dydk1a_mpv10.menu.CPUFreq.40=40MHz
+dydk1a_mpv10.menu.CPUFreq.40.build.f_cpu=40000000L
+dydk1a_mpv10.menu.CPUFreq.20=20MHz 
+dydk1a_mpv10.menu.CPUFreq.20.build.f_cpu=20000000L
+dydk1a_mpv10.menu.CPUFreq.10=10MHz
+dydk1a_mpv10.menu.CPUFreq.10.build.f_cpu=10000000L
+
+dydk1a_mpv10.menu.FlashMode.qio=QIO
+dydk1a_mpv10.menu.FlashMode.qio.build.flash_mode=dio
+dydk1a_mpv10.menu.FlashMode.qio.build.boot=qio
+dydk1a_mpv10.menu.FlashMode.dio=DIO
+dydk1a_mpv10.menu.FlashMode.dio.build.flash_mode=dio
+dydk1a_mpv10.menu.FlashMode.dio.build.boot=dio
+dydk1a_mpv10.menu.FlashMode.qout=QOUT
+dydk1a_mpv10.menu.FlashMode.qout.build.flash_mode=dout
+dydk1a_mpv10.menu.FlashMode.qout.build.boot=qout
+dydk1a_mpv10.menu.FlashMode.dout=DOUT
+dydk1a_mpv10.menu.FlashMode.dout.build.flash_mode=dout
+dydk1a_mpv10.menu.FlashMode.dout.build.boot=dout
+
+dydk1a_mpv10.menu.FlashFreq.80=80MHz
+dydk1a_mpv10.menu.FlashFreq.80.build.flash_freq=80m
+dydk1a_mpv10.menu.FlashFreq.40=40MHz
+dydk1a_mpv10.menu.FlashFreq.40.build.flash_freq=40m
+
+dydk1a_mpv10.menu.UploadMode.Auto=Auto
+dydk1a_mpv10.menu.UploadMode.Auto.upload.mode=default_reset
+dydk1a_mpv10.menu.UploadMode.Manual=Manual
+dydk1a_mpv10.menu.UploadMode.Manual.upload.mode=no_reset
+
+dydk1a_mpv10.menu.UploadSpeed.921600=921600
+dydk1a_mpv10.menu.UploadSpeed.921600.upload.speed=921600
+dydk1a_mpv10.menu.UploadSpeed.115200=115200
+dydk1a_mpv10.menu.UploadSpeed.115200.upload.speed=115200
+dydk1a_mpv10.menu.UploadSpeed.256000.windows=256000
+dydk1a_mpv10.menu.UploadSpeed.256000.upload.speed=256000
+dydk1a_mpv10.menu.UploadSpeed.230400.windows.upload.speed=256000
+dydk1a_mpv10.menu.UploadSpeed.230400=230400
+dydk1a_mpv10.menu.UploadSpeed.230400.upload.speed=230400
+dydk1a_mpv10.menu.UploadSpeed.460800.linux=460800
+dydk1a_mpv10.menu.UploadSpeed.460800.macosx=460800
+dydk1a_mpv10.menu.UploadSpeed.460800.upload.speed=460800
+dydk1a_mpv10.menu.UploadSpeed.512000.windows=512000
+dydk1a_mpv10.menu.UploadSpeed.512000.upload.speed=512000
+
+dydk1a_mpv10.menu.DebugLevel.none=None
+dydk1a_mpv10.menu.DebugLevel.none.build.code_debug=0
+dydk1a_mpv10.menu.DebugLevel.error=Error
+dydk1a_mpv10.menu.DebugLevel.error.build.code_debug=1
+dydk1a_mpv10.menu.DebugLevel.warn=Warn
+dydk1a_mpv10.menu.DebugLevel.warn.build.code_debug=2
+dydk1a_mpv10.menu.DebugLevel.info=Info
+dydk1a_mpv10.menu.DebugLevel.info.build.code_debug=3
+dydk1a_mpv10.menu.DebugLevel.debug=Debug
+dydk1a_mpv10.menu.DebugLevel.debug.build.code_debug=4
+dydk1a_mpv10.menu.DebugLevel.verbose=Verbose
+dydk1a_mpv10.menu.DebugLevel.verbose.build.code_debug=5
+
+##############################################################
+
+dyg_mpv10.name=Deneyap G
+dyg_mpv10.vid.0=0x303a
+dyg_mpv10.pid.0=0x1001
+
+dyg_mpv10.bootloader.tool=esptool_py
+dyg_mpv10.bootloader.tool.default=esptool_py
+
+dyg_mpv10.upload.tool=esptool_py
+dyg_mpv10.upload.tool.default=esptool_py
+dyg_mpv10.upload.tool.network=esp_ota
+
+dyg_mpv10.upload.maximum_size=1310720
+dyg_mpv10.upload.maximum_data_size=327680
+dyg_mpv10.upload.flags=
+dyg_mpv10.upload.extra_flags=
+dyg_mpv10.upload.use_1200bps_touch=false
+dyg_mpv10.upload.wait_for_upload_port=false
+
+dyg_mpv10.serial.disableDTR=false
+dyg_mpv10.serial.disableRTS=false
+
+dyg_mpv10.build.tarch=riscv32
+dyg_mpv10.build.target=esp
+dyg_mpv10.build.mcu=esp32c3
+dyg_mpv10.build.core=esp32
+dyg_mpv10.build.variant=dyg_mpv10
+dyg_mpv10.build.board=DYG
+dyg_mpv10.build.bootloader_addr=0x0
+
+dyg_mpv10.build.cdc_on_boot=1
+dyg_mpv10.build.f_cpu=160000000L
+dyg_mpv10.build.flash_size=4MB
+dyg_mpv10.build.flash_freq=80m
+dyg_mpv10.build.flash_mode=qio
+dyg_mpv10.build.boot=qio
+dyg_mpv10.build.partitions=default
+dyg_mpv10.build.defines=
+
+dyg_mpv10.menu.CDCOnBoot.cdc=Enabled
+dyg_mpv10.menu.CDCOnBoot.cdc.build.cdc_on_boot=1
+dyg_mpv10.menu.CDCOnBoot.default=Disabled
+dyg_mpv10.menu.CDCOnBoot.default.build.cdc_on_boot=0
+
+dyg_mpv10.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
+dyg_mpv10.menu.PartitionScheme.default.build.partitions=default
+dyg_mpv10.menu.PartitionScheme.defaultffat=Default 4MB with ffat (1.2MB APP/1.5MB FATFS)
+dyg_mpv10.menu.PartitionScheme.defaultffat.build.partitions=default_ffat
+dyg_mpv10.menu.PartitionScheme.default_8MB=8M Flash (3MB APP/1.5MB FAT)
+dyg_mpv10.menu.PartitionScheme.default_8MB.build.partitions=default_8MB
+dyg_mpv10.menu.PartitionScheme.default_8MB.upload.maximum_size=3342336
+dyg_mpv10.menu.PartitionScheme.minimal=Minimal (1.3MB APP/700KB SPIFFS)
+dyg_mpv10.menu.PartitionScheme.minimal.build.partitions=minimal
+dyg_mpv10.menu.PartitionScheme.no_ota=No OTA (2MB APP/2MB SPIFFS)
+dyg_mpv10.menu.PartitionScheme.no_ota.build.partitions=no_ota
+dyg_mpv10.menu.PartitionScheme.no_ota.upload.maximum_size=2097152
+dyg_mpv10.menu.PartitionScheme.noota_3g=No OTA (1MB APP/3MB SPIFFS)
+dyg_mpv10.menu.PartitionScheme.noota_3g.build.partitions=noota_3g
+dyg_mpv10.menu.PartitionScheme.noota_3g.upload.maximum_size=1048576
+dyg_mpv10.menu.PartitionScheme.noota_ffat=No OTA (2MB APP/2MB FATFS)
+dyg_mpv10.menu.PartitionScheme.noota_ffat.build.partitions=noota_ffat
+dyg_mpv10.menu.PartitionScheme.noota_ffat.upload.maximum_size=2097152
+dyg_mpv10.menu.PartitionScheme.noota_3gffat=No OTA (1MB APP/3MB FATFS)
+dyg_mpv10.menu.PartitionScheme.noota_3gffat.build.partitions=noota_3gffat
+dyg_mpv10.menu.PartitionScheme.noota_3gffat.upload.maximum_size=1048576
+dyg_mpv10.menu.PartitionScheme.huge_app=Huge APP (3MB No OTA/1MB SPIFFS)
+dyg_mpv10.menu.PartitionScheme.huge_app.build.partitions=huge_app
+dyg_mpv10.menu.PartitionScheme.huge_app.upload.maximum_size=3145728
+dyg_mpv10.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)
+dyg_mpv10.menu.PartitionScheme.min_spiffs.build.partitions=min_spiffs
+dyg_mpv10.menu.PartitionScheme.min_spiffs.upload.maximum_size=1966080
+dyg_mpv10.menu.PartitionScheme.fatflash=16M Flash (2MB APP/12.5MB FAT)
+dyg_mpv10.menu.PartitionScheme.fatflash.build.partitions=ffat
+dyg_mpv10.menu.PartitionScheme.fatflash.upload.maximum_size=2097152
+dyg_mpv10.menu.PartitionScheme.app3M_fat9M_16MB=16M Flash (3MB APP/9MB FATFS)
+dyg_mpv10.menu.PartitionScheme.app3M_fat9M_16MB.build.partitions=app3M_fat9M_16MB
+dyg_mpv10.menu.PartitionScheme.app3M_fat9M_16MB.upload.maximum_size=3145728
+dyg_mpv10.menu.PartitionScheme.rainmaker=RainMaker
+dyg_mpv10.menu.PartitionScheme.rainmaker.build.partitions=rainmaker
+dyg_mpv10.menu.PartitionScheme.rainmaker.upload.maximum_size=3145728
+
+dyg_mpv10.menu.CPUFreq.160=160MHz (WiFi)
+dyg_mpv10.menu.CPUFreq.160.build.f_cpu=160000000L
+dyg_mpv10.menu.CPUFreq.80=80MHz (WiFi)
+dyg_mpv10.menu.CPUFreq.80.build.f_cpu=80000000L
+dyg_mpv10.menu.CPUFreq.40=40MHz
+dyg_mpv10.menu.CPUFreq.40.build.f_cpu=40000000L
+dyg_mpv10.menu.CPUFreq.20=20MHz
+dyg_mpv10.menu.CPUFreq.20.build.f_cpu=20000000L
+dyg_mpv10.menu.CPUFreq.10=10MHz
+dyg_mpv10.menu.CPUFreq.10.build.f_cpu=10000000L
+
+dyg_mpv10.menu.FlashMode.qio=QIO
+dyg_mpv10.menu.FlashMode.qio.build.flash_mode=dio
+dyg_mpv10.menu.FlashMode.qio.build.boot=qio
+dyg_mpv10.menu.FlashMode.dio=DIO
+dyg_mpv10.menu.FlashMode.dio.build.flash_mode=dio
+dyg_mpv10.menu.FlashMode.dio.build.boot=dio
+dyg_mpv10.menu.FlashMode.qout=QOUT
+dyg_mpv10.menu.FlashMode.qout.build.flash_mode=dout
+dyg_mpv10.menu.FlashMode.qout.build.boot=qout
+dyg_mpv10.menu.FlashMode.dout=DOUT
+dyg_mpv10.menu.FlashMode.dout.build.flash_mode=dout
+dyg_mpv10.menu.FlashMode.dout.build.boot=dout
+
+dyg_mpv10.menu.FlashFreq.80=80MHz
+dyg_mpv10.menu.FlashFreq.80.build.flash_freq=80m
+dyg_mpv10.menu.FlashFreq.40=40MHz
+dyg_mpv10.menu.FlashFreq.40.build.flash_freq=40m
+
+dyg_mpv10.menu.FlashSize.4M=4MB (32Mb)
+dyg_mpv10.menu.FlashSize.4M.build.flash_size=4MB
+dyg_mpv10.menu.FlashSize.8M=8MB (64Mb)
+dyg_mpv10.menu.FlashSize.8M.build.flash_size=8MB
+dyg_mpv10.menu.FlashSize.8M.build.partitions=default_8MB
+dyg_mpv10.menu.FlashSize.2M=2MB (16Mb)
+dyg_mpv10.menu.FlashSize.2M.build.flash_size=2MB
+dyg_mpv10.menu.FlashSize.2M.build.partitions=minimal
+dyg_mpv10.menu.FlashSize.16M=16MB (128Mb)
+dyg_mpv10.menu.FlashSize.16M.build.flash_size=16MB
+
+dyg_mpv10.menu.UploadSpeed.921600=921600
+dyg_mpv10.menu.UploadSpeed.921600.upload.speed=921600
+dyg_mpv10.menu.UploadSpeed.115200=115200
+dyg_mpv10.menu.UploadSpeed.115200.upload.speed=115200
+dyg_mpv10.menu.UploadSpeed.256000.windows=256000
+dyg_mpv10.menu.UploadSpeed.256000.upload.speed=256000
+dyg_mpv10.menu.UploadSpeed.230400.windows.upload.speed=256000
+dyg_mpv10.menu.UploadSpeed.230400=230400
+dyg_mpv10.menu.UploadSpeed.230400.upload.speed=230400
+dyg_mpv10.menu.UploadSpeed.460800.linux=460800
+dyg_mpv10.menu.UploadSpeed.460800.macosx=460800
+dyg_mpv10.menu.UploadSpeed.460800.upload.speed=460800
+dyg_mpv10.menu.UploadSpeed.512000.windows=512000
+dyg_mpv10.menu.UploadSpeed.512000.upload.speed=512000
+
+dyg_mpv10.menu.DebugLevel.none=None
+dyg_mpv10.menu.DebugLevel.none.build.code_debug=0
+dyg_mpv10.menu.DebugLevel.error=Error
+dyg_mpv10.menu.DebugLevel.error.build.code_debug=1
+dyg_mpv10.menu.DebugLevel.warn=Warn
+dyg_mpv10.menu.DebugLevel.warn.build.code_debug=2
+dyg_mpv10.menu.DebugLevel.info=Info
+dyg_mpv10.menu.DebugLevel.info.build.code_debug=3
+dyg_mpv10.menu.DebugLevel.debug=Debug
+dyg_mpv10.menu.DebugLevel.debug.build.code_debug=4
+dyg_mpv10.menu.DebugLevel.verbose=Verbose
+dyg_mpv10.menu.DebugLevel.verbose.build.code_debug=5
 
 ##############################################################

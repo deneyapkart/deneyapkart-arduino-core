@@ -14,10 +14,31 @@
 #pragma once
 
 #include "sdkconfig.h"
-#if CONFIG_IDF_TARGET_ESP32C3
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3
 
 #include <inttypes.h>
+#include "esp_event.h"
 #include "Stream.h"
+
+ESP_EVENT_DECLARE_BASE(ARDUINO_HW_CDC_EVENTS);
+
+typedef enum {
+    ARDUINO_HW_CDC_ANY_EVENT = ESP_EVENT_ANY_ID,
+    ARDUINO_HW_CDC_CONNECTED_EVENT = 0,
+    ARDUINO_HW_CDC_BUS_RESET_EVENT,
+    ARDUINO_HW_CDC_RX_EVENT,
+    ARDUINO_HW_CDC_TX_EVENT,
+    ARDUINO_HW_CDC_MAX_EVENT,
+} arduino_hw_cdc_event_t;
+
+typedef union {
+    struct {
+            size_t len;
+    } rx;
+    struct {
+            size_t len;
+    } tx;
+} arduino_hw_cdc_event_data_t;
 
 class HWCDC: public Stream
 {
@@ -25,8 +46,12 @@ public:
     HWCDC();
     ~HWCDC();
 
+    void onEvent(esp_event_handler_t callback);
+    void onEvent(arduino_hw_cdc_event_t event, esp_event_handler_t callback);
+
     size_t setRxBufferSize(size_t);
     size_t setTxBufferSize(size_t);
+    void setTxTimeoutMs(uint32_t timeout);
     void begin(unsigned long baud=0);
     void end();
     
@@ -73,10 +98,12 @@ public:
 
 };
 
-#if ARDUINO_HW_CDC_ON_BOOT //Serial used for USB CDC
+#if ARDUINO_USB_MODE
+#if ARDUINO_USB_CDC_ON_BOOT//Serial used for USB CDC
 extern HWCDC Serial;
 #else
 extern HWCDC USBSerial;
+#endif
 #endif
 
 #endif /* CONFIG_IDF_TARGET_ESP32C3 */

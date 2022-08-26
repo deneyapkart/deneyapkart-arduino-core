@@ -9,13 +9,13 @@ float adcVolDeg = 0;                                    // Voltaj donusumu icin 
 
 void setup() {
   Serial.begin(115200);                                 // Seri haberlesme baslatildi
-  pinMode(A5, INPUT);                                   // A5 pini giris olarak ayarlandi
+  pinMode(A0, INPUT);                                   // A0 pini giris olarak ayarlandi
 }
 
 void loop() {
-  adcHamVeri = analogRead(A5);                          // Ham veri okundu
+  adcHamVeri = analogRead(A0);                          // Ham veri okundu
 
-  adcVolDeg = (adcHamVeri * 3.3) / 4095;                // DENEYAP KART ve DENEYAP KART 1A için Voltaj donusumu yapildi
+  adcVolDeg = (adcHamVeri * 3.3) / 4095;                // DENEYAP KART, DENEYAP KART 1A ve DENEYAP G için Voltaj donusumu yapildi
 //  adcVolDeg = (adcHamVeri * 3.3) / 8191;                // DENEYAP MİNİ Kart için Voltaj donusumu yapildi
 
   Serial.printf("\nADC ham veri\t: %d\n", adcHamVeri);  // Ham veri seri terminale yazdirildi

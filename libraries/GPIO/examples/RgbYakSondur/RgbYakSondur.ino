@@ -3,7 +3,7 @@
  *   Kartın üzerinde yer alan RGB led 400 milisaniye arayla Kırmızı, Yeşil, Mavi, Turuncu, Magenta, 
  *   Cyan, Beyaz renkleri yakmaktadır.
  *   
- *   Deneyap Kart 1A ile bu uygulamayı gerçekleştirilmek istenirse harici ledler bağlanmalıdır.
+ *   Deneyap Kart 1A ve DENEYAP G ile bu uygulamayı gerçekleştirilmek istenirse harici ledler bağlanmalıdır.
  *   
  */
 #define gecikme_suresi 400        // milisaniye

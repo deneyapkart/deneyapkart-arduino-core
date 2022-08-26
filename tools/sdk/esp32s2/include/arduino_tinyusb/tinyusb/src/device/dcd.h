@@ -30,7 +30,6 @@
 #include "common/tusb_common.h"
 #include "osal/osal.h"
 #include "common/tusb_fifo.h"
-#include "dcd_attr.h"
 
 #ifdef __cplusplus
  extern "C" {
@@ -41,7 +40,7 @@
 //--------------------------------------------------------------------+
 
 #ifndef CFG_TUD_ENDPPOINT_MAX
-  #define CFG_TUD_ENDPPOINT_MAX   DCD_ATTR_ENDPOINT_MAX
+  #define CFG_TUD_ENDPPOINT_MAX   TUP_DCD_ENDPOINT_MAX
 #endif
 
 //--------------------------------------------------------------------+
@@ -77,6 +76,11 @@ typedef struct TU_ATTR_ALIGNED(4)
     struct {
       tusb_speed_t speed;
     } bus_reset;
+
+    // SOF
+    struct {
+      uint32_t frame_count;
+    }sof;
 
     // SETUP_RECEIVED
     tusb_control_request_t setup_received;
@@ -126,6 +130,9 @@ void dcd_connect(uint8_t rhport) TU_ATTR_WEAK;
 // Disconnect by disabling internal pull-up resistor on D+/D-
 void dcd_disconnect(uint8_t rhport) TU_ATTR_WEAK;
 
+// Enable/Disable Start-of-frame interrupt. Default is disabled
+void dcd_sof_enable(uint8_t rhport, bool en);
+
 //--------------------------------------------------------------------+
 // Endpoint API
 //--------------------------------------------------------------------+
@@ -136,6 +143,11 @@ void dcd_edpt0_status_complete(uint8_t rhport, tusb_control_request_t const * re
 
 // Configure endpoint's registers according to descriptor
 bool dcd_edpt_open            (uint8_t rhport, tusb_desc_endpoint_t const * desc_ep);
+
+// Close all non-control endpoints, cancel all pending transfers if any.
+// Invoked when switching from a non-zero Configuration by SET_CONFIGURE therefore
+// required for multiple configuration support.
+void dcd_edpt_close_all       (uint8_t rhport);
 
 // Close an endpoint.
 // Since it is weak, caller must TU_ASSERT this function's existence before calling it.
@@ -148,10 +160,11 @@ bool dcd_edpt_xfer            (uint8_t rhport, uint8_t ep_addr, uint8_t * buffer
 // This API is optional, may be useful for register-based for transferring data.
 bool dcd_edpt_xfer_fifo       (uint8_t rhport, uint8_t ep_addr, tu_fifo_t * ff, uint16_t total_bytes) TU_ATTR_WEAK;
 
-// Stall endpoint
+// Stall endpoint, any queuing transfer should be removed from endpoint
 void dcd_edpt_stall           (uint8_t rhport, uint8_t ep_addr);
 
 // clear stall, data toggle is also reset to DATA0
+// This API never calls with control endpoints, since it is auto cleared when receiving setup packet
 void dcd_edpt_clear_stall     (uint8_t rhport, uint8_t ep_addr);
 
 //--------------------------------------------------------------------+
@@ -162,16 +175,47 @@ void dcd_edpt_clear_stall     (uint8_t rhport, uint8_t ep_addr);
 extern void dcd_event_handler(dcd_event_t const * event, bool in_isr);
 
 // helper to send bus signal event
-extern void dcd_event_bus_signal (uint8_t rhport, dcd_eventid_t eid, bool in_isr);
+TU_ATTR_ALWAYS_INLINE static inline void dcd_event_bus_signal (uint8_t rhport, dcd_eventid_t eid, bool in_isr)
+{
+  dcd_event_t event = { .rhport = rhport, .event_id = eid };
+  dcd_event_handler(&event, in_isr);
+}
 
 // helper to send bus reset event
-extern void dcd_event_bus_reset (uint8_t rhport, tusb_speed_t speed, bool in_isr);
+TU_ATTR_ALWAYS_INLINE static inline  void dcd_event_bus_reset (uint8_t rhport, tusb_speed_t speed, bool in_isr)
+{
+  dcd_event_t event = { .rhport = rhport, .event_id = DCD_EVENT_BUS_RESET };
+  event.bus_reset.speed = speed;
+  dcd_event_handler(&event, in_isr);
+}
 
 // helper to send setup received
-extern void dcd_event_setup_received(uint8_t rhport, uint8_t const * setup, bool in_isr);
+TU_ATTR_ALWAYS_INLINE static inline void dcd_event_setup_received(uint8_t rhport, uint8_t const * setup, bool in_isr)
+{
+  dcd_event_t event = { .rhport = rhport, .event_id = DCD_EVENT_SETUP_RECEIVED };
+  memcpy(&event.setup_received, setup, 8);
+
+  dcd_event_handler(&event, in_isr);
+}
 
 // helper to send transfer complete event
-extern void dcd_event_xfer_complete (uint8_t rhport, uint8_t ep_addr, uint32_t xferred_bytes, uint8_t result, bool in_isr);
+TU_ATTR_ALWAYS_INLINE static inline void dcd_event_xfer_complete (uint8_t rhport, uint8_t ep_addr, uint32_t xferred_bytes, uint8_t result, bool in_isr)
+{
+  dcd_event_t event = { .rhport = rhport, .event_id = DCD_EVENT_XFER_COMPLETE };
+
+  event.xfer_complete.ep_addr = ep_addr;
+  event.xfer_complete.len     = xferred_bytes;
+  event.xfer_complete.result  = result;
+
+  dcd_event_handler(&event, in_isr);
+}
+
+static inline void dcd_event_sof(uint8_t rhport, uint32_t frame_count, bool in_isr)
+{
+  dcd_event_t event = { .rhport = rhport, .event_id = DCD_EVENT_SOF };
+  event.sof.frame_count = frame_count;
+  dcd_event_handler(&event, in_isr);
+}
 
 #ifdef __cplusplus
  }

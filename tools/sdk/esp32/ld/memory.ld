@@ -25,6 +25,17 @@
  */
        
 /* List of deprecated options */
+/*
+ * SPDX-FileCopyrightText: 2021 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+/* CPU instruction prefetch padding size for flash mmap scenario */
+_esp_flash_mmap_prefetch_pad_size = 16;
+/* CPU instruction prefetch padding size for memory protection scenario */
+_esp_memprot_prefetch_pad_size = 0;
+/* Memory alignment size for PMS */
+_esp_memprot_align_size = 0;
 /* If BT is not built at all */
 MEMORY
 {
@@ -61,14 +72,14 @@ MEMORY
    */
   rtc_iram_seg(RWX) : org = 0x400C0000, len = 0x2000
   /* RTC fast memory (same block as above), viewed from data bus */
-  rtc_data_seg(RW) : org = 0x3ff80000, len = 0x2000 - 0
+  rtc_data_seg(RW) : org = 0x3ff80000, len = 0x2000 - (0x10)
   /* RTC slow memory (data accessible). Persists over deep sleep.
 
      Start of RTC slow memory is reserved for ULP co-processor code + data, if enabled.
   */
   rtc_slow_seg(RW) : org = 0x50000000 + 512,
                                      len = 0x2000 - 512
-  /* external memory ,including data and text */
+  /* external memory */
   extern_ram_seg(RWX) : org = 0x3F800000,
                                      len = 0x400000
 }

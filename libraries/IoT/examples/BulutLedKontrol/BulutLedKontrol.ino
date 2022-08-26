@@ -1,10 +1,9 @@
 /*
  *   BulutLedKontrol örneği,
- *   Bu örnekte Adafruit io web uygulaması kullanılmaktadır. Adafruit io web uygulamasıda Deneyap kart ile alınan ortam sıcaklık anlık olarak webde eklenen textte gözlenebilmektedir. 
- *   Bununla birlikte webte eklenen buton ile karttaki led kontrol edilebilmektedir.
+ *   Bu örnekte Adafruit io web uygulaması kullanılmaktadır. Adafruit io web uygulamasıda eklenen buton verilerine göre LED durumlarını değişitirmektedir.
+ *   DENEYAP 1A ve DENEYAP G dahili adreslenebilir RGBLED bulunmaktadır. Kodda ona göre değişiklik yapılmalıdır.
  *   
  */
-#include <Arduino.h>
 #include "WiFi.h"
 #include <Adafruit_MQTT.h>
 #include <Adafruit_MQTT_Client.h>

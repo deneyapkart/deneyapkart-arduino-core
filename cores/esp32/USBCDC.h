@@ -18,6 +18,9 @@
 
 #include <inttypes.h>
 #include "esp_event.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
+#include "freertos/semphr.h"
 #include "Stream.h"
 
 ESP_EVENT_DECLARE_BASE(ARDUINO_USB_CDC_EVENTS);
@@ -30,6 +33,7 @@ typedef enum {
     ARDUINO_USB_CDC_LINE_CODING_EVENT,
     ARDUINO_USB_CDC_RX_EVENT,
     ARDUINO_USB_CDC_TX_EVENT,
+    ARDUINO_USB_CDC_RX_OVERFLOW_EVENT,
     ARDUINO_USB_CDC_MAX_EVENT,
 } arduino_usb_cdc_event_t;
 
@@ -47,6 +51,9 @@ typedef union {
     struct {
             size_t len;
     } rx;
+    struct {
+            size_t dropped_bytes;
+    } rx_overflow;
 } arduino_usb_cdc_event_data_t;
 
 class USBCDC: public Stream
@@ -58,7 +65,8 @@ public:
     void onEvent(esp_event_handler_t callback);
     void onEvent(arduino_usb_cdc_event_t event, esp_event_handler_t callback);
 
-    size_t setRxBufferSize(size_t);
+    size_t setRxBufferSize(size_t size);
+    void setTxTimeoutMs(uint32_t timeout);
     void begin(unsigned long baud=0);
     void end();
     
@@ -113,7 +121,6 @@ public:
     void _onRX(void);
     void _onTX(void);
     void _onUnplugged(void);
-    xSemaphoreHandle tx_sem;
     
 protected:
     uint8_t  itf;
@@ -126,10 +133,12 @@ protected:
     bool     connected;
     bool     reboot_enable;
     xQueueHandle rx_queue;
+    xSemaphoreHandle tx_lock;
+    uint32_t tx_timeout_ms;
     
 };
 
-#if ARDUINO_USB_CDC_ON_BOOT //Serial used for USB CDC
+#if ARDUINO_USB_CDC_ON_BOOT && !ARDUINO_USB_MODE //Serial used for USB CDC
 extern USBCDC Serial;
 #endif
 

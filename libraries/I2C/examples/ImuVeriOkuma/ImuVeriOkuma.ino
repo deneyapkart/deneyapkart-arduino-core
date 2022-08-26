@@ -4,7 +4,7 @@
  *   Daha sonra IMU'daki akselerometre ile X-eksen, Y-eksen ve Z-eksen verileri seri terminale yazdırmaktadır.
  *   IMU'daki Jirometre (Gyrometer) ile X-eksen, Y-eksen ve Z-eksen bilgileri seri terminale yazdırmaktadır.
  *   
- *   Bu uygulama Deneyap Kart 1A ve Deneyap Mini Kartları ile gerçekleştirilmek istenirse harici IMU bağlanmalıdır ve gerekli bağlantı bilgileri değiştirilmelidir.
+ *   Bu uygulama Deneyap Kart 1A, Deneyap Mini ve DENEYAP G Kartları ile gerçekleştirilmek istenirse harici IMU bağlanmalıdır ve gerekli bağlantı bilgileri değiştirilmelidir.
  *   
  */
 #include "lsm6dsm.h"

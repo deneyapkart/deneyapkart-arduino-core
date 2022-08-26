@@ -5,8 +5,8 @@
  *   ESP32 mikrodenetleyicisine yaklaştırılan mıknatıs belirlenen değer üstünde mıknatıs değeri okuyunca
  *   Seri terminale "Magnetik Algılandı: xx:xx xx:xx:xxxx ....." yazdırmaktadır.  
  *   
- *   Deneyap Mini kartındaki mikrodenetleyici ESP32-S2 magnetik okuma özelliği bulunmamaktadır.
- *   Deneyap Mini kartı ile gerçekleştirilmek istenirse harici magnetik alan sensörü bağlanmalıdır ve gerekli değişiklikler yapılmalıdır.
+ *   DENEYAP MİNİ ve DENEYAP G kartındaki mikrodenetleyicilerinde dahili magnetik alan sensörü yoktur bu yüzden magnetik okuma özelliği bulunmamaktadır.
+ *   DENEYAP MİNİ ve DENEYAP G kartı ile gerçekleştirilmek istenirse harici magnetik alan sensörü bağlanmalıdır ve gerekli değişiklikler yapılmalıdır.
  *     
  */
 #include "Wire.h"

@@ -29,10 +29,10 @@ bool SDFS::begin(uint8_t ssPin, SPIClass &spi, uint32_t frequency, const char * 
     }
 
     #if defined (ARDUINO_DYDK1A)
-    spi.begin(SDCK,SDMI,SDMO,SDCS);
-    pinMode(SDMI,INPUT_PULLUP);
+        spi.begin(SDCK,SDMI,SDMO,SDCS);
+        pinMode(SDMI,INPUT_PULLUP);
     #else
-    spi.begin();   
+        spi.begin();   
     #endif
 
     _pdrv = sdcard_init(ssPin, &spi, frequency);
@@ -80,30 +80,46 @@ uint64_t SDFS::cardSize()
     return (uint64_t)sectors * sectorSize;
 }
 
+size_t SDFS::numSectors()
+{
+    if(_pdrv == 0xFF) {
+        return 0;
+    }
+    return sdcard_num_sectors(_pdrv);
+}
+
+size_t SDFS::sectorSize()
+{
+    if(_pdrv == 0xFF) {
+        return 0;
+    }
+    return sdcard_sector_size(_pdrv);
+}
+
 uint64_t SDFS::totalBytes()
 {
-    FATFS* fsinfo;
-    DWORD fre_clust;
-    if(f_getfree("0:",&fre_clust,&fsinfo)!= 0) return 0;
+	FATFS* fsinfo;
+	DWORD fre_clust;
+	if(f_getfree("0:",&fre_clust,&fsinfo)!= 0) return 0;
     uint64_t size = ((uint64_t)(fsinfo->csize))*(fsinfo->n_fatent - 2)
 #if _MAX_SS != 512
-        *(fsinfo->ssize);
+    *(fsinfo->ssize);
 #else
-        *512;
+    *512;
 #endif
     return size;
 }
 
 uint64_t SDFS::usedBytes()
 {
-    FATFS* fsinfo;
-    DWORD fre_clust;
-    if(f_getfree("0:",&fre_clust,&fsinfo)!= 0) return 0;
-    uint64_t size = ((uint64_t)(fsinfo->csize))*((fsinfo->n_fatent - 2) - (fsinfo->free_clst))
+	FATFS* fsinfo;
+	DWORD fre_clust;
+	if(f_getfree("0:",&fre_clust,&fsinfo)!= 0) return 0;
+	uint64_t size = ((uint64_t)(fsinfo->csize))*((fsinfo->n_fatent - 2) - (fsinfo->free_clst))
 #if _MAX_SS != 512
-        *(fsinfo->ssize);
+    *(fsinfo->ssize);
 #else
-        *512;
+    *512;
 #endif
     return size;
 }

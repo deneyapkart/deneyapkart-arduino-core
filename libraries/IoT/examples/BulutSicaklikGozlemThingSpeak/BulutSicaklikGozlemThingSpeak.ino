@@ -1,7 +1,7 @@
 /*
  *   BulutSicaklikGozlem örneği,
- *   Bu örnekte ThingSpeak web uygulaması kullanılmaktadır. ThingSpeak web uygulamasına Deneyap karttaki IMU ile alınan ortam sıcaklık webde eklenen textte veya grafik ile gözlenebilmektedir. 
- *   Bu uygulama Deneyap Kart 1A veya Deneyap Mini Kartı ile gerçekleştirilmek istenirse harici sıcaklık sensörü bağlanmalıdır ve gerekli değişiklikler yapılmalıdır. 
+ *   Bu örnekte ThingSpeak web uygulaması kullanılmaktadır. ThingSpeak web uygulamasına DENEYAP KART'taki dahili IMU'dan alınan sıcaklık webde eklenen textte veya grafik ile gözlenebilmektedir. 
+ *   Bu uygulama DENEYAP KART 1A, DENEYAP MİNİ ve DENEYAP G Kartları ile gerçekleştirilmek istenirse harici sıcaklık sensörü bağlanmalıdır ve kodda gerekli değişiklikler yapılmalıdır.
  *    
  */
 #include <WiFi.h>
