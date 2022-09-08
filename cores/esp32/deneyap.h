@@ -124,8 +124,8 @@
 #define TX	D0
 #define RX	D1
 #elif defined (ARDUINO_DYG)
-#define TX	D0
-#define RX	D1
+#define TX	D1
+#define RX	D0
 #endif
 
 // PWM pins
@@ -138,6 +138,7 @@
 #elif defined (ARDUINO_DYG)
 #define PWM0	A0
 #define PWM1	A1
+#define PWM2	A2
 #endif
 
 // Capacitive-Sensing pins
@@ -159,8 +160,8 @@
 #define T0	A1
 #define T1	A2
 #define T2	D4
-#define T3	D1
-#define T4	D0
+#define T3	D0
+#define T4	D1
 #define T5	D2
 #endif
 
@@ -179,7 +180,7 @@
 #define CAMPC	D7
 #define CAMXC	A4
 #define CAMH	A1
-#define CAMV	A0 
+#define CAMV	A0
 #endif
 
 #if defined (ARDUINO_DYDK)
@@ -220,7 +221,7 @@
 #elif defined (ARDUINO_DYG)
 #define RGBLED	(uint8_t)(10)
 #define GPKEY	(uint8_t)(9)
-#define BT	(uint8_t)(7)
+#define BT	(uint8_t)(9)
 #endif
 #define BUILTIN_KEY	GPKEY
 
