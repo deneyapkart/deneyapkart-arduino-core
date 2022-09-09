@@ -156,13 +156,6 @@
 #define T3	A3
 #define T4	A4
 #define T5	A5
-#elif defined (ARDUINO_DYG)
-#define T0	A1
-#define T1	A2
-#define T2	D4
-#define T3	D0
-#define T4	D1
-#define T5	D2
 #endif
 
 // Camera pins
