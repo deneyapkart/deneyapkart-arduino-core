@@ -447,7 +447,7 @@ dydk1a_mpv10.menu.DebugLevel.verbose.build.code_debug=5
 
 ##############################################################
 
-dyg_mpv10.name=DENEYAP KART G 
+dyg_mpv10.name=Deneyap Kart G 
 dyg_mpv10.vid.0=0x303a
 dyg_mpv10.pid.0=0x1001
 
