@@ -1,6 +1,6 @@
 /*
  *   UltrasonikMesafeörneği,
- *   Ultrasonik mesafe sensörü ile mesafe ölçülmektedir. Ölçülen mesafe seri terminale yazdırılmaktadır. 
+ *   Ultrasonik mesafe sensörü ile mesafe ölçülmektedir. Ölçülen mesafe seri port ekrane yazdırılmaktadır. 
  *    
  */
 #include "hcsr04ESP32.h"
@@ -15,6 +15,6 @@ void setup () {
 }
 
 void loop () {
-  Serial.println(distanceSensor.measureDistanceCm());       // Ultrasonik olcum yapiliyor ve seri terminale veri gonderiliyor
+  Serial.println(distanceSensor.measureDistanceCm());       // Ultrasonik olcum yapiliyor ve seri port ekrane veri gonderiliyor
   delay(500);
 }

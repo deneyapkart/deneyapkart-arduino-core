@@ -1,6 +1,6 @@
 /*
  *   MACadresiBulma örneği,
- *   Bu örnekte, MAC adresi seri terminale yazdırmaktadır. 
+ *   Bu örnekte, MAC adresi seri port ekrane yazdırmaktadır. 
  *   
  */  
 #include <WiFi.h>

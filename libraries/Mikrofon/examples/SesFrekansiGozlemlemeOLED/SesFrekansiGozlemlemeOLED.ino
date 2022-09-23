@@ -2,12 +2,11 @@
  *  SesFrekansiGozlemlemeOLED örneği,
  *  Deneyap Karttaki dahili mikrofon ile kullanıcı ortamdaki ses frenkansını Oled ekranda ve seri çizicide grafiksel olarak gözlemleyebilmektedir.
  *  
- *  Bu uygulama Deneyap Kart 1A ve Deneyap Mini Kartları ile gerçekleştirilmek istenirse harici mikrofon bağlanmalıdır ve gerekli bağlantı bilgileri değiştirilmelidir.  
- *  
+ *  Bu uygulama diğer DENEYAP geliştirme kartları ile gerçekleştirilmek istenirse harici mikrofon bağlanmalıdır ve gerekli bağlantı bilgileri değiştirilmelidir.  
 */
-#include <Wire.h>
-#include <Adafruit_SSD1306.h>
-#include <driver/i2s.h>
+#include "Wire.h"
+#include "Adafruit_SSD1306.h"
+#include "driver/i2s.h"
 #include "mp34dt05.h"  
 
 #define SCREEN_WIDTH 128  // OLED ekranın piksel olarak genişliği

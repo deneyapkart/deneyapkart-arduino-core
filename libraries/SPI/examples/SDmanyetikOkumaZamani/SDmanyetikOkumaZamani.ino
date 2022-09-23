@@ -71,7 +71,7 @@ void setup() {
 
 void loop() {
   MagnetikDegeri = hallRead();    //Magnetik okuma yapıldı
-  Serial.printf("\nMagnetik Değeri: %d",MagnetikDegeri); //MagnetikDegeri seri terminale yazıldı
+  Serial.printf("\nMagnetik Değeri: %d",MagnetikDegeri); //MagnetikDegeri seri port ekrane yazıldı
   
   if(MagnetikDegeri>100){   //değer değiştirilebilir
     String dataString = "";
@@ -99,7 +99,7 @@ void loop() {
     appendFile(SDCard, "/YeniDosya.txt", dataString.c_str());
 
     /*Magnetik Algılandı: saat:dakika:saniye gün:ay:yıl haftanın günü 
-    Seri Terminale yazıldı*/
+    seri port ekrane yazıldı*/
     Serial.print("Magnetik Algılandı: ");
     Serial.print(now.hour(), DEC);
     Serial.print(":");

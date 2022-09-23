@@ -16,7 +16,7 @@ limitations under the License.
 /*
  *  KisiTespiti örneği,
  *  TensorFlowLite yapay zeka kütüphanesinin kullanıldığı bu örnekte 
- *  Kamera görüntüleri seri terminalde çizdirmektedir.
+ *  Kamera görüntüleri seri port ekrande çizdirmektedir.
  *  
  *  Deneyap Mini Kartın kamera bağlantısı olmadığı için bu örnek Deneyap Mini Kartını desteklememektedir.
  * 

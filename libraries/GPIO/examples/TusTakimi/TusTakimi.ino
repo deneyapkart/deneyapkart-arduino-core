@@ -1,6 +1,6 @@
 /*
  *   TusTakimi örneği,
- *   TusTakımı uygulamasında 4x3 tuş takımı kullanılmıştır. Tuş takımında basılan tuşu seri terminale yazdırmaktadır. 
+ *   TusTakımı uygulamasında 4x3 tuş takımı kullanılmıştır. Tuş takımında basılan tuşu seri port ekrane yazdırmaktadır. 
 */
 #include <Keypad.h>
 

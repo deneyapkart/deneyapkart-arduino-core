@@ -1,7 +1,7 @@
 /*
  *   SPIFFS_Test örneği,
  *   Bu örnekte karta bir tane "mydir" isimli bir boş klasör ve hello.txt uzantılı dosya açmaktadır. 
- *   Dosyada hello world! yazmaktadır. Seri terminale hızını ve kaç bayt okunduğu yazmaktadır.
+ *   Dosyada hello world! yazmaktadır. seri port ekrane hızını ve kaç bayt okunduğu yazmaktadır.
  * 
  */
 #include "FS.h"

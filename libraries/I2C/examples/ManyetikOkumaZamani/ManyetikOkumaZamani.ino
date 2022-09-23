@@ -3,10 +3,10 @@
  *   MagnetikOkumaZamani uygulamasında RTC modülü kullanılmıştır. 
  *    
  *   ESP32 mikrodenetleyicisine yaklaştırılan mıknatıs belirlenen değer üstünde mıknatıs değeri okuyunca
- *   Seri terminale "Magnetik Algılandı: xx:xx xx:xx:xxxx ....." yazdırmaktadır.  
+ *   seri port ekrane "Magnetik Algılandı: xx:xx xx:xx:xxxx ....." yazdırmaktadır.  
  *   
- *   DENEYAP MİNİ ve DENEYAP G kartındaki mikrodenetleyicilerinde dahili magnetik alan sensörü yoktur bu yüzden magnetik okuma özelliği bulunmamaktadır.
- *   DENEYAP MİNİ ve DENEYAP G kartı ile gerçekleştirilmek istenirse harici magnetik alan sensörü bağlanmalıdır ve gerekli değişiklikler yapılmalıdır.
+ *   DENEYAP MİNİ ve DENEYAP KART G kartındaki mikrodenetleyicilerinde dahili magnetik alan sensörü yoktur bu yüzden magnetik okuma özelliği bulunmamaktadır.
+ *   DENEYAP MİNİ ve DENEYAP KART G kartı ile gerçekleştirilmek istenirse harici magnetik alan sensörü bağlanmalıdır ve gerekli değişiklikler yapılmalıdır.
  *     
  */
 #include "Wire.h"
@@ -27,14 +27,14 @@ void setup() {
 
 void loop() {
   MagnetikDegeri = hallRead();    //Magnetik okuma yapıldı
-  Serial.printf("\nMagnetik Değeri: %d",MagnetikDegeri); //MagnetikDegeri seri terminale yazıldı
+  Serial.printf("\nMagnetik Değeri: %d",MagnetikDegeri); //MagnetikDegeri seri port ekrane yazıldı
   Serial.println();
   
   if(MagnetikDegeri>100){   //değeri size uygun farklı bir değer değiştirilebilir
     DateTime now = rtc.now();
 
     /*Magnetik Algılandı: saat:dakika:saniye gün:ay:yıl haftanın günü 
-    Seri Terminale yazıldı*/
+    seri port ekrane yazıldı*/
     Serial.print("Magnetik Algılandı: ");
     Serial.print(now.hour(), DEC);
     Serial.print(":");

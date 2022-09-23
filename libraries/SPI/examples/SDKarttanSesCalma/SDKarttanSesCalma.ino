@@ -1,7 +1,7 @@
 /*
  *  SD Karttan .wav uzantılı ses dosyasını DAC pinleri ile çalma örneği.
  *  Örnekte çalınan ses dosyaları örneğin yer aldığı klasörün içinde yer almaktadır. 
- *  Seri terminale yazılan sayıya karşılık gelen ses dosyasını çalmaktadır.
+ *  seri port ekrane yazılan sayıya karşılık gelen ses dosyasını çalmaktadır.
  *  Oynatılan seslerin khz, sample değerleri farklıdır. 
  *  DENEYAP HOPARLÖR ile kullanılabilir.
  *  

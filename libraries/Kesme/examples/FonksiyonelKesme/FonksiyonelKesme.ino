@@ -1,7 +1,7 @@
 /*
  *  FonksiyonelKesme (interrupt) örneği,
  *  Bu uygulamada FunctionalInterrupt kütüphanesi kullanarak kesme işlemleri gerçekleştirilmiştir. 
- *  Örnekte karttaki butona veya harici bağlanan bir botuna basıldığında interrupt ile butona kaç defa basıldığı bilgisi seri terminale yazdırmaktadır. 
+ *  Örnekte karttaki butona veya harici bağlanan bir botuna basıldığında interrupt ile butona kaç defa basıldığı bilgisi seri port ekrane yazdırmaktadır. 
  */
 #include <FunctionalInterrupt.h>
 

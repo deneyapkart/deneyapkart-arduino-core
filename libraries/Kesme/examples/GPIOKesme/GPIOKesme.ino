@@ -1,6 +1,6 @@
 /*
  *  GPIOKesme (interrupt) örneği,
- *  Bu örnekte karttaki butona veya harici bağlanan bir botuna basıldığında interrupt ile butona kaç defa basıldığı bilgisi seri terminale yazdırmaktadır. 
+ *  Bu örnekte karttaki butona veya harici bağlanan bir botuna basıldığında interrupt ile butona kaç defa basıldığı bilgisi seri port ekrane yazdırmaktadır. 
  *  
  */
 struct Button {

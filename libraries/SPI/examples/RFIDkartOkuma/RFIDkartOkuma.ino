@@ -1,6 +1,6 @@
 /*
  *   RFIDkartUIDokuma örneği,
- *   RFIDkartUIDokuma uygulamasında RFID NFC modülüne kart okutulunca kartın UIDsini seri terminale yazdırmaktadır.
+ *   RFIDkartUIDokuma uygulamasında RFID NFC modülüne kart okutulunca kartın UIDsini seri port ekrane yazdırmaktadır.
  *   Kart UIDnizi okunduğunda harici olarak D12 pinine bağlanan LED yanmaktadır. 
  * 
  */
@@ -30,7 +30,7 @@ void loop() {
   if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
      Serial.print("Kart UID: ");
      String strID=fnc_user_ID();
-     Serial.println(strID); //Kart UID seri terminale yazıldı
+     Serial.println(strID); //Kart UID seri port ekrane yazıldı
      Serial.println();
      
      /*Kart UIDnizi okuduğunda LED yanmaktadır*/

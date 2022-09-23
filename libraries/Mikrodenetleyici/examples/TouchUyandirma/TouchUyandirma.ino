@@ -4,7 +4,7 @@
  *  ====================================================
  *  Bu kod, derin uykunun nasıl kullanılacağını gösterir. Uyandırma kaynağı touch.
  *  Karttaki touch pinlerinden birine dokunulduğunda resetlenerek ön yükleme yapılır.
- *  İşlemleri kaç defa yapıldığı seri terminale yazdırılmaktadır.
+ *  İşlemleri kaç defa yapıldığı seri port ekrane yazdırılmaktadır.
  *  
 */
 

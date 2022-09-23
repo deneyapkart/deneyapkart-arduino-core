@@ -31,7 +31,7 @@ void setup() {
   // Sayacı 1 artır
   sayac++;
 
-  // Sayacı Seri Terminale yazdır
+  // Sayacı seri port ekrane yazdır
   Serial.printf("Sayac degeri: %u\n", sayac);
 
   // Sayacı Prefence kaydet

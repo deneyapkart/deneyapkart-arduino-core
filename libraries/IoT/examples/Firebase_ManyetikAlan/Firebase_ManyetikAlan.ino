@@ -1,8 +1,8 @@
 /*
  *   Firebase veri tabanına veri gönderme örneği,
  *   Bu örnekte ESP32 dahili manyetik alan sensöründen veri gönderilmiştir. 
- *   DENEYAP MİNİ ve DENEYAP G kartındaki mikrodenetleyicilerinde dahili magnetik alan sensörü yoktur bu yüzden magnetik okuma özelliği bulunmamaktadır.
- *   DENEYAP MİNİ ve DENEYAP G kartı ile gerçekleştirilmek istenirse harici magnetik alan sensörü bağlanmalıdır ve gerekli değişiklikler yapılmalıdır.
+ *   DENEYAP MİNİ ve DENEYAP KART G kartındaki mikrodenetleyicilerinde dahili magnetik alan sensörü yoktur bu yüzden magnetik okuma özelliği bulunmamaktadır.
+ *   DENEYAP MİNİ ve DENEYAP KART G kartı ile gerçekleştirilmek istenirse harici magnetik alan sensörü bağlanmalıdır ve gerekli değişiklikler yapılmalıdır.
  *  
  */
 #include <WiFi.h>

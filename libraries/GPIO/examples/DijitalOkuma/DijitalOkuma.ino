@@ -4,7 +4,7 @@
  *   Cyan, Beyaz renklerinde yanacaktır ve sonraki buton basımında led sönmektedir. 
  *   Bu işlem bir döngü şekilde her butona basımında devam etmektedir.
  *   
- *   Deneyap Kart 1A ve DENEYAP G ile bu uygulamayı gerçekleştirilmek istenirse harici ledler bağlanmalıdır.
+ *   Deneyap Kart 1A ve DENEYAP KART G ile bu uygulamayı gerçekleştirilmek istenirse harici ledler bağlanmalıdır.
  *   
  */
 enum renkler

@@ -1,8 +1,6 @@
 name=Deneyap Gelistirme Kartlari
-version=
+version=1.0.7
 
-
-runtime.tools.xtensa-esp32s3-elf-gcc.path={runtime.platform.path}/tools/xtensa-esp32s3-elf
 runtime.tools.riscv32-esp-elf-gcc.path={runtime.platform.path}/tools/riscv32-esp-elf
 
 tools.esptool_py.path={runtime.tools.esptool_py.path}

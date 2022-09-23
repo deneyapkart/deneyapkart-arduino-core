@@ -1,10 +1,10 @@
 /*
  *   ImuVeriOkuma örneği,
- *   Uygulamada Deneyap kart üzerinde yer alan IMU ile Ortamın sıcaklığı Derece ve Fahrenhayt cinsinde seri terminale yazdırmaktadır. 
- *   Daha sonra IMU'daki akselerometre ile X-eksen, Y-eksen ve Z-eksen verileri seri terminale yazdırmaktadır.
- *   IMU'daki Jirometre (Gyrometer) ile X-eksen, Y-eksen ve Z-eksen bilgileri seri terminale yazdırmaktadır.
+ *   Uygulamada Deneyap kart üzerinde yer alan IMU ile Ortamın sıcaklığı Derece ve Fahrenhayt cinsinde seri port ekrane yazdırmaktadır. 
+ *   Daha sonra IMU'daki akselerometre ile X-eksen, Y-eksen ve Z-eksen verileri seri port ekrane yazdırmaktadır.
+ *   IMU'daki Jirometre (Gyrometer) ile X-eksen, Y-eksen ve Z-eksen bilgileri seri port ekrane yazdırmaktadır.
  *   
- *   Bu uygulama Deneyap Kart 1A, Deneyap Mini ve DENEYAP G Kartları ile gerçekleştirilmek istenirse harici IMU bağlanmalıdır ve gerekli bağlantı bilgileri değiştirilmelidir.
+ *   Bu uygulama Deneyap Kart 1A, Deneyap Mini ve DENEYAP KART G Kartları ile gerçekleştirilmek istenirse harici IMU bağlanmalıdır ve gerekli bağlantı bilgileri değiştirilmelidir.
  *   
  */
 #include "lsm6dsm.h"

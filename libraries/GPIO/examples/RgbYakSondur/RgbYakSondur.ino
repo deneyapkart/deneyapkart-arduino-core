@@ -3,7 +3,7 @@
  *   Kartın üzerinde yer alan RGB led 400 milisaniye arayla Kırmızı, Yeşil, Mavi, Turuncu, Magenta, 
  *   Cyan, Beyaz renkleri yakmaktadır.
  *   
- *   Deneyap Kart 1A ve DENEYAP G ile bu uygulamayı gerçekleştirilmek istenirse harici ledler bağlanmalıdır.
+ *   Deneyap Kart 1A ve DENEYAP KART G ile bu uygulamayı gerçekleştirilmek istenirse harici ledler bağlanmalıdır.
  *   
  */
 #define gecikme_suresi 400        // milisaniye
@@ -15,24 +15,6 @@ void setup() {
 }
 
 void loop() {
-  // Cyan
-  digitalWrite(LEDR, LOW);       
-  digitalWrite(LEDG, HIGH);      
-  digitalWrite(LEDB, HIGH);      
-  delay(gecikme_suresi);
-
-  // Meganta
-  digitalWrite(LEDR, HIGH);       
-  digitalWrite(LEDG, LOW);      
-  digitalWrite(LEDB, HIGH);     
-  delay(gecikme_suresi);
-
-  // Sarı
-  digitalWrite(LEDR, HIGH);     
-  digitalWrite(LEDG, HIGH);     
-  digitalWrite(LEDB, LOW);      
-  delay(gecikme_suresi);
-
   // Mavi
   digitalWrite(LEDR, LOW);      
   digitalWrite(LEDG, LOW);      
@@ -60,6 +42,24 @@ void loop() {
   // Renk yok
   digitalWrite(LEDR, LOW);      
   digitalWrite(LEDG, LOW);      
+  digitalWrite(LEDB, LOW);      
+  delay(gecikme_suresi);
+
+  // Cyan
+  digitalWrite(LEDR, LOW);       
+  digitalWrite(LEDG, HIGH);      
+  digitalWrite(LEDB, HIGH);      
+  delay(gecikme_suresi);
+
+  // Meganta
+  digitalWrite(LEDR, HIGH);       
+  digitalWrite(LEDG, LOW);      
+  digitalWrite(LEDB, HIGH);     
+  delay(gecikme_suresi);
+
+  // Sarı
+  digitalWrite(LEDR, HIGH);     
+  digitalWrite(LEDG, HIGH);     
   digitalWrite(LEDB, LOW);      
   delay(gecikme_suresi);
 }

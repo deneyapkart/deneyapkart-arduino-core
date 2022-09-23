@@ -4,9 +4,9 @@
 
 /*
  *   RMaker örneği,
- *   Bu örnek yüklendikten sonra seri terminale bir QR kodu yazdırılmaktadır. 
+ *   Bu örnek yüklendikten sonra seri port ekrane bir QR kodu yazdırılmaktadır. 
  *   Bu QR kodu ile ESPRainMaker mobil uygulamasıyla ve Deneyap Kart eşleşmektedir.
- *   Daha sonra seri terminalde ve mobil uygulamada buton durumu takip edilebilmektedir.
+ *   Daha sonra seri port ekrande ve mobil uygulamada buton durumu takip edilebilmektedir.
  *   Hem kartta hemde mobil uygulamada buton durumu değiştirilebilmektedir. 
  * 
 */

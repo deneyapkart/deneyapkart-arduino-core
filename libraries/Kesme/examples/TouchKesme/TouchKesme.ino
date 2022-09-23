@@ -1,6 +1,6 @@
 /*
  *  TouchKesme (interrupt) örneği,
- *  Bu örnekte Deneyap Kart 1A veya Deneyap karttaki D15(GPIO27) dokunulduğunda seri terminale Touch algılandı yazdırmaktadır. 
+ *  Bu örnekte Deneyap Kart 1A veya Deneyap karttaki D15(GPIO27) dokunulduğunda seri port ekrane Touch algılandı yazdırmaktadır. 
  *  Eşik(threshold) ne kadar büyük olursa, dokunma o kadar mantıklı olur.
  *  
 */
@@ -21,6 +21,6 @@ void setup() {
 void loop(){
   if(touch1detected){                    //D15 (GPIO27) pinine dokunulduğunda
     touch1detected = false;
-    Serial.println("Touch algılandı");  //seri terminale "Touch algılandı" yazdırıldı
+    Serial.println("Touch algılandı");  //seri port ekrane "Touch algılandı" yazdırıldı
   }
 }

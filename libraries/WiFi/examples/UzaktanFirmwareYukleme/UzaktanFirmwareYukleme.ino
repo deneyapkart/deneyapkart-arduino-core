@@ -1,7 +1,7 @@
 /*
  *  UzaktanFirmwareYukleme örneği,
  *  Bu örnek yüklendikten sonra porttan network ports seçeneğinden uygun port seçimi yapılmalıdır. 
- *  Yazılım tekrar yüklenmelidir. Seri terminalde güncelleme gözlemlenebilmektedir.
+ *  Yazılım tekrar yüklenmelidir. seri port ekrande güncelleme gözlemlenebilmektedir.
  * 
  */
 #include <WiFi.h>

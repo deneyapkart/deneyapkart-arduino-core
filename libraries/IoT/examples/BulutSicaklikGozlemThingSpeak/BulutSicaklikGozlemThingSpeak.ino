@@ -1,7 +1,7 @@
 /*
  *   BulutSicaklikGozlem örneği,
  *   Bu örnekte ThingSpeak web uygulaması kullanılmaktadır. ThingSpeak web uygulamasına DENEYAP KART'taki dahili IMU'dan alınan sıcaklık webde eklenen textte veya grafik ile gözlenebilmektedir. 
- *   Bu uygulama DENEYAP KART 1A, DENEYAP MİNİ ve DENEYAP G Kartları ile gerçekleştirilmek istenirse harici sıcaklık sensörü bağlanmalıdır ve kodda gerekli değişiklikler yapılmalıdır.
+ *   Bu uygulama DENEYAP KART 1A, DENEYAP MİNİ ve DENEYAP KART G Kartları ile gerçekleştirilmek istenirse harici sıcaklık sensörü bağlanmalıdır ve kodda gerekli değişiklikler yapılmalıdır.
  *    
  */
 #include <WiFi.h>
@@ -38,7 +38,7 @@ void setup() {
 }
 
 void loop() {
-    /*Sıcaklık değeri alınıyor ve seri terminale yazılıyor */
+    /*Sıcaklık değeri alınıyor ve seri port ekrane yazılıyor */
     sicaklik = IMU.readTempC();
     Serial.print("Sıcaklık: ");
     Serial.println(sicaklik);

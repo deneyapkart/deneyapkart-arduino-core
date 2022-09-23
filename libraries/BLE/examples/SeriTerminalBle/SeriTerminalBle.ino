@@ -1,7 +1,7 @@
 /*
  *  Bluetooth SeriTerminalBle örneği,
  *  Bu uygulama örneği için telefona  Serial Bluetooth Terminal programı indirilmesi gerekmektedir.
- *  Yazılım karta yüklendikten sonra hem seri terminaldan telefon uygulamasına hem de telefon uygulamasından seri terminale karakter verisi gönderilebilmektedir.
+ *  Yazılım karta yüklendikten sonra hem seri port ekrandan telefon uygulamasına hem de telefon uygulamasından seri port ekrane karakter verisi gönderilebilmektedir.
  *  
  *  Deneyap Mini Kartında dahili Bluetooth bulunmamaktadır.
  *    
@@ -20,11 +20,11 @@ void loop() {
   while(Serial.available() == 0 && SerialBT.available() == 0);            // Veri bekleniyor 
   if (Serial.available() > 0) 
   {
-    SerialBT.write(Serial.read());                                        // Veri yaziliyor (Seri terminal --> Bluetooth)
+    SerialBT.write(Serial.read());                                        // Veri yaziliyor (seri port ekran --> Bluetooth)
   }
   if (SerialBT.available() > 0) 
   {
-    Serial.write(SerialBT.read());                                        // Veri yaziliyor (Bluetooth --> Seri terminal)
+    Serial.write(SerialBT.read());                                        // Veri yaziliyor (Bluetooth --> seri port ekran)
   }
   delay(20);
 }

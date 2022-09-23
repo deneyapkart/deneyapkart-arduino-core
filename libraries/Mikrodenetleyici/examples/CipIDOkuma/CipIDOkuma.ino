@@ -1,6 +1,6 @@
 /*
  *   CipIDOkuma örneği,
- *   Bu örnekte, ESP32 veya ESP32S2 çip modelini, çipte kaç çekirdek olduğunu ve çip ID seri terminale yazdırmaktadır. 
+ *   Bu örnekte, ESP32 veya ESP32S2 çip modelini, çipte kaç çekirdek olduğunu ve çip ID seri port ekrane yazdırmaktadır. 
  *   
  */	
 uint32_t chipId = 0;

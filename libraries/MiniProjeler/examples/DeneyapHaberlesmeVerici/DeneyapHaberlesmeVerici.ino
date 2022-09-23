@@ -9,7 +9,7 @@
 /* Alıcı kartın MAC adresi bulmak için;
 Examples > Mikrodenetleyici > MacAdresiBulma
 Örnekler > Mikrodenetleyici > MacAdresiBulma
-Seri terminale yazılan adres 44:17:93:4C:58:00 */ 
+seri port ekrane yazılan adres 44:17:93:4C:58:00 */ 
 uint8_t broadcastAddress[] = {0x44, 0x17, 0x93, 0x4C, 0x58, 0x00}; // ALICI kartın MAC adresi
 
 typedef struct struct_message {

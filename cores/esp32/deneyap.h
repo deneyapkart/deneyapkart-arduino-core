@@ -40,8 +40,8 @@
 #define D12	(uint8_t)(17)
 #define D13	(uint8_t)(0)
 #define D14	(uint8_t)(35)
-#define D15	(uint8_t)(34)
-#define D16	(uint8_t)(33)
+#define D15	(uint8_t)(33)
+#define D16	(uint8_t)(34)
 #elif defined (ARDUINO_DYG)
 #define D0	(uint8_t)(21)
 #define D1	(uint8_t)(20)
@@ -124,8 +124,8 @@
 #define TX	D0
 #define RX	D1
 #elif defined (ARDUINO_DYG)
-#define TX	D1
-#define RX	D0
+#define TX	D0
+#define RX	D1
 #endif
 
 // PWM pins
@@ -138,7 +138,6 @@
 #elif defined (ARDUINO_DYG)
 #define PWM0	A0
 #define PWM1	A1
-#define PWM2	A2
 #endif
 
 // Capacitive-Sensing pins
@@ -173,7 +172,7 @@
 #define CAMPC	D7
 #define CAMXC	A4
 #define CAMH	A1
-#define CAMV	A0
+#define CAMV	A0 
 #endif
 
 #if defined (ARDUINO_DYDK)
@@ -199,22 +198,21 @@
 #define LEDR	D3
 #define LEDG	D2
 #define LEDB	D10
-#define GPKEY	(uint8_t)(0)
-#define BOOT	(uint8_t)(0)
+#define GPKEY	D8 	//(uint8_t)(0)
+#define BOOT	D8 	//(uint8_t)(0)
 #elif defined (ARDUINO_DYDK1A)
-#define RGBLED	(uint8_t)(13)
-#define GPKEY	(uint8_t)(0)
-#define BOOT	(uint8_t)(0)
+#define RGBLED	D12 //(uint8_t)(13)
+#define GPKEY	D8 	//(uint8_t)(0)
+#define BOOT	D8 	//(uint8_t)(0)
 #elif defined (ARDUINO_DYM)
-#define LEDR	(uint8_t)(34)
-#define LEDG	(uint8_t)(33)
-#define LEDB	(uint8_t)(35)
-#define GPKEY	(uint8_t)(0)
-#define BT	(uint8_t)(0)
+#define LEDR	D16 //(uint8_t)(34)
+#define LEDG	D15 //(uint8_t)(33)
+#define LEDB	D14 //(uint8_t)(35)
+#define GPKEY	D13 //(uint8_t)(0)
+#define BT		D13 //(uint8_t)(0)
 #elif defined (ARDUINO_DYG)
-#define RGBLED	(uint8_t)(10)
-#define GPKEY	(uint8_t)(9)
-#define BT	(uint8_t)(9)
+#define RGBLED	D3 //(uint8_t)(10)
+#define GPKEY	D2 //(uint8_t)(9)
 #endif
 #define BUILTIN_KEY	GPKEY
 
@@ -222,7 +220,7 @@
 #define GPIO_INPUT	(0x01)
 #define GPIO_OUTPUT	(0x00)
 #define PIN_HIGH	(0x01)
-#define PIN_LOW	(0x00)
+#define PIN_LOW		(0x00)
 #define BUTTON_PRESSED	(0x00)
 
 /* FUNCTION PROTOTYPES */

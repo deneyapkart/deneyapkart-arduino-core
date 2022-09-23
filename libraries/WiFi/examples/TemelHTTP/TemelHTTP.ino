@@ -1,6 +1,6 @@
 /*
  *   TemelHTTP örneği,
- *   Bu örnek https://deneyapkart.org/ sitesindeki html kodlarını seri terminale yazdırmaktadır. 
+ *   Bu örnek https://deneyapkart.org/ sitesindeki html kodlarını seri port ekrane yazdırmaktadır. 
  * 
 */ 
 #include <WiFi.h>

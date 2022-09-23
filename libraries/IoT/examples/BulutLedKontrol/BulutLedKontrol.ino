@@ -1,7 +1,7 @@
 /*
  *   BulutLedKontrol örneği,
  *   Bu örnekte Adafruit io web uygulaması kullanılmaktadır. Adafruit io web uygulamasıda eklenen buton verilerine göre LED durumlarını değişitirmektedir.
- *   DENEYAP 1A ve DENEYAP G dahili adreslenebilir RGBLED bulunmaktadır. Kodda ona göre değişiklik yapılmalıdır.
+ *   DENEYAP 1A ve DENEYAP KART G dahili adreslenebilir RGBLED bulunmaktadır. Kodda ona göre değişiklik yapılmalıdır.
  *   
  */
 #include "WiFi.h"

@@ -24,7 +24,7 @@ void setup() {
 
   WiFi.softAP(ssid, password);                                            // Cihaz Erisim Noktasi (AP) olarak baslatildi
   IPAddress myIP = WiFi.softAPIP();                                       
-  Serial.print("Erisim noktasi IP adresi: ");                             // Baglanti IP adresi seri terminale yazdiriliyor
+  Serial.print("Erisim noktasi IP adresi: ");                             // Baglanti IP adresi seri port ekrane yazdiriliyor
   Serial.println(myIP);
   server.begin();
 
@@ -43,7 +43,7 @@ void loop() {
       if(client.available())                                              // Istemciden veri kontrolu yapiliyor
       {                       
         char c = client.read();                                           // Veri okunuyor
-        Serial.write(c);                                                  // Seri terminale veri yaz
+        Serial.write(c);                                                  // seri port ekrane veri yaz
         if (c == '\n')                                                    // "Yeni Satir" karakteri geldi mi
         {                                                                 
           if(currentLine.length() == 0)                                   // Satirda bulunan veri sayisi sifir mi (istemci talepte bulunmus)

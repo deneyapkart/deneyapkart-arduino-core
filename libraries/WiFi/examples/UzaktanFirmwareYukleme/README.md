@@ -1,1 +1,1 @@
-UzaktanFirmwareYukleme hem Deneyap Kart hem de Deneyap Mini Kartı desteklemektedir. Bu uygulamada yazılım karta yüklenmelidir. Daha sonra porttan network ports seçeneğinden uygun port seçimi yapılmalıdır. Yazılım tekrar yüklenmelidir. Seri terminalde güncelleme gözlemlenebilmektedir.
+UzaktanFirmwareYukleme hem Deneyap Kart hem de Deneyap Mini Kartı desteklemektedir. Bu uygulamada yazılım karta yüklenmelidir. Daha sonra porttan network ports seçeneğinden uygun port seçimi yapılmalıdır. Yazılım tekrar yüklenmelidir. seri port ekrande güncelleme gözlemlenebilmektedir.

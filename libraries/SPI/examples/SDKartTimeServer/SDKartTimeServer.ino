@@ -1,7 +1,7 @@
 /*
  *  SDKartTimeServer örneği,
- *  Bu uygulamada seri terminalde tarih ve saati yazdırmaktadır. SDKartTimeServer uygulamada SD karta bir tane "mydir" isimli bir boş klasör ve holle.txt uzantılı dosya açmaktadır. 
- *  Dosyada hello world! yazmaktadır. Seri terminale hızını ve kaç bayt okunduğu yazmaktadır.
+ *  Bu uygulamada seri port ekrande tarih ve saati yazdırmaktadır. SDKartTimeServer uygulamada SD karta bir tane "mydir" isimli bir boş klasör ve holle.txt uzantılı dosya açmaktadır. 
+ *  Dosyada hello world! yazmaktadır. seri port ekrane hızını ve kaç bayt okunduğu yazmaktadır.
  * 
  *  Deneyap Kart ve Deneyap Kart 1A için CS(SS) pini D4 pinine bağlanması gerekmektedir.
  *  Deneyap Mini Kartı için CS(SS) pini D10 pinine bağlanması gerekmektedir.
