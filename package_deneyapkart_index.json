@@ -27,12 +27,17 @@
             },
             {
               "name": "Deneyap Kart 1A"
-            }
+            },
             {
               "name": "Deneyap Kart G"
             }
           ], 
           "toolsDependencies": [
+            {
+              "packager": "deneyap",
+              "name": "riscv32-esp-elf-gcc",
+              "version": "gcc8_4_0-esp-2021r2-patch3"
+            },
             {
               "packager": "deneyap", 
               "name": "xtensa-esp32-elf-gcc",
