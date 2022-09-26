@@ -1,18 +1,15 @@
 /*
  *   Dijital okuma örneği,
- *   Kartın üzerinde yer alan "But" butonuna basıldığında karta bulunan RGB led sırasıyla Kırmızı, Yeşil, Mavi, Turuncu, Magenta, 
+ *   Deneyap Geliştirme Kartlarının yer alan "But" butonuna basıldığında karta bulunan RGB led sırasıyla Kırmızı, Yeşil, Mavi, Sarı, Magenta, 
  *   Cyan, Beyaz renklerinde yanacaktır ve sonraki buton basımında led sönmektedir. 
  *   Bu işlem bir döngü şekilde her butona basımında devam etmektedir.
- *   
- *   Deneyap Kart 1A ve DENEYAP KART G ile bu uygulamayı gerçekleştirilmek istenirse harici ledler bağlanmalıdır.
- *   
- */
+*/
 enum renkler
 {
   KIRMIZI,
   YESIL,
   MAVI,
-  TURUNCU,
+  SARI,
   MAGENTA,
   CYAN,
   BEYAZ,
@@ -23,10 +20,12 @@ uint32_t sayici = 0;
 uint8_t renk_durumu = RENK_YOK;
 
 void setup() {
-  pinMode(GPKEY, INPUT);        // Genel amacli buton pini giris olarak ayarlandi
-  pinMode(LEDR, OUTPUT);        // Kirmizi led cikis olarak ayarlandi
-  pinMode(LEDG, OUTPUT);        // Yesil led cikis olarak ayarlandi
-  pinMode(LEDB, OUTPUT);        // Mavi led cikis olarak ayarlandi
+  pinMode(GPKEY, INPUT);                                    // Genel amacli buton pini giris olarak ayarlandi
+  #if defined (ARDUINO_DYDK) || defined (ARDUINO_DYM)       // DENEYAP KART veya DENEYAP MİNİ kartı kullanılıyorsa
+  pinMode(LEDR, OUTPUT);                                    // Kirmizi led cikis olarak ayarlandi
+  pinMode(LEDG, OUTPUT);                                    // Yesil led cikis olarak ayarlandi
+  pinMode(LEDB, OUTPUT);                                    // Mavi led cikis olarak ayarlandi
+  #endif
 }
 
 void loop() {
@@ -47,7 +46,8 @@ void loop() {
 
   switch(renk_durumu)
   {
-    case KIRMIZI:
+     #if defined (ARDUINO_DYDK) || defined (ARDUINO_DYM)       // DENEYAP KART veya DENEYAP MİNİ kartı kullanılıyorsa
+     case KIRMIZI:
       writeRedLed(HIGH);
       writeGreenLed(LOW);
       writeBlueLed(LOW);
@@ -65,7 +65,7 @@ void loop() {
       writeBlueLed(HIGH);
       break;
 
-    case TURUNCU:
+    case SARI:
       writeRedLed(HIGH);
       writeGreenLed(HIGH);
       writeBlueLed(LOW);
@@ -94,5 +94,47 @@ void loop() {
       writeGreenLed(LOW);
       writeBlueLed(LOW);
       break;
+
+    #elif defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYG)   // DENEYAP KART 1A ve DENEYAP KART G kartı kullanılıyorsa 
+     case KIRMIZI:
+      delay(1);
+      neopixelWrite(RGBLED,32,0,0);
+      break;
+
+    case YESIL:
+      delay(1);
+      neopixelWrite(RGBLED,0,32,0);
+      break;
+
+    case MAVI:
+      delay(1);
+      neopixelWrite(RGBLED,0,0,32);
+      break;
+
+    case SARI:
+      delay(1);
+      neopixelWrite(RGBLED,32,32,0);
+      break;
+
+    case MAGENTA:
+      delay(1);
+      neopixelWrite(RGBLED,32,0,32);
+      break;
+
+    case CYAN:
+      delay(1);
+      neopixelWrite(RGBLED,0,32,32);
+      break;
+
+    case BEYAZ:
+      delay(1);
+      neopixelWrite(RGBLED,32,32,32);
+      break;
+
+    case RENK_YOK:
+      delay(1);
+      neopixelWrite(RGBLED,0,0,0);
+      break;
+  #endif
   }
 }

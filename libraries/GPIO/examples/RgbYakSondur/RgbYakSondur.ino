@@ -1,20 +1,20 @@
 /*
  *   Dijital okuma örneği,
- *   Kartın üzerinde yer alan RGB led 400 milisaniye arayla Kırmızı, Yeşil, Mavi, Turuncu, Magenta, 
- *   Cyan, Beyaz renkleri yakmaktadır.
- *   
- *   Deneyap Kart 1A ve DENEYAP KART G ile bu uygulamayı gerçekleştirilmek istenirse harici ledler bağlanmalıdır.
- *   
- */
-#define gecikme_suresi 400        // milisaniye
+ *   Deneyap Geliştirme Kartlarının üzerinde yer alan RGB led 400 milisaniye arayla Kırmızı, Yeşil, Mavi, Turuncu, Magenta, 
+ *   Cyan, Beyaz renkleri yakmaktadır. 
+*/
+#define gecikme_suresi 400   // milisaniye
 
 void setup() {
-  pinMode(LEDR, OUTPUT);          // Kirmizi led cikis olarak ayarlandi
-  pinMode(LEDG, OUTPUT);          // Yesil led cikis olarak ayarlandi
-  pinMode(LEDB, OUTPUT);          // Mavi led cikis olarak ayarlandi
+  #if defined (ARDUINO_DYDK) || defined (ARDUINO_DYM)       // DENEYAP KART veya DENEYAP MİNİ kartı kullanılıyorsa
+  pinMode(LEDR, OUTPUT);                                    // Kirmizi led cikis olarak ayarlandi
+  pinMode(LEDG, OUTPUT);                                    // Yesil led cikis olarak ayarlandi
+  pinMode(LEDB, OUTPUT);                                    // Mavi led cikis olarak ayarlandi
+  #endif
 }
 
 void loop() {
+  #if defined (ARDUINO_DYDK) || defined (ARDUINO_DYM)       // DENEYAP KART veya DENEYAP MİNİ kartı kullanılıyorsa
   // Mavi
   digitalWrite(LEDR, LOW);      
   digitalWrite(LEDG, LOW);      
@@ -62,4 +62,39 @@ void loop() {
   digitalWrite(LEDG, HIGH);     
   digitalWrite(LEDB, LOW);      
   delay(gecikme_suresi);
-}
+  
+  #elif defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYG)   // DENEYAP KART 1A ve DENEYAP KART G kartı kullanılıyorsa 
+  // Mavi
+ delay(1);
+  neopixelWrite(RGBLED,0,0,64);
+  delay(gecikme_suresi);
+
+  // Yeşil
+  neopixelWrite(RGBLED,0,64,0);
+  delay(gecikme_suresi);
+  
+  // Kırmızı
+  neopixelWrite(RGBLED,64,0,0);
+  delay(gecikme_suresi);
+  
+  // Beyaz
+  neopixelWrite(RGBLED,64,64,64);
+  delay(gecikme_suresi);
+  
+  // Renk Yok
+  neopixelWrite(RGBLED,0,0,0);
+  delay(gecikme_suresi);
+  
+  // Cyan
+  neopixelWrite(RGBLED,0,64,64);
+  delay(gecikme_suresi);
+  
+  // Meganta
+  neopixelWrite(RGBLED,64,0,64);
+  delay(gecikme_suresi);
+  
+  // Sarı
+  neopixelWrite(RGBLED,64,64,0);
+  delay(gecikme_suresi);
+  #endif
+ }
