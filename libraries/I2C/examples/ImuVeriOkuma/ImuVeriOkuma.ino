@@ -1,51 +1,44 @@
 /*
  *   ImuVeriOkuma örneği,
- *   Uygulamada Deneyap kart üzerinde yer alan IMU ile Ortamın sıcaklığı Derece ve Fahrenhayt cinsinde seri port ekrane yazdırmaktadır. 
- *   Daha sonra IMU'daki akselerometre ile X-eksen, Y-eksen ve Z-eksen verileri seri port ekrane yazdırmaktadır.
- *   IMU'daki Jirometre (Gyrometer) ile X-eksen, Y-eksen ve Z-eksen bilgileri seri port ekrane yazdırmaktadır.
- *   
- *   Bu uygulama Deneyap Kart 1A, Deneyap Mini ve DENEYAP KART G Kartları ile gerçekleştirilmek istenirse harici IMU bağlanmalıdır ve gerekli bağlantı bilgileri değiştirilmelidir.
- *   
- */
+ *   Uygulamada Deneyap Kart üzerinde dahili olan IMU ile akselerometreden X-eksen, Y-eksen ve Z-eksen değerlerini seri port ekranına yazdırmaktadır.
+ *   Jirometreden X-eksen, Y-eksen ve Z-eksen değerlerini seri port ekranına yazdırmaktadır.
+ *   ve sıcaklık değerlerini seri port ekranına yazdırmaktadır. 
+ *   Bu uygulama diğer Deneyap geliştirme Kartları ile gerçekleştirilmek istenirse harici IMU bağlanmalıdır. (Deneyap 6-eksen ataletsel ölçüm birimi veya Deneyap 9-eksen ataletsel ölçüm birimi kullanılabilinir) 
+*/
 #include "lsm6dsm.h"
 
 #define delayms 700
 
-LSM6DSM IMU;                                    // IMU icin Class tanimlamasi
+LSM6DSM IMU;                                        // IMU için class tanımlanması
 
 void setup() {
-  Serial.begin(115200);                         // Seri haberlesme baslatildi
-  IMU.begin();                                  // IMU ayarlari konfigure edildi
+    Serial.begin(115200);                           // Seri haberleşme başlatılması
+    IMU.begin();                                    // begin(slaveAdress) fonksiyonu ile cihazların haberleşmesi başlatılması
 }
 
 void loop() {
-  Serial.println("\nAkselerometre degerleri\n");
-  Serial.print("X ekseni\t: ");
-  Serial.println(IMU.readFloatAccelX());        // X-eksen akselerometre verisi okuma
-  delay(delayms);
-  Serial.print("Y ekseni\t: ");
-  Serial.println(IMU.readFloatAccelY());        // Y-eksen akselerometre verisi okuma
-  delay(delayms);
-  Serial.print("Z ekseni\t: ");
-  Serial.println(IMU.readFloatAccelZ());        // Z-eksen akselerometre verisi okuma
-  delay(delayms);
+    Serial.println("\nAkselerometre degerleri");
+    Serial.print("X ekseni: ");                     // X-eksen akselerometre verisi okunması
+    Serial.print(IMU.readFloatAccelX());
+    Serial.print("\tY ekseni: ");                   // Y-eksen akselerometre verisi okunması
+    Serial.print(IMU.readFloatAccelY());
+    Serial.print("\tZ ekseni: ");                   // Z-eksen akselerometre verisi okunması
+    Serial.println(IMU.readFloatAccelZ());
+    delay(delayms);
 
-  Serial.println("\nGyro degerleri\n");
-  Serial.print("X ekseni\t: ");
-  Serial.println(IMU.readFloatGyroX());         // X-eksen gyro verisi okuma
-  delay(delayms);
-  Serial.print("Y ekseni\t: ");
-  Serial.println(IMU.readFloatGyroY());         // Y-eksen gyro verisi okuma
-  delay(delayms);
-  Serial.print("Z ekseni\t: ");
-  Serial.println(IMU.readFloatGyroZ());         // Z-eksen gyro verisi okuma
-  delay(delayms);
+    Serial.println("\nGyro degerleri");
+    Serial.print("X ekseni: ");                     // X-eksen gyro verisi okunması
+    Serial.print(IMU.readFloatGyroX());
+    Serial.print("\tY ekseni: ");                   // Y-eksen gyro verisi okunması
+    Serial.print(IMU.readFloatGyroY());
+    Serial.print("\tZ ekseni: ");                   // Z-eksen gyro verisi okunması
+    Serial.println(IMU.readFloatGyroZ());
+    delay(delayms);
 
-  Serial.println("\nSicaklik degerleri\n");
-  Serial.print("Celsius \t: ");
-  Serial.println(IMU.readTempC());              // Sicaklik verisi okuma (Celsius)
-  delay(delayms);
-  Serial.print("Fahrenheit \t: ");
-  Serial.println(IMU.readTempF());              // Sicaklik verisi okuma (Fahrenheit)
-  delay(delayms);
+    Serial.println("\nSicaklik degerleri");
+    Serial.print("Celsius: ");                      // Sicaklik verisi okunması (Celsius)
+    Serial.print(IMU.readTempC());
+    Serial.print("\tFahrenheit: ");                 // Sicaklik verisi okunması (Fahrenheit)
+    Serial.println(IMU.readTempF());
+    delay(delayms);
 }
