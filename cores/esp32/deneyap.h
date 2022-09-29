@@ -40,8 +40,8 @@
 #define D12	(uint8_t)(17)
 #define D13	(uint8_t)(0)
 #define D14	(uint8_t)(35)
-#define D15	(uint8_t)(33)
-#define D16	(uint8_t)(34)
+#define D15	(uint8_t)(34)
+#define D16	(uint8_t)(33)
 #elif defined (ARDUINO_DYG)
 #define D0	(uint8_t)(21)
 #define D1	(uint8_t)(20)
@@ -110,9 +110,9 @@
 #define MC	D6
 #define SS	D10
 #elif defined (ARDUINO_DYG)
-#define MO	A5
-#define MI	A4
-#define MC	A3
+#define MOSI	A5
+#define MISO	A4
+#define SCK	A3
 #define SS	D5
 #endif
 
@@ -214,6 +214,7 @@
 #elif defined (ARDUINO_DYG)
 #define RGBLED	D3
 #define GPKEY	D2
+#define BOOT	D2
 #endif
 #define BUILTIN_KEY	GPKEY
 
