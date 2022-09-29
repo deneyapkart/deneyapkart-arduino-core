@@ -14,8 +14,8 @@ FilterBeHp2	 KEYWORD1   FilterBeHp2
 ##################################
 micBegin	  KEYWORD2
 micRead		  KEYWORD2
+micQuit		  KEYWORD2
 dataFilter        KEYWORD2
-
 ##################################
 # Instances (KEYWORD2)
 ##################################
