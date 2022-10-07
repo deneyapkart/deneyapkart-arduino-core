@@ -1,7 +1,6 @@
 /*
-*   İki Deneyap kartının haberleşmesi örneği,
-*   Bu örnekte kullandığınız Deneyap kartlardan kullandığınız Deneyap kartının butonuna basıldığında alıcı Deneyap kartın ledi yanacaktır. 
-* 
+ *   İki Deneyap kartının haberleşmesi örneği,
+ *   Bu örnekte kullandığınız Deneyap kartlardan kullandığınız Deneyap kartının butonuna basıldığında alıcı Deneyap kartın ledi yanacaktır.
 */
 #include "WiFi.h"
 #include "esp_now.h"
@@ -9,7 +8,7 @@
 /* Alıcı kartın MAC adresi bulmak için;
 Examples > Mikrodenetleyici > MacAdresiBulma
 Örnekler > Mikrodenetleyici > MacAdresiBulma
-seri port ekrane yazılan adres 44:17:93:4C:58:00 */ 
+seri port ekranına yazılan adres 44:17:93:4C:58:00 */ 
 uint8_t broadcastAddress[] = {0x44, 0x17, 0x93, 0x4C, 0x58, 0x00}; // ALICI kartın MAC adresi
 
 typedef struct struct_message {

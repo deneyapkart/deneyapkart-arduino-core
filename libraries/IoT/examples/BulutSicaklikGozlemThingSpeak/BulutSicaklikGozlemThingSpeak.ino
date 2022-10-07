@@ -1,12 +1,12 @@
 /*
  *   BulutSicaklikGozlem örneği,
  *   Bu örnekte ThingSpeak web uygulaması kullanılmaktadır. ThingSpeak web uygulamasına DENEYAP KART'taki dahili IMU'dan alınan sıcaklık webde eklenen textte veya grafik ile gözlenebilmektedir. 
- *   Bu uygulama DENEYAP KART 1A, DENEYAP MİNİ ve DENEYAP KART G Kartları ile gerçekleştirilmek istenirse harici sıcaklık sensörü bağlanmalıdır ve kodda gerekli değişiklikler yapılmalıdır.
- *    
- */
+ *   Bu uygulama Deneyap Kart 1A ve Deneyap Kart G Kartları ile gerçekleştirilmek istenirse harici sıcaklık sensörü bağlanmalıdır ve kodda gerekli değişiklikler yapılmalıdır.
+ *   Deneyap Mini kartında dahili Wi-Fi haberleşme özelliği yoktur.  
+*/
 #include <WiFi.h>
 #include "HTTPClient.h"
-#include "lsm6dsm.h"
+#include "lsm6dsm.h" // Deneyap Kart dahili IMU kütüphanesinin eklenmesi
 
 LSM6DSM IMU;  //IMU için Class tanımlaması
 float sicaklik;

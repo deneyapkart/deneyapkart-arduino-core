@@ -27,7 +27,7 @@ bool SDFS::begin(uint8_t ssPin, SPIClass &spi, uint32_t frequency, const char * 
     if(_pdrv != 0xFF) {
         return true;
     }
-
+    
     #if defined (ARDUINO_DYDK1A)
         spi.begin(SDCK,SDMI,SDMO,SDCS);
         pinMode(SDMI,INPUT_PULLUP);
@@ -103,11 +103,11 @@ uint64_t SDFS::totalBytes()
 	if(f_getfree("0:",&fre_clust,&fsinfo)!= 0) return 0;
     uint64_t size = ((uint64_t)(fsinfo->csize))*(fsinfo->n_fatent - 2)
 #if _MAX_SS != 512
-    *(fsinfo->ssize);
+        *(fsinfo->ssize);
 #else
-    *512;
+        *512;
 #endif
-    return size;
+	return size;
 }
 
 uint64_t SDFS::usedBytes()
@@ -117,11 +117,11 @@ uint64_t SDFS::usedBytes()
 	if(f_getfree("0:",&fre_clust,&fsinfo)!= 0) return 0;
 	uint64_t size = ((uint64_t)(fsinfo->csize))*((fsinfo->n_fatent - 2) - (fsinfo->free_clst))
 #if _MAX_SS != 512
-    *(fsinfo->ssize);
+        *(fsinfo->ssize);
 #else
-    *512;
+        *512;
 #endif
-    return size;
+	return size;
 }
 
 bool SDFS::readRAW(uint8_t* buffer, uint32_t sector)

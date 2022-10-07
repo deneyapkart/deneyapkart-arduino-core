@@ -65,8 +65,7 @@ void loop() {
   
   #elif defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYG)   // DENEYAP KART 1A ve DENEYAP KART G kartı kullanılıyorsa 
   // Mavi
- delay(1);
-  neopixelWrite(RGBLED,0,0,64);
+  neopixelWrite(RGBLED,0,0,64);                             // Parlaklık değeri 64 seçilmiştir. 0-255 arası parlaklık değeri verilmektedir.
   delay(gecikme_suresi);
 
   // Yeşil

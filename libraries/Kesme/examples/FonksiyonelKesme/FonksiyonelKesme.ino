@@ -1,12 +1,12 @@
 /*
  *  FonksiyonelKesme (interrupt) örneği,
  *  Bu uygulamada FunctionalInterrupt kütüphanesi kullanarak kesme işlemleri gerçekleştirilmiştir. 
- *  Örnekte karttaki butona veya harici bağlanan bir botuna basıldığında interrupt ile butona kaç defa basıldığı bilgisi seri port ekrane yazdırmaktadır. 
+ *  Örnekte karttaki butona veya harici bağlanan bir botuna basıldığında interrupt ile butona kaç defa basıldığı bilgisi seri port ekranına yazdırmaktadır. 
  */
 #include <FunctionalInterrupt.h>
 
 #define BUTTON1 12
-#define BUTTON2 0   // Genel amacli buton "BUT"  tanımlandı.
+#define BUTTON2 GPKEY   // Genel amacli buton "BUT"  tanımlandı.
 
 class Button
 {

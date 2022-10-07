@@ -2,10 +2,9 @@
  *  Bluetooth SeriTerminalBle örneği,
  *  Bu uygulama örneği için telefona  Serial Bluetooth Terminal programı indirilmesi gerekmektedir.
  *  Yazılım karta yüklendikten sonra hem seri port ekrandan telefon uygulamasına hem de telefon uygulamasından seri port ekrane karakter verisi gönderilebilmektedir.
- *  
- *  Deneyap Mini Kartında dahili Bluetooth bulunmamaktadır.
- *    
- */
+ *  Bu kütüphane sadece Deneyap Kart ve Deneyap Kart 1A desteklemektedir.
+ *  Deneyap Mini Kartında dahili Bluetooth haberleşme özelliği bulunmamaktadır.  
+*/
 #include "BluetoothSerial.h"
 
 BluetoothSerial SerialBT;                                                 // Bluetooth icin class tanimlama

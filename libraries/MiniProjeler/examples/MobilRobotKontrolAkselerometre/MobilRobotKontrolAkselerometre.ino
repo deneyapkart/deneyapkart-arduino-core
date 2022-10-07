@@ -1,17 +1,19 @@
 /*
  *  MobilRobotKontrolAkselerometre örneği
- *  Bu örnek uygulama ile MobilRobotSurucu örneği ile iki Deneyap Kart birbiriyle haberleşmektedir. 
- *  MobilRobotKontrolAkselerometre örneğinde yer alan IMU ile akselerometreden veriler alınıp diğer Deneyap Karta göndermektedir.
- *  
- *  Deneyap Kart 1A ve Deneyap Mini Kart ile gerçekleşmesi için harici IMU bağlanmalıdır.
- * 
- */
-#include "lsm6dsm.h"
+ *  Bu örnek uygulama ile MobilRobotSurucu örneği ile iki Deneyap geliştirme kartı haberleşmektedir.
+ *  Deneyap Karttaki dahili IMU'dan alınan Akselerometre verisi diğer Deneyap geliştirme kartına gönderilmektedir.
+ *  Bu uygulama Deneyap Kart 1A ve Deneyap Kart G Kartları ile gerçekleştirilmek istenirse harici imu sensörü bağlanmalıdır ve kodda gerekli değişiklikler yapılmalıdır.
+ *  Deneyap Mini kartında dahili Wi-Fi haberleşme özelliği yoktur.
+*/
+#include "lsm6dsm.h"  // Deneyap Kart dahili IMU kütüphanesinin eklenmesi
 #include "WiFi.h"
 #include "esp_now.h"
 
-//uint8_t broadcastAddress[] = {0xC8, 0x2B, 0x96, 0x8B, 0x94, 0xA8};    // Yayin ya
-uint8_t broadcastAddress[] = {0xC8, 0x2B, 0x96, 0x8C, 0x97, 0xB4};    // v1.2
+/* Alıcı kartın MAC adresi bulmak için;
+Examples > Mikrodenetleyici > MacAdresiBulma
+Örnekler > Mikrodenetleyici > MacAdresiBulma
+seri port ekrane yazılan adres 44:17:93:4C:58:00 */ 
+uint8_t broadcastAddress[] = {0x44, 0x17, 0x93, 0x4C, 0x58, 0x00}; // ALICI kartın MAC adresi
 
 typedef struct struct_message {
     float accel_x;

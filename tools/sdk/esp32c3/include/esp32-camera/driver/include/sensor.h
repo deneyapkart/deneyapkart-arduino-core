@@ -69,6 +69,7 @@ typedef enum {
 typedef enum {
     PIXFORMAT_RGB565,    // 2BPP/RGB565
     PIXFORMAT_YUV422,    // 2BPP/YUV422
+    PIXFORMAT_YUV420,    // 1.5BPP/YUV420
     PIXFORMAT_GRAYSCALE, // 1BPP/GRAYSCALE
     PIXFORMAT_JPEG,      // JPEG/COMPRESSED
     PIXFORMAT_RGB888,    // 3BPP/RGB888
@@ -208,7 +209,7 @@ typedef struct _sensor {
 
     // Sensor function pointers
     int  (*init_status)         (sensor_t *sensor);
-    int  (*reset)               (sensor_t *sensor);
+    int  (*reset)               (sensor_t *sensor); // Reset the configuration of the sensor, and return ESP_OK if reset is successful
     int  (*set_pixformat)       (sensor_t *sensor, pixformat_t pixformat);
     int  (*set_framesize)       (sensor_t *sensor, framesize_t framesize);
     int  (*set_contrast)        (sensor_t *sensor, int level);

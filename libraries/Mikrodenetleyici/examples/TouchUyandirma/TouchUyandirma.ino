@@ -4,10 +4,9 @@
  *  ====================================================
  *  Bu kod, derin uykunun nasıl kullanılacağını gösterir. Uyandırma kaynağı touch.
  *  Karttaki touch pinlerinden birine dokunulduğunda resetlenerek ön yükleme yapılır.
- *  İşlemleri kaç defa yapıldığı seri port ekrane yazdırılmaktadır.
- *  
+ *  İşlemleri kaç defa yapıldığı seri port ekranına yazdırılmaktadır. 
+ *  Deneyap Kart G touch pinleri bulunmamaktadır. 
 */
-
 #define Threshold 40 /* Değer arttıkça hassasiyet artar */
 
 RTC_DATA_ATTR int bootCount = 0;

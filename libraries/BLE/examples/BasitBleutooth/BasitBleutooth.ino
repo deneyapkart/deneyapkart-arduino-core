@@ -3,7 +3,6 @@
  *   Bu örnek ile harici bluetooth kullanalabilmektedir. 
  *   Bluetooth modülü ile Deneyap Mini kart bağlantı gerçekleştirilmelidir. Bu aşamada şifre istenmesi durumunda “0000” ya da “1234” standart şifrelerden birinin girilmesi gerekmektedir.
  *   Bağlantı gerçekleştikten sonra seri port ekran uygulamasına girilir. Ekranda saniyede bir T3 VAKFI yazısı görülmektedir.  
- * 
 */
 HardwareSerial Bluetooth(1);
 

@@ -3,9 +3,9 @@
  *   Uygulamada Deneyap Kart üzerinde dahili olan IMU ile akselerometreden X-eksen, Y-eksen ve Z-eksen değerlerini seri port ekranına yazdırmaktadır.
  *   Jirometreden X-eksen, Y-eksen ve Z-eksen değerlerini seri port ekranına yazdırmaktadır.
  *   ve sıcaklık değerlerini seri port ekranına yazdırmaktadır. 
- *   Bu uygulama diğer Deneyap geliştirme Kartları ile gerçekleştirilmek istenirse harici IMU bağlanmalıdır. (Deneyap 6-eksen ataletsel ölçüm birimi veya Deneyap 9-eksen ataletsel ölçüm birimi kullanılabilinir) 
+ *   Bu uygulama diğer Deneyap geliştirme Kartları ile gerçekleştirilmek istenirse harici IMU bağlanmalıdır.
 */
-#include "lsm6dsm.h"
+#include "lsm6dsm.h"                                // Deneyap Kart dahili IMU kütüphanesinin eklenmesi
 
 #define delayms 700
 

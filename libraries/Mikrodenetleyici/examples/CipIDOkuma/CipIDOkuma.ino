@@ -1,8 +1,7 @@
 /*
  *   CipIDOkuma örneği,
- *   Bu örnekte, ESP32 veya ESP32S2 çip modelini, çipte kaç çekirdek olduğunu ve çip ID seri port ekrane yazdırmaktadır. 
- *   
- */	
+ *   Bu örnekte, Deneyap Geliştirme kartlarının çip modelini, çipte kaç çekirdek olduğunu ve çip ID seri port ekrane yazdırmaktadır.  
+*/	
 uint32_t chipId = 0;
 
 void setup() {

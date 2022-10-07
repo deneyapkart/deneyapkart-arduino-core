@@ -3,10 +3,9 @@
  *  Örnekte çalınan ses dosyaları örneğin yer aldığı klasörün içinde yer almaktadır. 
  *  seri port ekrane yazılan sayıya karşılık gelen ses dosyasını çalmaktadır.
  *  Oynatılan seslerin khz, sample değerleri farklıdır. 
- *  DENEYAP HOPARLÖR ile kullanılabilir.
  *  
- *  DENEYAP MİNİ kartını desteklememektedir. 
- */
+ *  Deneyap Mini ve Deneyap Kart G kartını desteklememektedir. 
+*/
 
 #include <SPI.h>
 #include <SD.h>
@@ -25,8 +24,10 @@ File myFile;
 void setup() {
   Serial.begin(115200);
   SPI.begin();
+
 /* SPI.begin(D15, D9, D14, D13);  //DENEYAP KART'ta bu pinler ile kullanın
    pinMode(D9,INPUT_PULLUP);      // SCK: D15, MISO: D9, MOSI: D14, SS: D13  */
+   
   if (!SDCard.begin()) {
     Serial.println("SD bağlantısı başarısız!");
   }else      

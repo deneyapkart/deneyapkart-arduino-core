@@ -184,6 +184,9 @@ public:
   bool will(const char *topic, const char *payload, uint8_t qos = 0,
             uint8_t retain = 0);
 
+  // Sets the KeepAlive Interval, in seconds.
+  bool setKeepAliveInterval(uint16_t keepAlive);
+
   // Publish a message to a topic using the specified QoS level.  Returns true
   // if the message was published, false otherwise.
   bool publish(const char *topic, const char *payload, uint8_t qos = 0);
@@ -250,6 +253,7 @@ protected:
   const char *will_payload;
   uint8_t will_qos;
   uint8_t will_retain;
+  uint16_t keepAliveInterval;    // MQTT KeepAlive time interval, in seconds
   uint8_t buffer[MAXBUFFERSIZE]; // one buffer, used for all incoming/outgoing
   uint16_t packet_id_counter;
 
@@ -262,7 +266,7 @@ private:
   uint8_t connectPacket(uint8_t *packet);
   uint8_t disconnectPacket(uint8_t *packet);
   uint16_t publishPacket(uint8_t *packet, const char *topic, uint8_t *payload,
-                         uint16_t bLen, uint8_t qos);
+                         uint16_t bLen, uint8_t qos, uint16_t maxPacketLen = 0);
   uint8_t subscribePacket(uint8_t *packet, const char *topic, uint8_t qos);
   uint8_t unsubscribePacket(uint8_t *packet, const char *topic);
   uint8_t pingPacket(uint8_t *packet);
@@ -315,6 +319,8 @@ public:
   SubscribeCallbackIOType callback_io;
 
   AdafruitIO_MQTT *io_mqtt;
+
+  bool new_message;
 
 private:
   Adafruit_MQTT *mqtt;

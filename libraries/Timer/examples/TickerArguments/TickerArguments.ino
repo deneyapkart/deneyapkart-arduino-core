@@ -1,13 +1,11 @@
 /*
  *   TickerArguments örneği,
  *   Bu örnekte Timer ile LED yanıp sönmektedir.
- *   
- *   Deneyap Kart 1A ile bu uygulamayı gerçekleştirilmek istenirse harici ledler bağlanmalıdır.
- * 
 */
 #include <Ticker.h>
 
-#define LED_PIN LEDB
+#define LED_PIN   LEDB  // Deneyap Kart ve Deneyap Mini Led pini 
+//#define LED_PIN   D0  // Deneyap Kart 1A ve Deneyap Kart G için harici pin takılmalıdır
 
 Ticker tickerSetHigh;
 Ticker tickerSetLow;

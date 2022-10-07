@@ -3,13 +3,10 @@
  *   SDmagnetikOkumaZamani uygulamasında RTC ve SD Kart modülleri kullanılmıştır. 
  *   
  *   Uygulamada SD karta YeniDosya.txt uzantılı dosya oluşturmaktadır. 
- *   ESP32 mikrodenetleyicisine yaklaştırılan mıknatıs belirlenen değer üstünde mıknatıs değeri okuyunca
- *   SD karttaki YeniDosya.txt içine "Magnetik Algılandı: xx:xx xx:xx:xxxx ....." yazdırmaktadır.  
- *   
- *   Deneyap Mini kartındaki mikrodenetleyici ESP32-S2 magnetik okuma özelliği bulunmamaktadır.
- *   Deneyap Mini kartı ile gerçekleştirilmek istenirse harici magnetik alan sensörü bağlanmalıdır ve gerekli değişiklikler yapılmalıdır.
- *     
- */
+ *   Deneyap Kart ve Deneyap Kart 1A mikrodenetleyicisine yaklaştırılan mıknatıs belirlenen değer üstünde mıknatıs değeri okuyunca
+ *   SD karttaki YeniDosya.txt içine "Magnetik Algılandı: xx:xx xx:xx:xxxx ....." yazdırmaktadır.
+ *   Deneyap Mini ve Deneyap Kart G kartındaki mikrodenetleyicilerinde dahili magnetik alan sensörü yoktur bu yüzden magnetik okuma özelliği bulunmamaktadır.   
+*/
 #include "FS.h"
 #include "SD.h"
 #include "SPI.h"

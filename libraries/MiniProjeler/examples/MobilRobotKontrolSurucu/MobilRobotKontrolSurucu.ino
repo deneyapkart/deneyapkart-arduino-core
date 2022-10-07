@@ -1,9 +1,9 @@
 /*
- * MobilRobotSurucu örneği
- * u örnek uygulama ile MobilRobotKontrolAkselerometre örneği ile iki Deneyap Kart birbiriyle haberleşmektedir. 
- * MobilRobotSurucu örneğinde diğer Deneyap Karttan gelen verilere göre motorlar hareket etmektedir.
- * 
- */
+ *  MobilRobotSurucu örneği
+ *  Bu örnek uygulama ile MobilRobotKontrolAkselerometre örneği ile iki Deneyap geliştirme kartı haberleşmektedir. 
+ *  MobilRobotKontrolAkselerometre örneğinden gelen veriye göre Deneyap geliştirme kartındaki motorlar hareket etmektedir.
+ *  Deneyap Kart 1A ve Deneyap Kart G için led fonksiyonları değiştirilmedir. 
+*/
 #include "WiFi.h"
 #include "esp_now.h"
 

@@ -2,10 +2,8 @@
  *  Bluetooth BLE_server örneği,
  *  Bu uygulama örneği için telefona BLE Scanner, nRF Connect veya LightBlue gibi bir uygulama indirilmesi gerekmektedir. 
  *  Telefondaki uygulama ile Deneyap Kart bağlantısını gerçekleştirildikten sonra uygulamada "Merhaba Dünya" yazısını yazdırmaktadır.
- *  
- *  Deneyap Mini Kartında dahili Bluetooth bulunmamaktadır.
- *     
- */
+ *  Deneyap Mini Kartında dahili Bluetooth haberleşme özelliği bulunmamaktadır.    
+*/
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
