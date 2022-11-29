@@ -1,1 +1,0 @@
-MobilRobotKontrolAkselerometre örnek uygulaması Deneyap Kartı ve Deneyap Mini Kartı desteklemektedir. Bu örnek uygulama ile MobilRobotSurucu örneği ile iki Deneyap Kart birbiriyle haberleşmektedir. MobilRobotKontrolAkselerometre örneğinde yer alan IMU ile akselerometreden veriler alınıp diğer Deneyap Karta göndermektedir. 

@@ -24,7 +24,7 @@
 #define D13	(uint8_t)(12)
 #define D14	(uint8_t)(14)
 #define D15	(uint8_t)(27)
-#elif defined (ARDUINO_DYM)
+#elif defined (ARDUINO_DYM) || defined (ARDUINO_DYMv2)
 #define D0	(uint8_t)(44)
 #define D1	(uint8_t)(43)
 #define D2	(uint8_t)(42)
@@ -50,6 +50,23 @@
 #define D4	(uint8_t)(8)
 #define D5	(uint8_t)(7)
 #define D6	(uint8_t)(2)
+#elif defined (ARDUINO_DYDK1Av2)
+#define D0	(uint8_t)(1)
+#define D1	(uint8_t)(2)
+#define D2	(uint8_t)(43)
+#define D3	(uint8_t)(44)
+#define D4	(uint8_t)(42)
+#define D5	(uint8_t)(41)
+#define D6	(uint8_t)(40)
+#define D7	(uint8_t)(39)
+#define D8	(uint8_t)(38)
+#define D9	(uint8_t)(48)
+#define D10	(uint8_t)(47)
+#define D11	(uint8_t)(21)
+#define D12	(uint8_t)(0)
+#define D13	(uint8_t)(10)
+#define D14	(uint8_t)(3)
+#define D15	(uint8_t)(8)
 #endif
 
 // Analog input pins
@@ -60,7 +77,7 @@
 #define A3	(uint8_t)(35)
 #define A4	(uint8_t)(32)
 #define A5	(uint8_t)(33)
-#elif defined (ARDUINO_DYM)
+#elif defined (ARDUINO_DYM) || defined (ARDUINO_DYMv2)
 #define A0	(uint8_t)(8)
 #define A1	(uint8_t)(9)
 #define A2	(uint8_t)(10)
@@ -75,22 +92,31 @@
 #define A3	(uint8_t)(4)
 #define A4	(uint8_t)(5)
 #define A5	(uint8_t)(6)
+#elif defined (ARDUINO_DYDK1Av2)
+#define A0	(uint8_t)(4)
+#define A1	(uint8_t)(5)
+#define A2	(uint8_t)(6)
+#define A3	(uint8_t)(7)
+#define A4	(uint8_t)(15)
+#define A5	(uint8_t)(16)
+#define A6	(uint8_t)(17)
+#define A7	(uint8_t)(18)
 #endif
 
 // Analog output pins
 #if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A)
 #define DAC1	(uint8_t)(25)
 #define DAC2	(uint8_t)(26)
-#elif defined (ARDUINO_DYM)
+#elif defined (ARDUINO_DYM) || defined (ARDUINO_DYMv2)
 #define DA0	D12
 #define DA1	D11
 #endif
 
 // I2C pins
-#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A)
+#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYDK1Av2)
 #define SDA	D10
 #define SCL	D11
-#elif defined (ARDUINO_DYM)
+#elif defined (ARDUINO_DYM) || defined (ARDUINO_DYMv2)
 #define SD	D8
 #define SC	D7
 #elif defined (ARDUINO_DYG)
@@ -99,12 +125,12 @@
 #endif
 
 // SPI pins
-#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A)
+#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYDK1Av2)
 #define MOSI	D7
 #define MISO	D6
 #define SCK	D5
 #define SS	D4
-#elif defined (ARDUINO_DYM)
+#elif defined (ARDUINO_DYM) || defined (ARDUINO_DYMv2)
 #define MO	D4
 #define MI	D5
 #define MC	D6
@@ -117,10 +143,10 @@
 #endif
 
 // UART pins
-#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A)
+#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYDK1Av2)
 #define TX	D2
 #define RX	D3
-#elif defined (ARDUINO_DYM)
+#elif defined (ARDUINO_DYM) || defined (ARDUINO_DYMv2)
 #define TX	D0
 #define RX	D1
 #elif defined (ARDUINO_DYG)
@@ -129,10 +155,10 @@
 #endif
 
 // PWM pins
-#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A)
+#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYDK1Av2)
 #define PWM0	D0
 #define PWM1	D1
-#elif defined (ARDUINO_DYM)
+#elif defined (ARDUINO_DYM) || defined (ARDUINO_DYMv2)
 #define P0	D2
 #define P1	D3
 #elif defined (ARDUINO_DYG)
@@ -149,7 +175,7 @@
 #define T3	D14
 #define T4	D13
 #define T5	D12
-#elif defined (ARDUINO_DYM)
+#elif defined (ARDUINO_DYM) || defined (ARDUINO_DYMv2)
 #define T0	A0
 #define T1	A1
 #define T2	A2
@@ -174,10 +200,25 @@
 #define CAMXC	A4
 #define CAMH	A1
 #define CAMV	A0 
+#elif defined (ARDUINO_DYDK1Av2)
+#define CAMSD	A0 //4
+#define CAMSC	A1 //5
+#define CAMD2	D5 //41
+#define CAMD3	D1 //2
+#define CAMD4	D0 //1
+#define CAMD5	D4 //42
+#define CAMD6	D6 //40
+#define CAMD7	D8 //38
+#define CAMD8	A6 //17
+#define CAMD9	A4 //15
+#define CAMPC	D7 //39
+#define CAMXC	A5 //16
+#define CAMH	A3 //7
+#define CAMV	A2 //6
 #endif
 
-#if defined (ARDUINO_DYDK)
 // Microphone pins
+#if defined (ARDUINO_DYDK)
 #define MICD	D13
 #define MICC	D12
 
@@ -186,12 +227,17 @@
 #define IMUSC	D11
 #endif
 
-#if defined (ARDUINO_DYDK1A)
 //SD Card pins
+#if defined (ARDUINO_DYDK1A)
 #define SDMI	D9
 #define SDMO	D14
 #define SDCS	D13
 #define SDCK	D15
+#elif defined (ARDUINO_DYDK1Av2)
+#define SDMI	14
+#define SDMO	12
+#define SDCS	11
+#define SDCK	13
 #endif
 
 // Built-in leds and button
@@ -215,6 +261,14 @@
 #define RGBLED	D3
 #define GPKEY	D2
 #define BOOT	D2
+#elif defined (ARDUINO_DYMv2)
+#define RGBLED	D15
+#define GPKEY	D13
+#define BT		D13
+#elif defined (ARDUINO_DYDK1Av2)
+#define RGBLED	D9
+#define GPKEY	D12
+#define BT		D12
 #endif
 #define BUILTIN_KEY	GPKEY
 
@@ -232,7 +286,7 @@ void writeGreenLed(uint8_t state);
 void writeBlueLed(uint8_t state);
 uint8_t readGenPurButton(void);
 
-#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A)
+#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYDK1Av2)
 void cameraInit(void);
 // Function declaration for CameraStream sketch defined in "app_httpd.cpp"
 void startCameraServer();

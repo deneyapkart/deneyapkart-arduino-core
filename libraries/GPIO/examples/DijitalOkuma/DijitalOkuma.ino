@@ -95,10 +95,10 @@ void loop() {
       writeBlueLed(LOW);
       break;
 
-    #elif defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYG)   // DENEYAP KART 1A ve DENEYAP KART G kartı kullanılıyorsa 
+    #else                             // Diğer Deneyap geliştirme kartları kullanılıyorsa 
      case KIRMIZI:
       delay(1);
-      neopixelWrite(RGBLED,32,0,0);                           // Parlaklık değeri 32 seçilmiştir. 0-255 arası parlaklık değeri verilmektedir.
+      neopixelWrite(RGBLED,32,0,0);   // Parlaklık değeri 32 seçilmiştir. 0-255 arası parlaklık değeri verilmektedir.
       break;
 
     case YESIL:

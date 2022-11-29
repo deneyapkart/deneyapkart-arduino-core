@@ -28,7 +28,7 @@ bool SDFS::begin(uint8_t ssPin, SPIClass &spi, uint32_t frequency, const char * 
         return true;
     }
     
-    #if defined (ARDUINO_DYDK1A)
+    #if defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYDK1Av2)
         spi.begin(SDCK,SDMI,SDMO,SDCS);
         pinMode(SDMI,INPUT_PULLUP);
     #else

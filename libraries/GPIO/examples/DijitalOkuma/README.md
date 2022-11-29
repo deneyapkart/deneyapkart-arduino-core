@@ -1,1 +1,0 @@
-DijitalOkuma uygulama örneği Deneyap Kart ve Deneyap Mini Kartını da desteklemektedir. Kartın üzerinde yer alan "But" butonuna basıldığında karta bulunan RGB ledimiz sırasıyla Kırmızı, Yeşil, Mavi, Turuncu, Magenta, Cyan, Beyaz renklerinde yanacaktır ve sonraki buton basımında led sönmektedir. Bu işlem bir döngü şekilde her butona basımında devam etmektedir.

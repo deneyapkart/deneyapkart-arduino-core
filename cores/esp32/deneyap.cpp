@@ -237,7 +237,7 @@ uint8_t readGenPurButton(void)
 //   return readPin(GPIO24);
 // }
 
-#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A)
+#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYDK1Av2)
 /**
   * @brief  Configure and initialize camera
   * @param  None

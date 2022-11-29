@@ -1,8 +1,8 @@
 /*
-*   ServoAnalogOkuma örneği,
+*   PotServoMotorKontrol örneği,
 *   A0 pinine bağlanan potansiyonometre değerine göre D9 pinine bağlanan servo motor mili dönmektedir. 
 */
-#include "Deneyap_Servo.h"          // Deneyap Servo kütüphanesinin eklenmesi
+#include <Deneyap_Servo.h>          // Deneyap Servo kütüphanesinin eklenmesi
    
 Servo myservo;                      // Servo için class tanımlanması
 

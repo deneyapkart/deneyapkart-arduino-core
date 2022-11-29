@@ -2,7 +2,7 @@
 *   ServoMotor örneği,
 *   D9 pinine bağlanan servo motorun mili 60 derece dönmektedir.
 */
-#include "Deneyap_Servo.h"      // Deneyap Servo kütüphanesi eklenmesi
+#include <Deneyap_Servo.h>      // Deneyap Servo kütüphanesi eklenmesi
  
 Servo myservo;                  // Servo için class tanımlanması
 

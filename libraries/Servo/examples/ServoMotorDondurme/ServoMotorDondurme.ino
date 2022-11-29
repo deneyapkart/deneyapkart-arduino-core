@@ -1,8 +1,8 @@
 /*
-*   ServoMotorSupurge örneği, 
+*   ServoMotorDondurme örneği, 
 *   D9 pinine bağlanan servo motorun milinin 0-180 derece aralığında 15 derecelik adımlarla ileri geri dönmektedir. 
 */
-#include "Deneyap_Servo.h"                // Deneyap Servo kütüphanesi eklenmesi
+#include <Deneyap_Servo.h>                // Deneyap Servo kütüphanesi eklenmesi
  
 Servo myservo;                            // Servo için class tanımlanması
 

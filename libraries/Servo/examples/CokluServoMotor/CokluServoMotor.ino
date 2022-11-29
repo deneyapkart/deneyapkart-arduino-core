@@ -1,9 +1,9 @@
 /*
-*   UcServoMotor örneği,
+*   CokluServoMotor örneği,
 *   3 adet servo motoru döndürmektedir. 1. servo motor mili 30 derece, 2. servo motor mili 60 derece, 3. servo motor mili 90 derece döndürmektedir.
 *   Birden fazla servo motor bağlanıldığında attach(pin, channel) fonksiyonu içinde farklı kanal(channel) ayarlanmalıdır. 
 */
-#include "Deneyap_Servo.h"      // Deneyap Servo kütüphanesi eklenmesi 
+#include <Deneyap_Servo.h>      // Deneyap Servo kütüphanesi eklenmesi 
  
 Servo servo1;                   // 1. servo motor için class tanımlanması
 Servo servo2;                   // 2. servo motor için class tanımlanması

@@ -1,1 +1,0 @@
-RgbYakSondur uygulama örneği Deneyap Kart ve Deneyap Mini Kartını desteklemektedir. Kartın üzerinde yer alan RGB led belirlenen 400 ms gecikme süresiyle sırasıyla Kırmızı, Yeşil, Mavi, Sarı, Magenta, Cyan ve Beyaz renklerinde yanıp sönmektedir. 
