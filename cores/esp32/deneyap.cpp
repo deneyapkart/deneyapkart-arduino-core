@@ -265,16 +265,31 @@ void cameraInit(void)
   config.pin_pwdn       = -1;
   config.pin_reset      = -1;
   config.xclk_freq_hz   = 15000000;
+  config.frame_size     = FRAMESIZE_UXGA;
   config.pixel_format   = PIXFORMAT_JPEG;
-  //init with high specs to pre-allocate larger buffers
-  if(psramFound()){
-    config.frame_size   = FRAMESIZE_UXGA;
-    config.jpeg_quality = 10;
-    config.fb_count     = 2;
+  //config.pixel_format = PIXFORMAT_RGB565; // for face detection/recognition
+  config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
+  config.fb_location = CAMERA_FB_IN_PSRAM;
+  config.jpeg_quality = 12;
+  config.fb_count = 1;
+  
+  //init with high specs to pre-allocate larger buffers                     for larger pre-allocated frame buffer.
+  if(config.pixel_format == PIXFORMAT_JPEG){
+    if(psramFound()){
+      config.jpeg_quality = 10;
+      config.fb_count = 2;
+      config.grab_mode = CAMERA_GRAB_LATEST;
+    } else {
+      // Limit the frame size when PSRAM is not available
+      config.frame_size = FRAMESIZE_SVGA;
+      config.fb_location = CAMERA_FB_IN_DRAM;
+    }
   } else {
-    config.frame_size   = FRAMESIZE_SVGA;
-    config.jpeg_quality = 12;
-    config.fb_count     = 1;
+    // Best option for face detection/recognition
+    config.frame_size = FRAMESIZE_240X240;
+#if CONFIG_IDF_TARGET_ESP32S3
+    config.fb_count = 2;
+#endif
   }
 
   // Camera init

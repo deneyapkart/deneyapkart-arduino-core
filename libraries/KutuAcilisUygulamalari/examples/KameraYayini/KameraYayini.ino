@@ -6,7 +6,8 @@
 /*
  *   Deneyap Elektronik Geliştirme Seti'nin kutu açılış uygulamasıdır.
  *   Bu örnek yüklendikten sonra kablosuz ağa bağlanmaya uygun herhangi bir cihaz(mobil, tablet, bilgisayar vb.) kullanılarak bu ağa dahil olunur. 
- *   seri port ekrane yazılan adrese tarayıcıdan girilir ve görüntü başlatılır.
+ *   seri port ekrana yazılan adrese tarayıcıdan girilir ve görüntü başlatılır.
+ *   Bu örnek kamera konnektörü dahili olan Deneyap Geliştirme Kartlarını desteklemektedir.
  * 
  */
 #include <WiFi.h>

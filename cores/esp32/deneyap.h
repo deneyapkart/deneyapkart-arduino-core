@@ -201,20 +201,20 @@
 #define CAMH	A1
 #define CAMV	A0 
 #elif defined (ARDUINO_DYDK1Av2)
-#define CAMSD	A0 //4
-#define CAMSC	A1 //5
-#define CAMD2	D5 //41
-#define CAMD3	D1 //2
-#define CAMD4	D0 //1
-#define CAMD5	D4 //42
-#define CAMD6	D6 //40
-#define CAMD7	D8 //38
-#define CAMD8	A6 //17
-#define CAMD9	A4 //15
-#define CAMPC	D7 //39
-#define CAMXC	A5 //16
-#define CAMH	A3 //7
-#define CAMV	A2 //6
+#define CAMSD	A0
+#define CAMSC	A1
+#define CAMD2	D5
+#define CAMD3	D1
+#define CAMD4	D0
+#define CAMD5	D4
+#define CAMD6	D6
+#define CAMD7	D8
+#define CAMD8	A6
+#define CAMD9	A4
+#define CAMPC	D7
+#define CAMXC	A5
+#define CAMH	A3
+#define CAMV	A2
 #endif
 
 // Microphone pins

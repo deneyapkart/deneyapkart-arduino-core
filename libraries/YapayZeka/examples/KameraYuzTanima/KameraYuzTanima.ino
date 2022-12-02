@@ -1,9 +1,9 @@
 /*
  *  KameraYuzTanima örneği,
- *  Bu örnek yüklendikten sonra seri port ekrande yazılan adrese tarayıcıdan girilir ve görüntü başlatılır.
+ *  Bu örnek WiFi ağı ve şifresini girdikten sonra ağa bağlanacaktır. 
+ *  WiFi ağına bağlandıktan sonra seri port ekranından görüntünün yayınlanacağı IP adresi yazılacaktır.
  * 
- *  Deneyap Mini Kartın kamera bağlantısı olmadığı için bu örnek Deneyap Mini Kartını desteklememektedir.
- *  
+ *  Bu örnek kamera konnektörü dahili olan Deneyap Geliştirme Kartlarını desteklemektedir.  
 */
 #include "WiFi.h"
 
