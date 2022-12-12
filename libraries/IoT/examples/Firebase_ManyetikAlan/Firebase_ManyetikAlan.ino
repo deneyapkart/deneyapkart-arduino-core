@@ -3,7 +3,6 @@
  *   Bu örnekte Deneyap Kart ve Deneyap Kart 1A dahili manyetik alan sensöründen veri gönderilmiştir. 
  *   Deneyap Mini ve Deneyap Kart G kartındaki mikrodenetleyicilerinde dahili magnetik alan sensörü yoktur bu yüzden magnetik okuma özelliği bulunmamaktadır.
  *   Bu uygulama Deneyap Kart G kartı ile gerçekleştirilmek istenirse harici magnetik alan sensörü bağlanmalıdır ve gerekli değişiklikler yapılmalıdır.
- *   Deneyap Mini kartında dahili Wi-Fi haberleşme özelliği yoktur.
 */
 #include <WiFi.h>
 #include <Firebase_ESP_Client.h>
