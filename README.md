@@ -58,7 +58,7 @@ To report any issue/bug/problem etc., please make sure you have searched the sim
 ![PinoutDYDK_ENG](docs/DeneyapKart1A_ExtendedPinOutEng_mpv1.0.png)
 
 ### Deneyap Kart G Pinout
-![PinoutDYDK_ENG](docs/DeneyapKartG_PinOutEng_mpv1.0)
+![PinoutDYDK_ENG](docs/DeneyapKartG_PinOutEng_mpv1.0.png)
 
 ### Deneyap Kart G Extended Pinout
-![PinoutDYDK_ENG](docs/DeneyapKartG_ExtendedPinOutEng_mpv1.0)
+![PinoutDYDK_ENG](docs/DeneyapKartG_ExtendedPinOutEng_mpv1.0.png)
