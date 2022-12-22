@@ -1,12 +1,11 @@
 /*
  *   Adreslenebilir RGB LED ile Kırmızı, Yeşil, Mavi, Beyaz renklerini yakma örneği,
  *   
- *   Bu örnekte Deneyap Kart 1A ve Deneyap Kart G üzerindeki dahili RGB LED sırasıyla Kırmızı, Yeşil, Mavi, Beyaz 
+ *   Bu örnekte Adreslenelibilir RGB LED dahili olan Deneyap Geliştirme Kartlarındaki RGB LED sırasıyla Kırmızı, Yeşil, Mavi, Beyaz 
  *   renklerini 1 saniye aralıklarla yakmaktadır.
  *   
- *   Bu uygulama Deneyap Kart 1A ve Deneyap Kart G ile çalışmaktadır. 
  *   Deneyap Kart ve Deneyap Mini Kart ile çalışması için harici Adreslenelibilir RGB LED bağlanması gerekmektedir.
- */
+*/
 #include "RGB5050.h"
 
 RGB5050 rgb;

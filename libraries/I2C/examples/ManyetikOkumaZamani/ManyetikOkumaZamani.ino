@@ -2,13 +2,11 @@
  *   MagnetikOkumaZamani örneği, 
  *   MagnetikOkumaZamani uygulamasında RTC modülü kullanılmıştır. 
  *    
- *   ESP32 mikrodenetleyicisine yaklaştırılan mıknatıs belirlenen değer üstünde mıknatıs değeri okuyunca
- *   seri port ekrane "Magnetik Algılandı: xx:xx xx:xx:xxxx ....." yazdırmaktadır.  
+ *   Bu örnekte Deneyap Kart ve Deneyap Kart 1A kartlarındaki mikrodenetleyiye yaklaştırılan mıknatıs belirlenen değer üstünde mıknatıs değeri okuyunca alınan veriler
+ *   seri port ekranına "Magnetik Algılandı: xx:xx xx:xx:xxxx ....." yazdırmaktadır.  
  *   
- *   DENEYAP MİNİ ve DENEYAP KART G kartındaki mikrodenetleyicilerinde dahili magnetik alan sensörü yoktur bu yüzden magnetik okuma özelliği bulunmamaktadır.
- *   DENEYAP MİNİ ve DENEYAP KART G kartı ile gerçekleştirilmek istenirse harici magnetik alan sensörü bağlanmalıdır ve gerekli değişiklikler yapılmalıdır.
- *     
- */
+ *   Bu örnek uygulama diğer Deneyap Geliştirme Kartları kullanılırsa harici magnetik alan sensörü bağlanılmalı ve kodda gerekli değişiklikler yapılmalıdır.   
+*/
 #include "Wire.h"
 #include "RTClib.h"
 

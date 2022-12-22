@@ -5,8 +5,7 @@
  */
 #define PWM_FREQ  5000                                  // PWM frekansi
 #define PWM_CH    0                                     // PWM kanal secimi (0-15)
-#define LED_PIN   PWM0                                  // Deneyap Kart, Deneyap Kart 1A, Deneyap Kart G için Motor PWM pini (PWM0-PWM1) 
-//#define LED_PIN P0                                    // Deneyap Mini için Motor PWM pini (P0-P1) 
+#define LED_PIN   PWM0                                  // PWM pini
 #define PWM_RES   8                                     // PWM cozunurlugu (1-16 bit) 
 
 uint8_t ledBrightness = 0;                              // Ledin parlaklik ayari (0-255)

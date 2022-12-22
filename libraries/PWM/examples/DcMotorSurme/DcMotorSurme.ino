@@ -8,8 +8,7 @@
 #define PWM_CH    0                                     // PWM kanali (0-15)
 #define PWM_RES   8                                     // PWM cozunurlugu (1-16 bits)
 
-#define MOT_PIN   PWM0                                  // Deneyap Kart, Deneyap Kart 1A, Deneyap Kart G için Motor PWM pini (PWM0-PWM1) 
-//#define MOT_PIN   P0                                  // Deneyap Mini için Motor PWM pini (P0-P1) 
+#define MOT_PIN   PWM0                                  // PWM pini
 #define MOT_DIR1  D4                                    // Motor yon secme pin1
 #define MOT_DIR2  D5                                    // Motor yon secme pin2
 

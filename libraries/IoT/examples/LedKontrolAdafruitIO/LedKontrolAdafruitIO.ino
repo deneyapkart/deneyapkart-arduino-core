@@ -6,10 +6,7 @@
  *
  *    Deneyap Geliştirme Kartlarındaki dahili LED durumu AdafruitIO web tabanlı bulut ekranından konrol edilmektedir.
  *    Aynı zamanda Deneyap Geliştirme Kartlarındaki dahili buton durumu AdafruitIO web tabanlı bulut ekranında gözlemlenmektedir.
- *    
- *    Bu uygulama örneği için "Adafruit MQTT Library by Adafruit" kütüphanesi indirilmelidir.  -> https://github.com/adafruit/Adafruit_MQTT_Library <-
- *    Bu uygulama örneği AdafruitIO kütüphanesi 2.5.2 versiyonu ile yazılmıştır.
- */
+*/
 #include "WiFi.h"
 #include <Adafruit_MQTT.h> // Adafruit MQTT Library kütüphanesi indirilmelidir
 #include <Adafruit_MQTT_Client.h>

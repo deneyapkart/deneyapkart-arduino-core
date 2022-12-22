@@ -17,17 +17,15 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   Serial.println(myData.button);
   Serial.println();
   if (myData.button == 0) {
-  digitalWrite(LEDB,HIGH); // DENEYAP KART veya DENEYAP MİNİ kartı kullanılıyorsa
-  // neopixelWrite(RGBLED,0,0,32); // DENEYAP KART 1A ve DENEYAP KART G kartı kullanılıyorsa
+  digitalWrite(LED_BUILTIN, HIGH);
  }else{
-  digitalWrite(LEDB,LOW); // DENEYAP KART veya DENEYAP MİNİ kartı kullanılıyorsa
-  //neopixelWrite(RGBLED,0,0,0);// DENEYAP KART 1A ve DENEYAP KART G kartı kullanılıyorsa
+  digitalWrite(LED_BUILTIN, LOW);
  }
 }
 
 void setup() {
   Serial.begin(115200);
-  pinMode(LEDB,OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
   WiFi.mode(WIFI_STA);
 
   if (esp_now_init() != ESP_OK) {

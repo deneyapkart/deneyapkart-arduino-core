@@ -1,6 +1,6 @@
 /*
  *   Adreslenebilir RGB LED ile gökkuşağı renkleri yakma örneği,
- *   Bu örnekte Deneyap Kart 1A ve Deneyap Kart G üzerindeki dahili RGB LED ile gökkuşağı renklerini yakılmaktadır.
+ *   Bu örnekte Adreslenelibilir RGB LED dahili olan Deneyap Geliştirme Kartlarındaki RGB LED ile gökkuşağı renkleri yakmaktadır.
  *   
  *   Deneyap Kart ve Deneyap Mini Kart ile çalışması için harici Adreslenelibilir RGB LED bağlanması gerekmektedir.   
 */

@@ -18,7 +18,7 @@ void setup() {
 void loop() {
   int potValue = analogRead(POT_PIN);   // Potansiyonometrenin değerini okunması
 
-  /* Deneyap Mini veya Deneyap Mini v2 kullanılırsa ADC okuma aralığını 0-8191 olarak değiştirin */
+  /* Deneyap Mini Kartları için 4095=>8191 olarak degistirilmelidir. */
   int motorPosition = map(potValue, 0, 4095, 0, STEPS_PER_REV);   // Potansiyonometrenin değerleri ile step motorun konumu arasında bir orantı kurulması
   Serial.printf("Step motorumuz %d adım ilerliyor.\n",  motorPosition);
   motor.step(motorPosition);    // Step motorunu belirtilen konuma taşınması

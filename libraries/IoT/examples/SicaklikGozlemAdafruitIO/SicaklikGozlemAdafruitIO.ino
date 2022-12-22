@@ -3,12 +3,8 @@
  *   Bu örnekte AdafruitIO web uygulaması kullanılmaktadır.
  *   Deneyap Kart'taki dahili IMU'dan alınan sıcaklık verileri AdafruitIO bulut web uygulamasıda gözlenmektedir.
  *   Bununla birlikte AdafruitIO bulut web uygulamasına eklenen buton ile karttaki dahili LED kontrol edilebilmektedir.
- *   Bu örnek uygulama diğer Deneyap Geliştirme Kartları kullanılırsa harici sıcaklık sensörü bağlanılmalı ve kodda gerekli değişiklikler yapılmalıdır.
- *    
- *   Bu uygulama örneği için "Adafruit MQTT Library by Adafruit" kütüphanesi indirilmelidir.  -> https://github.com/adafruit/Adafruit_MQTT_Library <-
- *   Bu uygulama örneği AdafruitIO kütüphanesi 2.5.2 versiyonu ile yazılmıştır.
- */
- 
+ *   Bu örnek uygulama diğer Deneyap Geliştirme Kartları kullanılırsa harici sıcaklık sensörü bağlanılmalı ve kodda gerekli değişiklikler yapılmalıdır.   
+*/ 
 #include "lsm6dsm.h"  // Deneyap Kart dahili IMU kütüphanesinin eklenmesi
 #include "WiFi.h"
 #include <Adafruit_MQTT.h>
