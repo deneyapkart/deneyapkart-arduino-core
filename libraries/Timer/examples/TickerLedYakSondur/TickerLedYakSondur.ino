@@ -5,7 +5,7 @@
 #include <Ticker.h>
 
 #define LED_PIN   LEDB  // Deneyap Kart ve Deneyap Mini Led pini 
-//#define LED_PIN   D0  // Deneyap Kart 1A ve Deneyap Kart G için harici pin takılmalıdır
+//#define LED_PIN   D0  // Diğer Deneyap Geliştirme kartları harici LED takılmalıdır
 
 Ticker blinker;
 Ticker toggler;

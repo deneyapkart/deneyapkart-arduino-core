@@ -1,11 +1,10 @@
 /* 
- *   SDmagnetikOkumaZamani örneği, 
- *   SDmagnetikOkumaZamani uygulamasında RTC ve SD Kart modülleri kullanılmıştır. 
+ *   SDmaynetikOkumaZamani örneği, 
+ *   SDmaynetikOkumaZamani uygulamasında RTC ve SD Kart modülleri kullanılmıştır. 
  *   
- *   Uygulamada SD karta YeniDosya.txt uzantılı dosya oluşturmaktadır. 
- *   Deneyap Kart ve Deneyap Kart 1A mikrodenetleyicisine yaklaştırılan mıknatıs belirlenen değer üstünde mıknatıs değeri okuyunca
- *   SD karttaki YeniDosya.txt içine "Magnetik Algılandı: xx:xx xx:xx:xxxx ....." yazdırmaktadır.
- *   Deneyap Mini ve Deneyap Kart G kartındaki mikrodenetleyicilerinde dahili magnetik alan sensörü yoktur bu yüzden magnetik okuma özelliği bulunmamaktadır.   
+ *   Bu örnekte Deneyap Kart ve Deneyap Kart 1A dahili manyetik alan sensöründen alınan maynetik alan verileri seri port ekranına yazdırmaktadır. 
+ *   Alınan bu veriler aynı zamanda SD karttaki YeniDosya.txt içine "Magnetik Algılandı: xx:xx xx:xx:xxxx ....." yazdırmaktadır.
+ *   Bu örnek uygulama diğer Deneyap Geliştirme Kartları kullanılırsa harici magnetik alan sensörü bağlanılmalı ve kodda gerekli değişiklikler yapılmalıdır.   
 */
 #include "FS.h"
 #include "SD.h"

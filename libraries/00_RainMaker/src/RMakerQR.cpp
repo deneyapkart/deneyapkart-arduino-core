@@ -3,7 +3,7 @@
 void printQR(const char *name, const char *pop, const char *transport)
 {
     if (!name || !pop || !transport) {
-        log_w("Cannot generate QR code payload. Data missing.");
+        log_w("QR kodu yüklemesi oluşturulamıyor. Veri eksik.");
         return;
     }
     char payload[150];
@@ -11,11 +11,11 @@ void printQR(const char *name, const char *pop, const char *transport)
                     ",\"pop\":\"%s\",\"transport\":\"%s\"}",
                     PROV_QR_VERSION, name, pop, transport);
     if(Serial){
-        Serial.printf("Scan this QR code from the ESP RainMaker phone app.\n");
+        Serial.printf("\nESP RainMaker telefon uygulamasından bu QR kodunu taratın.\n");
     }
     qrcode_display(payload);
     if(Serial){
-        Serial.printf("If QR code is not visible, copy paste the below URL in a browser.\n%s?data=%s\n", QRCODE_BASE_URL, payload);
+        Serial.printf("QR kodu görünür değilse, aşağıdaki URL'yi bir tarayıcıda kopyala yapıştırın.\n%s?data=%s\n\n", QRCODE_BASE_URL, payload);
     }
 }
 #endif

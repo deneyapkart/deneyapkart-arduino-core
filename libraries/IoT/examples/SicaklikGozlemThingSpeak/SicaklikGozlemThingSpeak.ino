@@ -1,7 +1,8 @@
 /*
- *   BulutSicaklikGozlem örneği,
- *   Bu örnekte ThingSpeak web uygulaması kullanılmaktadır. ThingSpeak web uygulamasına DENEYAP KART'taki dahili IMU'dan alınan sıcaklık webde eklenen textte veya grafik ile gözlenebilmektedir. 
- *   Bu uygulama Deneyap Kart 1A ve Deneyap Kart G Kartları ile gerçekleştirilmek istenirse harici sıcaklık sensörü bağlanmalıdır ve kodda gerekli değişiklikler yapılmalıdır. 
+ *   SicaklikGozlemThingSpeak örneği,
+ *   Bu örnekte ThingSpeak web uygulaması kullanılmaktadır.
+ *   Deneyap Kart'taki dahili IMU'dan alınan sıcaklık verileri ThingSpeak web uygulamasında gözlenebilmektedir. 
+ *   Bu örnek uygulama diğer Deneyap Geliştirme Kartları kullanılırsa harici sıcaklık sensörü bağlanılmalı ve kodda gerekli değişiklikler yapılmalıdır.
 */
 #include <WiFi.h>
 #include "HTTPClient.h"
@@ -19,10 +20,10 @@ WiFiClient client;
 const int httpPort = 80;
 
 void setup() {
-  IMU.begin();           // IMU ayarlari konfigure edildi
-  Serial.begin(115200);  // Seri haberlesme baslatildi
+  IMU.begin();           // IMU ayarlari konfigure edilmesi
+  Serial.begin(115200);  // Seri haberlesme baslatilmasi
 
-   /*WiFi bağlantısı gerçekleştiriliyor*/
+   /* Wi-Fi bağlantısı gerçekleştiriliyor*/
   Serial.print(ssid);
   Serial.print(" kablosuz agina baglaniliyor");
   WiFi.begin(ssid, password);
@@ -37,12 +38,12 @@ void setup() {
 }
 
 void loop() {
-    /*Sıcaklık değeri alınıyor ve seri port ekrane yazılıyor */
+    /* Sıcaklık değeri alınması ve seri port ekranına yazılması */
     sicaklik = IMU.readTempC();
     Serial.print("Sıcaklık: ");
     Serial.println(sicaklik);
     
-    /*Sıcaklık değeri ThingSpeak gönderiliyor */
+    /* Sıcaklık değeri ThingSpeak gönderilmesi */
     client.connect(server, httpPort);
     
     String data_to_send = apiKey;

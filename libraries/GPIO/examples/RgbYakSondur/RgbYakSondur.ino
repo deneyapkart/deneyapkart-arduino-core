@@ -1,5 +1,5 @@
 /*
- *   Dijital okuma örneği,
+ *   RgbYakSondur örneği,
  *   Deneyap Geliştirme Kartlarının üzerinde yer alan RGB led 400 milisaniye arayla Kırmızı, Yeşil, Mavi, Turuncu, Magenta, 
  *   Cyan, Beyaz renkleri yakmaktadır. 
 */
@@ -63,7 +63,7 @@ void loop() {
   digitalWrite(LEDB, LOW);      
   delay(gecikme_suresi);
   
-  #else                             // Diğer Deneyap geliştirme kartları kullanılıyorsa 
+  #else                             // Diğer Deneyap Geliştirme Kartları kullanılıyorsa 
   // Mavi
   neopixelWrite(RGBLED,0,0,64);     // Parlaklık değeri 64 seçilmiştir. 0-255 arası parlaklık değeri verilmektedir.
   delay(gecikme_suresi);

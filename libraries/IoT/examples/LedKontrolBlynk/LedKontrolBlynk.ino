@@ -1,8 +1,8 @@
 /*
  *    LedKontrolBlynk örneği,
  *    Bu örnekte Blynk 2 uygulaması kullanılmıştır. 
- *    Blynk web tabanlı bulut(https://blynk.cloud/) ve mobil uygulamasında(Blynk IoT) Deneyap Geliştirme Kartlarındaki LED kontrol edilmektedir.
- *    Aynı zamanda Deneyap Geliştirme Kartlarınadaki buton durumu Blynk web tabanlı bulut ve mobil uygulamalarında gözlemlenmektedir.
+ *    Blynk web tabanlı bulut(https://blynk.cloud/) ve mobil uygulamasında(Blynk IoT) Deneyap Geliştirme Kartlarındaki dahili LED kontrol edilmektedir.
+ *    Aynı zamanda Deneyap Geliştirme Kartlarınadaki dahili buton durumu Blynk web tabanlı bulut ve mobil uygulamalarında gözlemlenmektedir.
  *    
  *    Bu uygulama örneği için "Blynk by Volodymyr Shymanskyy" kütüphanesi indirilmelidir.  ->https://github.com/blynkkk/blynk-library <-
  *    Bu uygulama örneği Blynk kütüphanesi 1.0.1 versiyonu ile yazılmıştır.
@@ -11,8 +11,8 @@
 #define BLYNK_DEVICE_NAME   "*******"  // blynk.cloud web tabanlı bulut ekranında Device Info'da konfigurasyon ayarları yer almaktadır
 #define BLYNK_AUTH_TOKEN    "*******"  // blynk.cloud web tabanlı bulut ekranında Device Info'da konfigurasyon ayarları yer almaktadır
 
-#include <WiFi.h>
-#include <WiFiClient.h>
+#include "WiFi.h"
+#include "WiFiClient.h"
 #include <BlynkSimpleEsp32.h>
 
 char auth[] = BLYNK_AUTH_TOKEN;
@@ -24,8 +24,8 @@ BlynkTimer timer;
 
 /* Blynk uygulamasında Widget Box'da Button seçildi ve Switch Control(V0) virtual pinine bağlandı */
 BLYNK_WRITE(V0) {                     // Blynk web tabanlı bulut ya da mobil uygulamasında V0 bağlı butona basıldığında
-  int LedDurum = param.asInt();
-  if(LedDurum == 1) {
+  int LedState = param.asInt();
+  if(LedState == 1) {
     digitalWrite(LED_BUILTIN, HIGH);  // V0 virtual pinine bağlı butona basıldığında Deneyap Geliştirme Kartlarındaki LED'in yanması
   } else {
     digitalWrite(LED_BUILTIN, LOW);

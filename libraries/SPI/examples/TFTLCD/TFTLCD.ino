@@ -1,8 +1,10 @@
 /*
  *  TFTLCD örneği,
  *  TFTLCD ekrana yazı ve şekiller yazdırmaktadır.
- * 
- */
+
+ *  Bu uygulama örneği için "Adafruit ST7735 and ST7789 Library by Adafruit" kütüphanesi indirilmelidir.  ->https://github.com/adafruit/Adafruit-ST7735-Library<-
+ *  Bu uygulama örneği Adafruit ST7735 and ST7789 Library kütüphanesi 1.7.3 versiyonu ile yazılmıştır.
+*/
 #include <Adafruit_ST7735.h>   //ST7735 için donanıma özel kütüphane
 //#include <Adafruit_ST7789.h> //ST7789 için donanıma özel kütüphane
 #include <SPI.h>

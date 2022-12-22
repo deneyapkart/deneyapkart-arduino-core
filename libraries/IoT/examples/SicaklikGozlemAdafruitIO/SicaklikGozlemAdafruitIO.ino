@@ -1,9 +1,14 @@
 /*
- *   BulutSicaklikGozlem örneği,
- *   Bu örnekte Adafruit io web uygulaması kullanılmaktadır. Adafruit io web uygulamasıda DENEYAP KART'taki dahili IMU'dan alınan sıcaklık anlık olarak webde eklenen textte gözlenebilmektedir. 
- *   Bununla birlikte webte eklenen buton ile karttaki led kontrol edilebilmektedir.
- *   Bu uygulama Deneyap Kart 1A ve Deneyap Kart G Kartları ile gerçekleştirilmek istenirse harici sıcaklık sensörü bağlanmalıdır ve kodda gerekli değişiklikler yapılmalıdır.
-*/
+ *   SicaklikGozlemAdafruitIO örneği,
+ *   Bu örnekte AdafruitIO web uygulaması kullanılmaktadır.
+ *   Deneyap Kart'taki dahili IMU'dan alınan sıcaklık verileri AdafruitIO bulut web uygulamasıda gözlenmektedir.
+ *   Bununla birlikte AdafruitIO bulut web uygulamasına eklenen buton ile karttaki dahili LED kontrol edilebilmektedir.
+ *   Bu örnek uygulama diğer Deneyap Geliştirme Kartları kullanılırsa harici sıcaklık sensörü bağlanılmalı ve kodda gerekli değişiklikler yapılmalıdır.
+ *    
+ *   Bu uygulama örneği için "Adafruit MQTT Library by Adafruit" kütüphanesi indirilmelidir.  -> https://github.com/adafruit/Adafruit_MQTT_Library <-
+ *   Bu uygulama örneği AdafruitIO kütüphanesi 2.5.2 versiyonu ile yazılmıştır.
+ */
+ 
 #include "lsm6dsm.h"  // Deneyap Kart dahili IMU kütüphanesinin eklenmesi
 #include "WiFi.h"
 #include <Adafruit_MQTT.h>
@@ -24,7 +29,7 @@ Adafruit_MQTT_Publish sicaklik = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/fee
 Adafruit_MQTT_Subscribe buton_durumu = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/buton-durumu");
 float sicaklik_degeri = 0.0;
 
-/*MQTT bağlatısı gerçekleştiriliyor*/
+/*MQTT bağlatısı gerçekleştirilmesi */
 void MQTT_connect() {
   int8_t ret;
   if (mqtt.connected()) 
@@ -58,7 +63,7 @@ void setup() {
   Serial.begin(115200);
   delay(10);
 
-  /*WiFi bağlatısı gerçekleştiriliyor*/
+  /*WiFi bağlatısı gerçekleştirilmesi*/
   Serial.println(); Serial.println();
   Serial.print(WLAN_SSID);
   Serial.print(" kablosuz agina baglaniliyor");
@@ -99,7 +104,7 @@ void loop() {
     }
   }
 
-  /*Sıcaklık değeri alındı ve ekrana yazıldı */
+  /*Sıcaklık değeri alınması, seri port ekranına yazılması, AdafruitIO'ya gönderilmesi*/
   sicaklik_degeri = imu.readTempC(); 
   Serial.print(F("\nSicaklik degeri gonderiliyor "));
   Serial.print(sicaklik_degeri);

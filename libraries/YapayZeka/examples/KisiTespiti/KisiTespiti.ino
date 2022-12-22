@@ -1,3 +1,10 @@
+/*
+ *  KisiTespiti örneği,
+ *  TensorFlowLite yapay zeka kütüphanesinin kullanıldığı bu örnekte 
+ *  Kamera görüntüleri seri port ekrande çizdirmektedir.
+ *  
+ *  Bu örnek dahili kamera konnektörü olan Deneyap Geliştirme Kartlarını desteklemektedir.  
+*/
 /* Copyright 2019 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +19,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
-
-/*
- *  KisiTespiti örneği,
- *  TensorFlowLite yapay zeka kütüphanesinin kullanıldığı bu örnekte 
- *  Kamera görüntüleri seri port ekrande çizdirmektedir.
- *  
- *  Deneyap Mini Kartın kamera bağlantısı olmadığı için bu örnek Deneyap Mini Kartını desteklememektedir.
- * 
- */
 #include <TensorFlowLite_ESP32.h>
 
 #include "main_functions.h"

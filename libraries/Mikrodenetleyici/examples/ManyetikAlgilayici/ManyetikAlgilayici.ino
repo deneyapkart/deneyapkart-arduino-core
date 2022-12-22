@@ -1,8 +1,8 @@
 /*
  *   ManyetikAlgilayici örneği,
  *   Bu örnekte mikrodenetleyiciden manyetik algılayıcıdan veri okuması yapılmaktadır. Değerler düşük olabilir.
- *   Bu örnekte Deneyap Kart ve Deneyap Kart 1A dahili manyetik alan sensöründen veri gönderilmiştir. 
- *   Deneyap Mini ve Deneyap Kart G kartındaki mikrodenetleyicilerinde dahili magnetik alan sensörü yoktur bu yüzden magnetik okuma özelliği bulunmamaktadır.
+ *   Bu örnekte Deneyap Kart ve Deneyap Kart 1A dahili manyetik alan sensöründen alınan verileri seri port ekranına yazdırmaktadır. 
+ *   Bu örnek uygulama diğer Deneyap Geliştirme Kartları kullanılırsa harici magnetik alan sensörü bağlanılmalı ve kodda gerekli değişiklikler yapılmalıdır.
 */
 int deger = 0;
 

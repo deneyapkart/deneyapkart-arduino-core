@@ -3,7 +3,6 @@
  *  Bu örnek uygulama ile MobilRobotSurucu örneği ile iki Deneyap geliştirme kartı haberleşmektedir.
  *  Deneyap Karttaki dahili IMU'dan alınan Akselerometre verisi diğer Deneyap geliştirme kartına gönderilmektedir.
  *  Bu uygulama Deneyap Kart 1A ve Deneyap Kart G Kartları ile gerçekleştirilmek istenirse harici imu sensörü bağlanmalıdır ve kodda gerekli değişiklikler yapılmalıdır.
- *  Deneyap Mini kartında dahili Wi-Fi haberleşme özelliği yoktur.
 */
 #include "lsm6dsm.h"  // Deneyap Kart dahili IMU kütüphanesinin eklenmesi
 #include "WiFi.h"

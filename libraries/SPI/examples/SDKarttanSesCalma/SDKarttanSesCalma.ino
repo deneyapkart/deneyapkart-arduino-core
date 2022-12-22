@@ -4,7 +4,7 @@
  *  seri port ekrane yazılan sayıya karşılık gelen ses dosyasını çalmaktadır.
  *  Oynatılan seslerin khz, sample değerleri farklıdır. 
  *  
- *  Deneyap Mini ve Deneyap Kart G kartını desteklememektedir. 
+ *  Deneyap Kart ve Deneyap Kart 1A kartlarını desteklemektedir. 
 */
 
 #include <SPI.h>

@@ -2,16 +2,27 @@
 #define Pins_Arduino_h
 
 #include <stdint.h>
+#include "soc/soc_caps.h"
+
+#define USB_VID            0x303A
+#define USB_PID            0x8147
+#define USB_MANUFACTURER   "Turkish Technnology Team Foundation (T3)"
+#define USB_PRODUCT        "DENEYAP KART 1A v2"
+#define USB_SERIAL         "" // Empty string for MAC adddress
 
 #define EXTERNAL_NUM_INTERRUPTS	46
 #define NUM_DIGITAL_PINS	48
 #define NUM_ANALOG_INPUTS	20
 
-#define analogInputToDigitalPin(p)  (((p)<20)?(esp32_adc2gpio[(p)]):-1)
+#define analogInputToDigitalPin(p)  (((p)<20)?(analogChannelToDigitalPin(p)):-1)
 #define digitalPinToInterrupt(p)    (((p)<48)?(p):-1)
 #define digitalPinHasPWM(p)         (p < 46)
 
-static const uint8_t KEY_BUILTIN = 0;
+static const uint8_t LED_BUILTIN = SOC_GPIO_PIN_COUNT+48;
+#define BUILTIN_LED  LED_BUILTIN // backward compatibility
+#define LED_BUILTIN LED_BUILTIN
+#define RGB_BUILTIN LED_BUILTIN
+#define RGB_BRIGHTNESS 64
 
 static const uint8_t TX 	= 43;
 static const uint8_t RX 	= 44;
@@ -49,5 +60,8 @@ static const uint8_t D12 	= 0;
 static const uint8_t D13 	= 10;
 static const uint8_t D14 	= 3;
 static const uint8_t D15 	= 8;
+
+static const uint8_t PWM0 	= 1;
+static const uint8_t PWM1 	= 2;
 
 #endif /* Pins_Arduino_h */

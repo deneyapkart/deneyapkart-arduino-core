@@ -1,5 +1,5 @@
 /*
- *   Dijital okuma örneği,
+ *   DijitalOkuma örneği,
  *   Deneyap Geliştirme Kartlarının yer alan "But" butonuna basıldığında karta bulunan RGB led sırasıyla Kırmızı, Yeşil, Mavi, Sarı, Magenta, 
  *   Cyan, Beyaz renklerinde yanacaktır ve sonraki buton basımında led sönmektedir. 
  *   Bu işlem bir döngü şekilde her butona basımında devam etmektedir.
@@ -95,7 +95,7 @@ void loop() {
       writeBlueLed(LOW);
       break;
 
-    #else                             // Diğer Deneyap geliştirme kartları kullanılıyorsa 
+    #else                             // Diğer Deneyap Geliştirme Kartları kullanılıyorsa
      case KIRMIZI:
       delay(1);
       neopixelWrite(RGBLED,32,0,0);   // Parlaklık değeri 32 seçilmiştir. 0-255 arası parlaklık değeri verilmektedir.
