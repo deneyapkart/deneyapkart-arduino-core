@@ -300,11 +300,11 @@ dydk1a_mpv10.menu.EraseFlash.all=Enabled
 dydk1a_mpv10.menu.EraseFlash.all.upload.erase_cmd=-e
 
 ##############################################################
-#
+
 #dydk1a_mpv20.name=Deneyap Kart 1A v2
 #
-#dydk1a_mpv20.vid.0=0x303a
-#dydk1a_mpv20.pid.0=0x1001
+#dydk1a_mpv20.vid.0=0x303A
+#dydk1a_mpv20.pid.0=0x8147
 #
 #dydk1a_mpv20.bootloader.tool=esptool_py
 #dydk1a_mpv20.bootloader.tool.default=esptool_py
@@ -510,13 +510,13 @@ dydk1a_mpv10.menu.EraseFlash.all.upload.erase_cmd=-e
 #dydk1a_mpv20.menu.EraseFlash.none.upload.erase_cmd=
 #dydk1a_mpv20.menu.EraseFlash.all=Enabled
 #dydk1a_mpv20.menu.EraseFlash.all.upload.erase_cmd=-e
-#
+
 ##############################################################
 
 dym_mpv10.name=Deneyap Mini
 
-dym_mpv10.vid.0=0x303a
-dym_mpv10.pid.0=0x0002
+dym_mpv10.vid.0=0x303A
+dym_mpv10.pid.0=0x8141
 
 dym_mpv10.bootloader.tool=esptool_py
 dym_mpv10.bootloader.tool.default=esptool_py
@@ -605,6 +605,9 @@ dym_mpv10.menu.PartitionScheme.fatflash.upload.maximum_size=2097152
 dym_mpv10.menu.PartitionScheme.app3M_fat9M_16MB=16M Flash (3MB APP/9MB FATFS)
 dym_mpv10.menu.PartitionScheme.app3M_fat9M_16MB.build.partitions=app3M_fat9M_16MB
 dym_mpv10.menu.PartitionScheme.app3M_fat9M_16MB.upload.maximum_size=3145728
+dym_mpv10.menu.PartitionScheme.rainmaker=RainMaker
+dym_mpv10.menu.PartitionScheme.rainmaker.build.partitions=rainmaker
+dym_mpv10.menu.PartitionScheme.rainmaker.upload.maximum_size=3145728
 
 dym_mpv10.menu.CPUFreq.240=240MHz (WiFi)
 dym_mpv10.menu.CPUFreq.240.build.f_cpu=240000000L
@@ -691,11 +694,11 @@ dym_mpv10.menu.EraseFlash.all=Enabled
 dym_mpv10.menu.EraseFlash.all.upload.erase_cmd=-e
 
 ##############################################################
-#
+
 #dym_mpv20.name=Deneyap Mini v2
 #
-#dym_mpv20.vid.0=0x303a
-#dym_mpv20.pid.0=0x0002
+#dym_mpv20.vid.0=0x303A
+#dym_mpv20.pid.0=0x8144
 #
 #dym_mpv20.bootloader.tool=esptool_py
 #dym_mpv20.bootloader.tool.default=esptool_py
@@ -789,6 +792,9 @@ dym_mpv10.menu.EraseFlash.all.upload.erase_cmd=-e
 #dym_mpv20.menu.PartitionScheme.app3M_fat9M_16MB=16M Flash (3MB APP/9.9MB FATFS)
 #dym_mpv20.menu.PartitionScheme.app3M_fat9M_16MB.build.partitions=app3M_fat9M_16MB
 #dym_mpv20.menu.PartitionScheme.app3M_fat9M_16MB.upload.maximum_size=3145728
+#dym_mpv20.menu.PartitionScheme.rainmaker=RainMaker
+#dym_mpv20.menu.PartitionScheme.rainmaker.build.partitions=rainmaker
+#dym_mpv20.menu.PartitionScheme.rainmaker.upload.maximum_size=3145728
 #
 #dym_mpv20.menu.CPUFreq.240=240MHz (WiFi)
 #dym_mpv20.menu.CPUFreq.240.build.f_cpu=240000000L
@@ -873,13 +879,13 @@ dym_mpv10.menu.EraseFlash.all.upload.erase_cmd=-e
 #dym_mpv20.menu.EraseFlash.none.upload.erase_cmd=
 #dym_mpv20.menu.EraseFlash.all=Enabled
 #dym_mpv20.menu.EraseFlash.all.upload.erase_cmd=-e
-#
+
 ##############################################################
 
 dyg_mpv10.name=Deneyap Kart G 
 
-dyg_mpv10.vid.0=0x303a
-dyg_mpv10.pid.0=0x1001
+dyg_mpv10.vid.0=0x303A
+dyg_mpv10.pid.0=0x814A
 
 dyg_mpv10.bootloader.tool=esptool_py
 dyg_mpv10.bootloader.tool.default=esptool_py

@@ -39,9 +39,12 @@
 #define D11	(uint8_t)(18)
 #define D12	(uint8_t)(17)
 #define D13	(uint8_t)(0)
+#elif defined (ARDUINO_DYM)
 #define D14	(uint8_t)(35)
 #define D15	(uint8_t)(33)
 #define D16	(uint8_t)(34)
+#elif defined (ARDUINO_DYMv2)
+#define D14	(uint8_t)(33)
 #elif defined (ARDUINO_DYG)
 #define D0	(uint8_t)(21)
 #define D1	(uint8_t)(20)
@@ -67,7 +70,7 @@
 #define D13	(uint8_t)(10)
 #define D14	(uint8_t)(3)
 #define D15	(uint8_t)(8)
-#endif
+#endif 
 
 // Analog input pins
 #if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A)
@@ -101,7 +104,7 @@
 #define A5	(uint8_t)(16)
 #define A6	(uint8_t)(17)
 #define A7	(uint8_t)(18)
-#endif
+#endif 
 
 // Analog output pins
 #if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A)
@@ -124,7 +127,7 @@
 #define SCL	D6
 #endif
 
-// SPI pins
+/*// SPI pins
 #if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYDK1Av2)
 #define MOSI	D7
 #define MISO	D6
@@ -140,15 +143,15 @@
 #define MISO	A4
 #define SCK	A3
 #define SS	D5
-#endif
+#endif*/
 
 // UART pins
 #if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYDK1Av2)
 #define TX	D2
 #define RX	D3
 #elif defined (ARDUINO_DYM) || defined (ARDUINO_DYMv2)
-#define TX	D0
-#define RX	D1
+#define TX	D1
+#define RX	D0
 #elif defined (ARDUINO_DYG)
 #define TX	D1
 #define RX	D0
@@ -159,15 +162,15 @@
 #define PWM0	D0
 #define PWM1	D1
 #elif defined (ARDUINO_DYM) || defined (ARDUINO_DYMv2)
-#define P0	D2
-#define P1	D3
+#define PWM0	D2
+#define PWM1	D3
 #elif defined (ARDUINO_DYG)
 #define PWM0	A0
 #define PWM1	A1
 #define PWM2	A2
 #endif
 
-// Capacitive-Sensing pins
+/*// Capacitive-Sensing pins
 #if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A)
 #define T0	A4
 #define T1	A5
@@ -182,7 +185,7 @@
 #define T3	A3
 #define T4	A4
 #define T5	A5
-#endif
+#endif*/
 
 // Camera pins
 #if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A)
@@ -245,6 +248,7 @@
 #define LEDR	D3
 #define LEDG	D2
 #define LEDB	D10
+#define LED_BUILTIN D10
 #define GPKEY	D8
 #define BOOT	D8
 #elif defined (ARDUINO_DYDK1A)
@@ -255,6 +259,7 @@
 #define LEDR	D16
 #define LEDG	D15
 #define LEDB	D14
+#define LED_BUILTIN D14
 #define GPKEY	D13
 #define BT		D13
 #elif defined (ARDUINO_DYG)

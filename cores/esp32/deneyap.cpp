@@ -1,13 +1,10 @@
 /******************************************************************************
 deneyap.cpp
 Main Deneyap Development Boards Library
-
 Main functions used for read, write, pin mode etc. operations
-
 Ozgur BOSTAN @ RFtek Electronics
 ozgur.bostan@rftek.com.tr
 April 08, 2020
-
 2020 Copyright (c) RFtek Electronics Ltd.  All right reserved.
 ******************************************************************************/
 
@@ -21,12 +18,12 @@ April 08, 2020
 //   */
 // void pinMode(uint16_t pinNumber, uint16_t pinMode)
 // {
-// 	if(pinMode == INPUT)
-// 		pinDirConfig(pinNumber, GPIO_INPUT);
-// 	else if(pinMode == OUTPUT)
-// 		pinDirConfig(pinNumber, GPIO_OUTPUT);
-// 	else
-// 		pinDirConfig(pinNumber, pinMode);
+//  if(pinMode == INPUT)
+//    pinDirConfig(pinNumber, GPIO_INPUT);
+//  else if(pinMode == OUTPUT)
+//    pinDirConfig(pinNumber, GPIO_OUTPUT);
+//  else
+//    pinDirConfig(pinNumber, pinMode);
 // }
 
 // /**
@@ -59,15 +56,15 @@ April 08, 2020
 
 void writeRedLed(uint8_t state)
 {
-	if(state == HIGH || state == PIN_HIGH)
+  if(state == HIGH || state == PIN_HIGH)
 #if ARDUINO_DYDK
-		digitalWrite(LEDR, PIN_LOW);
+    digitalWrite(LEDR, PIN_LOW);
 #elif ARDUINO_DYM
     digitalWrite(LEDR, PIN_HIGH);
 #endif
-	else if(state == LOW || state == PIN_LOW)
+  else if(state == LOW || state == PIN_LOW)
 #if ARDUINO_DYDK
-		digitalWrite(LEDR, PIN_HIGH);
+    digitalWrite(LEDR, PIN_HIGH);
 #elif ARDUINO_DYM
     digitalWrite(LEDR, PIN_LOW);
 #endif
