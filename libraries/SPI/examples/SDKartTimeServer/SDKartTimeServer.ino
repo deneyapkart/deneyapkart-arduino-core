@@ -3,9 +3,9 @@
  *  Bu uygulamada seri port ekrande tarih ve saati yazdırmaktadır. SDKartTimeServer uygulamada SD karta bir tane "mydir" isimli bir boş klasör ve holle.txt uzantılı dosya açmaktadır. 
  *  Dosyada hello world! yazmaktadır. seri port ekrane hızını ve kaç bayt okunduğu yazmaktadır.
  * 
- *  Deneyap Kart ve Deneyap Kart 1A için CS(SS) pini D4 pinine bağlanması gerekmektedir.
- *  Deneyap Mini Kartı için CS(SS) pini D10 pinine bağlanması gerekmektedir.
- *  
+ *  Deneyap Kart, Deneyap Kart 1A ve Deneyap Kart 1Av2 için CS(SS) pini D4 pinine bağlanması gerekmektedir.
+ *  Deneyap Mini Kart ve Deneyap Mini v2 Kart için CS(SS) pini D10 pinine bağlanması gerekmektedir.
+ *  Deneyap Kart G için MOSI:A5, MISO:A4, SCK:A3, SS:D5 pinlerine bağlanması gerekmektedir.
 */
 #include "FS.h"
 #include "SD.h"

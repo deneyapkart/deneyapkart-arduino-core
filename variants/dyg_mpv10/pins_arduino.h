@@ -22,7 +22,13 @@ static const uint8_t LED_BUILTIN = SOC_GPIO_PIN_COUNT+10;
 #define BUILTIN_LED  LED_BUILTIN // backward compatibility
 #define LED_BUILTIN LED_BUILTIN
 #define RGB_BUILTIN LED_BUILTIN
+#define RGBLED LED_BUILTIN
 #define RGB_BRIGHTNESS 64
+
+static const uint8_t GPKEY  = 9;
+#define KEY_BUILTIN GPKEY
+#define BUILTIN_KEY GPKEY
+#define BT GPKEY
 
 static const uint8_t TX = 21;
 static const uint8_t RX = 20;
