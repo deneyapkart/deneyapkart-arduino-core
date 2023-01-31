@@ -5,11 +5,15 @@
  *  Oynatılan seslerin khz, sample değerleri farklıdır. 
  *  
  *  Deneyap Kart ve Deneyap Kart 1A kartlarını desteklemektedir. 
+ *
+ *  ==============================================================================
+ *    Bu uygulama örneği için "AutoAnalogAudio by TMRh20" kütüphanesi indirilmelidir.  ->https://github.com/TMRh20/AutoAnalogAudio<-
+ *    Bu uygulama örneği AutoAnalogAudio kütüphanesi 1.43 versiyonu ile yazılmıştır.
+ *  ==============================================================================
 */
-
 #include <SPI.h>
 #include <SD.h>
-#include "AutoAnalogAudio.h"
+#include <AutoAnalogAudio.h>
 
 #define AUDIO_DEBUG
 uint32_t adcReadings = MAX_BUFFER_SIZE;
@@ -25,15 +29,15 @@ void setup() {
   Serial.begin(115200);
   SPI.begin();
 
-/* SPI.begin(D15, D9, D14, D13);  //DENEYAP KART'ta bu pinler ile kullanın
+  /* SPI.begin(D15, D9, D14, D13);  //DENEYAP KART'ta bu pinler ile kullanın
    pinMode(D9,INPUT_PULLUP);      // SCK: D15, MISO: D9, MOSI: D14, SS: D13  */
-   
-  if (!SDCard.begin()) {
+
+  if (!SD.begin()) {
     Serial.println("SD bağlantısı başarısız!");
-  }else      
-  Serial.println("SD bağlantısı başarılı");
-  aaAudio.begin(1, 1);   
-  aaAudio.autoAdjust = 0;  
+  } else
+    Serial.println("SD bağlantısı başarılı");
+  aaAudio.begin(1, 1);
+  aaAudio.autoAdjust = 0;
   aaAudio.setSampleRate(80000);
   aaAudio.dacBitsPerSample = 8;
 }
@@ -70,10 +74,10 @@ void loop() {
     char input = Serial.read();
     switch (input) {
       /*Ses dosyaları: https://github.com/deneyapkart/deneyapkart-arduino-core/tree/master/libraries/SPI/examples/SDKarttanSesCalma */
-      case '1':  playAudio("/M8b24kM.wav");  break;    // 8bit, 24khz, Mono
-      case '2':  playAudio("/M8b24kS.wav");  break;    // 8bit, 24khz, Stereo
-      case '3':  playAudio("/M8b44kST.wav"); break;    // 8bit, 44khz, Mono
-      case '4':  Serial.println("Tamam");    break;
+      case '1': playAudio("/M8b24kM.wav"); break;   // 8bit, 24khz, Mono
+      case '2': playAudio("/M8b24kS.wav"); break;   // 8bit, 24khz, Stereo
+      case '3': playAudio("/M8b44kST.wav"); break;  // 8bit, 44khz, Mono
+      case '4': Serial.println("Tamam"); break;
     }
   }
   if (!useTasks) {

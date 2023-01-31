@@ -29,12 +29,12 @@ bool create_wav_file(const char *song_name, uint32_t duration, uint16_t num_chan
   /* bayt cinsinden veri boyutu -> bu miktarda veriyi daha sonra mikrofonda kaydetme */
   uint32_t data_size = sampling_rate * num_channels * bits_per_sample * duration / 8;
 
-  if (!SDCard.begin()) {
+  if (!SD.begin()) {
     Serial.println("Kart bağlantısı başarısız");
     return false;
   }
 
-  File new_audio_file = SDCard.open(song_name, FILE_WRITE);
+  File new_audio_file = SD.open(song_name, FILE_WRITE);
   if (new_audio_file == NULL) {
     Serial.println("Dosya oluşturulamadı");
     return false;
@@ -86,7 +86,7 @@ bool create_wav_file(const char *song_name, uint32_t duration, uint16_t num_chan
   /* Gerçek veriler bu noktadan sonra eklenme */
 
   new_audio_file.close();
-  SDCard.end();
+  SD.end();
   return true;
 }
 
@@ -98,7 +98,7 @@ void microphone_record(const char *song_name, uint32_t duration) {
   }
 
   /* Mikrofondan veri kaydetmek için SD kartı başlatma */
-  if (!SDCard.begin()) {
+  if (!SD.begin()) {
     Serial.println("Kart bağlantısı başarısız");
     return;
   }
@@ -107,7 +107,7 @@ void microphone_record(const char *song_name, uint32_t duration) {
   uint8_t *buf = (uint8_t *)malloc(BUFFER_SIZE);
 
   /* PCM verilerini eklemek için oluşturulan .wav dosyasını ekleme + binary modunda geçme */
-  File audio_file = SDCard.open(song_name, FILE_APPEND);
+  File audio_file = SD.open(song_name, FILE_APPEND);
   if (audio_file == NULL) {
     Serial.println("Dosya oluşturulamadı");
     return;
@@ -151,5 +151,5 @@ void microphone_record(const char *song_name, uint32_t duration) {
   micQuit();
   audio_file.close();
   free(buf);
-  SDCard.end();
+  SD.end();
 }

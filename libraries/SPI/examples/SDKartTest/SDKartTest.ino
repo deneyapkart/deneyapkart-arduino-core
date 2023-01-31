@@ -170,11 +170,11 @@ void testFileIO(fs::FS &fs, const char * path){
 
 void setup(){
     Serial.begin(115200);
-    if(!SDCard.begin()){
+    if(!SD.begin()){
         Serial.println("Kart okuma basarisiz");
         return;
     }
-    uint8_t cardType = SDCard.cardType();
+    uint8_t cardType = SD.cardType();
 
     if(cardType == CARD_NONE){
         Serial.println("SD kart takili degil");
@@ -192,23 +192,23 @@ void setup(){
         Serial.println("TANIMSIZ");
     }
 
-    uint64_t cardSize = SDCard.cardSize() / (1024 * 1024);
+    uint64_t cardSize = SD.cardSize() / (1024 * 1024);
     Serial.printf("SD Card Size: %lluMB\n", cardSize);
 
-    listDir(SDCard, "/", 0);
-    createDir(SDCard, "/mydir");
-    listDir(SDCard, "/", 0);
-    removeDir(SDCard, "/mydir");
-    listDir(SDCard, "/", 2);
-    writeFile(SDCard, "/hello.txt", "Hello ");
-    appendFile(SDCard, "/hello.txt", "World!\n");
-    readFile(SDCard, "/hello.txt");
-    deleteFile(SDCard, "/foo.txt");
-    renameFile(SDCard, "/hello.txt", "/foo.txt");
-    readFile(SDCard, "/foo.txt");
-    testFileIO(SDCard, "/test.txt");
-    Serial.printf("Toplam alan: %lluMB\n", SDCard.totalBytes() / (1024 * 1024));
-    Serial.printf("Kullanılan alan: %lluMB\n", SDCard.usedBytes() / (1024 * 1024));
+    listDir(SD, "/", 0);
+    createDir(SD, "/mydir");
+    listDir(SD, "/", 0);
+    removeDir(SD, "/mydir");
+    listDir(SD, "/", 2);
+    writeFile(SD, "/hello.txt", "Hello ");
+    appendFile(SD, "/hello.txt", "World!\n");
+    readFile(SD, "/hello.txt");
+    deleteFile(SD, "/foo.txt");
+    renameFile(SD, "/hello.txt", "/foo.txt");
+    readFile(SD, "/foo.txt");
+    testFileIO(SD, "/test.txt");
+    Serial.printf("Toplam alan: %lluMB\n", SD.totalBytes() / (1024 * 1024));
+    Serial.printf("Kullanılan alan: %lluMB\n", SD.usedBytes() / (1024 * 1024));
 }
 
 void loop(){

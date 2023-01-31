@@ -1,24 +1,26 @@
 /*
  *  KisiTespiti örneği,
- *  TensorFlowLite yapay zeka kütüphanesinin kullanıldığı bu örnekte 
- *  Kamera görüntüleri seri port ekrande çizdirmektedir.
+ *  TensorFlowLite yapay öğrenme kütüphanesi kullanılmıştır.
+ *  Kamera aldığı görselleri seri port ekranında karakterler ile çizdirmektedir. 
  *  
- *  Bu örnek dahili kamera konnektörü olan Deneyap Geliştirme Kartlarını desteklemektedir.  
+ *  Bu örnek dahili kamera konnektörü olan Deneyap Geliştirme Kartlarını desteklemektedir.
+ *
+ *  ==============================================================================
+ *  Bu uygulama örneği için "TensorFlowLite_ESP32 by TensorFlow Authors" kütüphanesi indirilmelidir.  ->https://github.com/tanakamasayuki/Arduino_TensorFlowLite_ESP32<-
+ *  Bu uygulama örneği TensorFlowLite_ESP32 kütüphanesi 0.9.0 versiyonu ile yazılmıştır.
+ *  ==============================================================================
 */
-/* Copyright 2019 The TensorFlow Authors. All Rights Reserved.
 
+/* Copyright 2019 The TensorFlow Authors. All Rights Reserved.
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
     http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.
-==============================================================================*/
+limitations under the License. */
 #include <TensorFlowLite_ESP32.h>
 
 #include "main_functions.h"

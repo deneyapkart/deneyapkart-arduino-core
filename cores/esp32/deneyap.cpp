@@ -46,83 +46,81 @@ April 08, 2020
 //   return readPin((uint8_t)pinNumber);
 // }
 
-/**
-  * @brief  Change built-in red led (RGB) state
-  * @param  Pin state (HIGH/PIN_HIGH, LOW/PIN_LOW)
-  * @retval None
-  */
+// #if defined (ARDUINO_DYDK) || defined (ARDUINO_DYM)
+// /**
+//   * @brief  Change built-in red led (RGB) state
+//   * @param  Pin state (HIGH/PIN_HIGH, LOW/PIN_LOW)
+//   * @retval None
+//   */
+// void writeRedLed(uint8_t state)
+// {
+//   if(state == HIGH || state == PIN_HIGH)
+// #if ARDUINO_DYDK
+//     digitalWrite(LEDR, PIN_LOW);
+// #elif ARDUINO_DYM
+//     digitalWrite(LEDR, PIN_HIGH);
+// #endif
+//   else if(state == LOW || state == PIN_LOW)
+// #if ARDUINO_DYDK
+//     digitalWrite(LEDR, PIN_HIGH);
+// #elif ARDUINO_DYM
+//     digitalWrite(LEDR, PIN_LOW);
+// #endif
+// }
 
-#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYM)
+// /**
+//   * @brief  Change built-in green led (RGB) state
+//   * @param  Pin state (HIGH/PIN_HIGH, LOW/PIN_LOW)
+//   * @retval None
+//   */
+// void writeGreenLed(uint8_t state)
+// {
+//   if(state == HIGH || state == PIN_HIGH)
+// #if ARDUINO_DYDK
+//     digitalWrite(LEDG, PIN_LOW);
+// #elif ARDUINO_DYM
+//     digitalWrite(LEDG, PIN_HIGH);
+// #endif
+//   else if(state == LOW || state == PIN_LOW)
+// #if ARDUINO_DYDK
+//     digitalWrite(LEDG, PIN_HIGH);
+// #elif ARDUINO_DYM
+//     digitalWrite(LEDG, PIN_LOW);
+// #endif
+// }
 
-void writeRedLed(uint8_t state)
-{
-  if(state == HIGH || state == PIN_HIGH)
-#if ARDUINO_DYDK
-    digitalWrite(LEDR, PIN_LOW);
-#elif ARDUINO_DYM
-    digitalWrite(LEDR, PIN_HIGH);
-#endif
-  else if(state == LOW || state == PIN_LOW)
-#if ARDUINO_DYDK
-    digitalWrite(LEDR, PIN_HIGH);
-#elif ARDUINO_DYM
-    digitalWrite(LEDR, PIN_LOW);
-#endif
-}
+// /**
+//   * @brief  Change built-in blue led (RGB) state
+//   * @param  Pin state (HIGH/PIN_HIGH, LOW/PIN_LOW)
+//   * @retval None
+//   */
+// void writeBlueLed(uint8_t state)
+// {
+//   if(state == HIGH || state == PIN_HIGH)
+// #if ARDUINO_DYDK
+//     digitalWrite(LEDB, PIN_LOW);
+// #elif ARDUINO_DYM
+//     digitalWrite(LEDB, PIN_HIGH);
+// #endif
+//   else if(state == LOW || state == PIN_LOW)
+// #if ARDUINO_DYDK
+//     digitalWrite(LEDB, PIN_HIGH);
+// #elif ARDUINO_DYM
+//     digitalWrite(LEDB, PIN_LOW);
+// #endif
+// }
+// 
+// #endif
 
-/**
-  * @brief  Change built-in green led (RGB) state
-  * @param  Pin state (HIGH/PIN_HIGH, LOW/PIN_LOW)
-  * @retval None
-  */
-void writeGreenLed(uint8_t state)
-{
-  if(state == HIGH || state == PIN_HIGH)
-#if ARDUINO_DYDK
-    digitalWrite(LEDG, PIN_LOW);
-#elif ARDUINO_DYM
-    digitalWrite(LEDG, PIN_HIGH);
-#endif
-  else if(state == LOW || state == PIN_LOW)
-#if ARDUINO_DYDK
-    digitalWrite(LEDG, PIN_HIGH);
-#elif ARDUINO_DYM
-    digitalWrite(LEDG, PIN_LOW);
-#endif
-}
-
-/**
-  * @brief  Change built-in blue led (RGB) state
-  * @param  Pin state (HIGH/PIN_HIGH, LOW/PIN_LOW)
-  * @retval None
-  */
-void writeBlueLed(uint8_t state)
-{
-  if(state == HIGH || state == PIN_HIGH)
-#if ARDUINO_DYDK
-    digitalWrite(LEDB, PIN_LOW);
-#elif ARDUINO_DYM
-    digitalWrite(LEDB, PIN_HIGH);
-#endif
-  else if(state == LOW || state == PIN_LOW)
-#if ARDUINO_DYDK
-    digitalWrite(LEDB, PIN_HIGH);
-#elif ARDUINO_DYM
-    digitalWrite(LEDB, PIN_LOW);
-#endif
-}
-
-#endif
-
-/**
-  * @brief  Read built-in general purpose button state
-  * @param  None
-  * @retval State of the pin
-  */
-uint8_t readGenPurButton(void)
-{
-  return digitalRead(BUILTIN_KEY);
-}
+// /**
+//   * @brief  Read built-in general purpose button state
+//   * @param  None
+//   * @retval State of the pin
+//   */
+// uint8_t readGenPurButton(void)
+// {
+//   return digitalRead(BUILTIN_KEY);
+// }
 
 // /**
 //   * @brief  Enable built-in 1.2VDC regulator for camera module
@@ -234,70 +232,70 @@ uint8_t readGenPurButton(void)
 //   return readPin(GPIO24);
 // }
 
-#if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYDK1Av2)
-/**
-  * @brief  Configure and initialize camera
-  * @param  None
-  * @retval Pin state
-  */
-void cameraInit(void)
-{
-  camera_config_t config;
-  config.ledc_channel   = LEDC_CHANNEL_0;
-  config.ledc_timer     = LEDC_TIMER_0;
-  config.pin_d0         = CAMD2;
-  config.pin_d1         = CAMD3;
-  config.pin_d2         = CAMD4;
-  config.pin_d3         = CAMD5;
-  config.pin_d4         = CAMD6;
-  config.pin_d5         = CAMD7;
-  config.pin_d6         = CAMD8;
-  config.pin_d7         = CAMD9;
-  config.pin_xclk       = CAMXC;
-  config.pin_pclk       = CAMPC;
-  config.pin_vsync      = CAMV;
-  config.pin_href       = CAMH;
-  config.pin_sscb_sda   = CAMSD;
-  config.pin_sscb_scl   = CAMSC;
-  config.pin_pwdn       = -1;
-  config.pin_reset      = -1;
-  config.xclk_freq_hz   = 15000000;
-  config.frame_size     = FRAMESIZE_UXGA;
-  config.pixel_format   = PIXFORMAT_JPEG;
-  //config.pixel_format = PIXFORMAT_RGB565; // for face detection/recognition
-  config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
-  config.fb_location = CAMERA_FB_IN_PSRAM;
-  config.jpeg_quality = 12;
-  config.fb_count = 1;
-  
-  //init with high specs to pre-allocate larger buffers                     for larger pre-allocated frame buffer.
-  if(config.pixel_format == PIXFORMAT_JPEG){
-    if(psramFound()){
-      config.jpeg_quality = 10;
-      config.fb_count = 2;
-      config.grab_mode = CAMERA_GRAB_LATEST;
-    } else {
-      // Limit the frame size when PSRAM is not available
-      config.frame_size = FRAMESIZE_SVGA;
-      config.fb_location = CAMERA_FB_IN_DRAM;
-    }
-  } else {
-    // Best option for face detection/recognition
-    config.frame_size = FRAMESIZE_240X240;
-#if CONFIG_IDF_TARGET_ESP32S3
-    config.fb_count = 2;
-#endif
-  }
-
-  // Camera init
-  esp_err_t err = esp_camera_init(&config);
-  if (err != ESP_OK) {
-    Serial.printf("Camera init failed with error 0x%x", err);
-    return;
-  }
-
-  sensor_t * s = esp_camera_sensor_get();
-  // Drop down frame size for higher initial frame rate
-  s->set_framesize(s, FRAMESIZE_QVGA);
-}
-#endif
+// #if defined (ARDUINO_DYDK) || defined (ARDUINO_DYDK1A) || defined (ARDUINO_DYDK1Av2)
+// /**
+//   * @brief  Configure and initialize camera
+//   * @param  None
+//   * @retval Pin state
+//   */
+// void cameraInit(void)
+// {
+//   camera_config_t config;
+//   config.ledc_channel   = LEDC_CHANNEL_0;
+//   config.ledc_timer     = LEDC_TIMER_0;
+//   config.pin_d0         = CAMD2;
+//   config.pin_d1         = CAMD3;
+//   config.pin_d2         = CAMD4;
+//   config.pin_d3         = CAMD5;
+//   config.pin_d4         = CAMD6;
+//   config.pin_d5         = CAMD7;
+//   config.pin_d6         = CAMD8;
+//   config.pin_d7         = CAMD9;
+//   config.pin_xclk       = CAMXC;
+//   config.pin_pclk       = CAMPC;
+//   config.pin_vsync      = CAMV;
+//   config.pin_href       = CAMH;
+//   config.pin_sscb_sda   = CAMSD;
+//   config.pin_sscb_scl   = CAMSC;
+//   config.pin_pwdn       = -1;
+//   config.pin_reset      = -1;
+//   config.xclk_freq_hz   = 15000000;
+//   config.frame_size     = FRAMESIZE_UXGA;
+//   config.pixel_format   = PIXFORMAT_JPEG;
+//   //config.pixel_format = PIXFORMAT_RGB565; // for face detection/recognition
+//   config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
+//   config.fb_location = CAMERA_FB_IN_PSRAM;
+//   config.jpeg_quality = 12;
+//   config.fb_count = 1;
+//   
+//   //init with high specs to pre-allocate larger buffers                     for larger pre-allocated frame buffer.
+//   if(config.pixel_format == PIXFORMAT_JPEG){
+//     if(psramFound()){
+//       config.jpeg_quality = 10;
+//       config.fb_count = 2;
+//       config.grab_mode = CAMERA_GRAB_LATEST;
+//     } else {
+//       // Limit the frame size when PSRAM is not available
+//       config.frame_size = FRAMESIZE_SVGA;
+//       config.fb_location = CAMERA_FB_IN_DRAM;
+//     }
+//   } else {
+//     // Best option for face detection/recognition
+//     config.frame_size = FRAMESIZE_240X240;
+// #if CONFIG_IDF_TARGET_ESP32S3
+//     config.fb_count = 2;
+// #endif
+//   }
+// 
+//   // Camera init
+//   esp_err_t err = esp_camera_init(&config);
+//   if (err != ESP_OK) {
+//     Serial.printf("Camera init failed with error 0x%x", err);
+//     return;
+//   }
+// 
+//   sensor_t * s = esp_camera_sensor_get();
+//   // Drop down frame size for higher initial frame rate
+//   s->set_framesize(s, FRAMESIZE_QVGA);
+// }
+// #endif

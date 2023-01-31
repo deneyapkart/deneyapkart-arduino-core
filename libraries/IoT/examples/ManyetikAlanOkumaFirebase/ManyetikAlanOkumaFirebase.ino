@@ -4,9 +4,13 @@
  *   Bu örnekte Deneyap Kart ve Deneyap Kart 1A dahili manyetik alan sensöründen alınan veriler Firebase veri tabanına göndermektedir.
  *   
  *   Bu örnek uygulama diğer Deneyap Geliştirme Kartları kullanılırsa harici magnetik alan sensörü bağlanılmalı ve kodda gerekli değişiklikler yapılmalıdır.
+ *  ==============================================================================
+ *    Bu uygulama örneği için "Firebase Arduino Client Library for ESP8266 and ESP32 by Mobizt" kütüphanesi indirilmelidir.  ->https://github.com/mobizt/Firebase-ESP-Client<-
+ *    Bu uygulama örneği Firebase Arduino Client Library for ESP8266 kütüphanesi 4.0.3 versiyonu ile yazılmıştır.
+ *  ==============================================================================
 */
 #include "WiFi.h"
-#include "Firebase_ESP_Client.h"
+#include <Firebase_ESP_Client.h>
 
 #define WLAN_SSID "***********"     // Baglanti kurulacak Wi-Fi agi adi
 #define WLAN_PASS "***********"     // Baglanti kurulacak Wi-Fi agi sifresi

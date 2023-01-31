@@ -36,7 +36,7 @@ void playAudio(const char *audioFile) {
   }
 
   //Open the designated file
-  myFile = SDCard.open(audioFile);
+  myFile = SD.open(audioFile);
   if (myFile) {
     myFile.seek(22);
     myFile.read((byte*)&numChannels, 2);

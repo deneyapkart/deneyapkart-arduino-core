@@ -6,17 +6,22 @@
  *
  *    Deneyap Geliştirme Kartlarındaki dahili LED durumu AdafruitIO web tabanlı bulut ekranından konrol edilmektedir.
  *    Aynı zamanda Deneyap Geliştirme Kartlarındaki dahili buton durumu AdafruitIO web tabanlı bulut ekranında gözlemlenmektedir.
+ *
+ *  ==============================================================================
+ *    Bu uygulama örneği için "Adafruit_MQTT by Adafruit" kütüphanesi indirilmelidir.  ->https://github.com/adafruit/Adafruit_MQTT_Library<-
+ *    Bu uygulama örneği Adafruit_MQTT kütüphanesi 2.4.3 versiyonu ile yazılmıştır.
+ *  ==============================================================================
 */
 #include "WiFi.h"
-#include <Adafruit_MQTT.h> // Adafruit MQTT Library kütüphanesi indirilmelidir
+#include <Adafruit_MQTT.h>
 #include <Adafruit_MQTT_Client.h>
 
-#define WLAN_SSID       "*******"         // Bağlantı kurulacak Wi-Fi ağı adı
-#define WLAN_PASS       "*******"         // Bağlantı kurulacak Wi-Fi ağı şifresi
-#define AIO_SERVER      "io.adafruit.com"
-#define AIO_SERVERPORT  1883                  
-#define AIO_USERNAME    "*******"         // AdafruitIO kullanıcı ismi, AdafruitIO bulut ekranındaki anahtar simgesinde yer almaktadır
-#define AIO_KEY         "*******"         // AdafruitIO kullanıcı anahtarı, AdafruitIO bulut ekranındaki anahtar simgesinde yer almaktadır
+#define WLAN_SSID "*******"  // Bağlantı kurulacak Wi-Fi ağı adı
+#define WLAN_PASS "*******"  // Bağlantı kurulacak Wi-Fi ağı şifresi
+#define AIO_SERVER "io.adafruit.com"
+#define AIO_SERVERPORT 1883
+#define AIO_USERNAME "*******"  // AdafruitIO kullanıcı ismi, AdafruitIO bulut ekranındaki anahtar simgesinde yer almaktadır
+#define AIO_KEY "*******"       // AdafruitIO kullanıcı anahtarı, AdafruitIO bulut ekranındaki anahtar simgesinde yer almaktadır
 
 WiFiClient client;
 Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);
@@ -24,12 +29,12 @@ Adafruit_MQTT_Subscribe ledState = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "
 Adafruit_MQTT_Publish button = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/buton-durumu");      // AdafruitIO'da oluşturulan Dashboards ekranında "Create New Block" kısmına tıklayarak "Gauge" feeds nesnesi eklenmelidir
 
 void setup() {
-  pinMode(LED_BUILTIN,OUTPUT); // Deneyap Geliştirme Kartlarındaki dahili LED çıkış olarak ayarlanması
-  pinMode(GPKEY,INPUT);        // Deneyap Geliştirme Kartlarındaki dahili Genel amaçlı buton pini giriş olarak ayarlanması            
-  Serial.begin(115200);        // Seri haberleşme başlatılması
+  pinMode(LED_BUILTIN, OUTPUT);  // Deneyap Geliştirme Kartlarındaki dahili LED çıkış olarak ayarlanması
+  pinMode(GPKEY, INPUT);         // Deneyap Geliştirme Kartlarındaki dahili Genel amaçlı buton pini giriş olarak ayarlanması
+  Serial.begin(115200);          // Seri haberleşme başlatılması
   delay(10);
-  
-  WiFi.begin(WLAN_SSID, WLAN_PASS); // Wi-Fi bağlatısının gerçekleştirilmesi
+
+  WiFi.begin(WLAN_SSID, WLAN_PASS);  // Wi-Fi bağlatısının gerçekleştirilmesi
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -43,8 +48,8 @@ void loop() {
   /* AdafruitIO bulutdan gelen veriye göre Deneyap Geliştirme Kartlarındaki dahili LEDin yanması */
   Adafruit_MQTT_Subscribe *subscription;
   while ((subscription = mqtt.readSubscription(5000))) {
-    if(subscription == &ledState)  {
-      if (!strcmp((char*) ledState.lastread, "ON")) {
+    if (subscription == &ledState) {
+      if (!strcmp((char *)ledState.lastread, "ON")) {
         digitalWrite(LED_BUILTIN, HIGH);
       } else {
         digitalWrite(LED_BUILTIN, LOW);
@@ -53,7 +58,7 @@ void loop() {
   }
 
   /* Buton verisinin AdafruitIO bulutuna gönderilmesi*/
-  int ButtonValue = digitalRead(GPKEY); 
+  int ButtonValue = digitalRead(GPKEY);
   button.publish(ButtonValue);
   delay(250);
 }
@@ -70,8 +75,8 @@ void MQTT_connect() {
     Serial.println(mqtt.connectErrorString(ret));
     Serial.println("3 saniye icinde tekrar baglanti denemesi gerceklesecek...");
     mqtt.disconnect();
-    delay(5000); 
-    count = count - 1 ;
+    delay(5000);
+    count = count - 1;
     if (count == 0) {
       esp_restart();
     }

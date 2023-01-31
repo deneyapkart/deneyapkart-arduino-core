@@ -1,13 +1,10 @@
-/*
- *  SesSeviyesiAlgilama örneği,
- *  Deneyap Karttaki dahili mikrofon ile kullanıcı ortamdaki ses verisini SERİ ÇİZİCİ(Serial Plotter)de gözlemlemektedir.
- *  Karttaki mavi led ve D0 harici bağlanan ledler belirlenen değere göre yanıp sönmektedir.
+/*  Deneyap Karttaki dahili mikrofon ile kullanıcı ortamdaki ses verilerini SERİ ÇİZİCİ(Serial Plotter)de gözlemlemektedir.
+ *  Deneyap Karttaki dahili mavi led ve D0 pinine bağlanan harici led ile belirlenen değere göre ledler yanıp sönmektedir.
  *  Ses değişimini SERİ ÇİZİCİ ekranında grafiksel olarak izlenmelidir.
- *  Bu uygulama diğer DENEYAP geliştirme kartları ile gerçekleştirilmek istenirse harici mikrofon bağlanmalıdır ve gerekli bağlantı bilgileri değiştirilmelidir.
- */
-#include "mp34dt05.h" // Deneyap Kart dahili mikrofonun kütüphanesinin eklenmesi
+ *  Bu uygulama diğer Deneyap Geliştirme Kartları ile gerçekleştirilmek istenirse harici mikrofon bağlanmalıdır ve kodda gerekli değişiklikler yapılmalıdır */
+#include "mp34dt05.h"  // Deneyap Kart dahili mikrofonun kütüphanesinin eklenmesi
 
-#define threshold 50 // verilen eşik değeri, ortamın ses durumuna göre istenilen değer ile değiştirilmeli.
+#define threshold 50  // verilen eşik değeri. Ortamın ses durumuna göre istenilen değer ile değiştirilmeli
 int samples[BUFFER_SIZE];
 FilterBeHp2 filter;
 

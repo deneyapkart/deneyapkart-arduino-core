@@ -4,7 +4,7 @@
  *   Deneyap Kart'taki dahili IMU'dan alınan sıcaklık verileri ThingSpeak web uygulamasında gözlenebilmektedir. 
  *   Bu örnek uygulama diğer Deneyap Geliştirme Kartları kullanılırsa harici sıcaklık sensörü bağlanılmalı ve kodda gerekli değişiklikler yapılmalıdır.
 */
-#include <WiFi.h>
+#include "WiFi.h"
 #include "HTTPClient.h"
 #include "lsm6dsm.h" // Deneyap Kart dahili IMU kütüphanesinin eklenmesi
 

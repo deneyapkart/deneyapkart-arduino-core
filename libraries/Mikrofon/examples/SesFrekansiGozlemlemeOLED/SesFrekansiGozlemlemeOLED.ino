@@ -1,10 +1,14 @@
 /*
  *  SesFrekansiGozlemlemeOLED örneği,
  *  Deneyap Karttaki dahili mikrofon ile kullanıcı ortamdaki ses frenkansını Oled ekranda ve SERİ ÇİZİCİ(Serial Plotter)de grafiksel olarak gözlemleyebilmektedir.
- *  Bu uygulama diğer Deneyap geliştirme kartları ile gerçekleştirilmek istenirse harici mikrofon bağlanmalıdır ve gerekli bağlantı bilgileri değiştirilmelidir.
- */
+ *  Bu uygulama diğer Deneyap geliştirme kartları ile gerçekleştirilmek istenirse harici mikrofon bağlanmalıdır ve kodda gerekli değişiklikler yapılmalıdır.
+ *  ==============================================================================
+ *    Bu uygulama örneği için "Adafruit SSD1306 by Adafruit" kütüphanesi indirilmelidir.  ->https://github.com/adafruit/Adafruit_SSD1306<-
+ *    Bu uygulama örneği Adafruit SSD1306 kütüphanesi 2.5.7 versiyonu ile yazılmıştır.
+ *  ==============================================================================
+*/
 #include "Wire.h"
-#include "Adafruit_SSD1306.h"
+#include <Adafruit_SSD1306.h>
 #include "mp34dt05.h" // Deneyap Kart dahili mikrofonun kütüphanesinin eklenmesi
 
 #define SCREEN_WIDTH 128 // OLED ekranın piksel olarak genişliği

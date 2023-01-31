@@ -4,8 +4,10 @@
  *    Blynk web tabanlı bulut(https://blynk.cloud/) ve mobil uygulamasında(Blynk IoT) Deneyap Geliştirme Kartlarındaki dahili LED kontrol edilmektedir.
  *    Aynı zamanda Deneyap Geliştirme Kartlarınadaki dahili buton durumu Blynk web tabanlı bulut ve mobil uygulamalarında gözlemlenmektedir.
  *    
+ *  ==============================================================================
  *    Bu uygulama örneği için "Blynk by Volodymyr Shymanskyy" kütüphanesi indirilmelidir.  ->https://github.com/blynkkk/blynk-library <-
  *    Bu uygulama örneği Blynk kütüphanesi 1.0.1 versiyonu ile yazılmıştır.
+ *  ==============================================================================
 */
 #define BLYNK_TEMPLATE_ID   "*******"  // blynk.cloud web tabanlı bulut ekranında Device Info'da konfigurasyon ayarları yer almaktadır
 #define BLYNK_DEVICE_NAME   "*******"  // blynk.cloud web tabanlı bulut ekranında Device Info'da konfigurasyon ayarları yer almaktadır

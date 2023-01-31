@@ -9,10 +9,12 @@
  *
  *    Örnek uygulamayı yükledikten sonra seri port ekranına gelen QR kodunu ESP RainMaker mobil uygulamasında taratınız.
  *    Seri port ekranına gelen QR kodu görünür değilse, altındaki URL'yi bir tarayıcıda kopyala yapıştırın.
- *    QR kod seri port ekranından görünmüyor ise dahili butona "BUT" 4 saniyeden fazla basılı tutun.    
- *
+ *    QR kod seri port ekranından görünmüyor ise dahili butona "BUT" 4 saniyeden fazla basılı tutun.   
+
+ *  ==============================================================================
  *    Bu uygulama örneği için "SimpleTimer by Alexander Kiryanenko" kütüphanesi indirilmelidir.  -> https://github.com/kiryanenko/SimpleTimer<-
  *    Bu uygulama örneği SimpleTimer kütüphanesi 1.0.0 versiyonu ile yazılmıştır.
+ *  ==============================================================================
 */
 #include "RMaker.h"
 #include "WiFi.h"

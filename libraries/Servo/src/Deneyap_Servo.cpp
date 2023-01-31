@@ -37,4 +37,5 @@ void Servo::write(int value) {
   if(value > 180) value = 180; 
   int servoValue = (value - SERVOMIN) * (DUTYCYLEMAX - DUTYCYLEMIN) / (SERVOMAX - SERVOMIN) + DUTYCYLEMIN; // mapping to SERVOMIN-SERVOMAX values from DUTYCYLEMIN-DUTYCYLEMAX values
   ledcWrite(_channel, servoValue); // _channel select servoValue(duty) to be set for selected channel
+  //delay(DELAYMS);
 }

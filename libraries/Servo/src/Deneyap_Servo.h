@@ -13,6 +13,8 @@
 
 #include <Arduino.h>
 
+#define DELAYMS 2000
+
 #define PWMFREQ 50
 #define PWMCHANNEL 0
 #define PWMRESOLUTION 12
