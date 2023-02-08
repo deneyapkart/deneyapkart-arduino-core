@@ -75,5 +75,5 @@ Herhangi bir hata/sorun bildirmeden önce, lütfen karşılaşılan benzer bir h
 ### Deneyap Kart 1A v2 Pin Diyagramı
 ![PinoutDYDK1Av2_TR](DeneyapKart1A_PinDiyagramı_mpv2.0.png)
 
-### Deneyap Kart 1A Genişletilmiş Pin Diyagramı
+### Deneyap Kart 1A v2 Genişletilmiş Pin Diyagramı
 ![ExPinoutDYDK1Av2_TR](DeneyapKart1A_GenisletilmisPinDiyagramı_mpv2.0.png)
