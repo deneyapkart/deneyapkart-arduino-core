@@ -26,8 +26,10 @@ For more information, please visit [Deneyap Kart Technical Guide](https://docs.d
 - [Deneyap Kart 1A Extended Pinout](#deneyap-kart-1a-extended-pinout)
 - [Deneyap Kart G Pinout](#deneyap-kart-g-pinout)
 - [Deneyap Kart G Extended Pinout](#deneyap-kart-g-extended-pinout)
-- [Deneyap Mini v2 Pinout](#deneyap-mini_v2-pinout)
-- [Deneyap Mini v2 Extended Pinout](#deneyap-mini_v2-extended-pinout)
+- [Deneyap Mini v2 Pinout](#deneyap-mini-v2-pinout)
+- [Deneyap Mini v2 Extended Pinout](#deneyap-mini-v2-extended-pinout)
+- [Deneyap Kart 1A v2 Pinout](#deneyap-kart-1a-v2-pinout)
+- [Deneyap Kart 1A v2 Extended Pinout](#deneyap-kart-1a-v2-extended-pinout)
 
 ### Installation Instructions
 JSON index file: `https://raw.githubusercontent.com/deneyapkart/deneyapkart-arduino-core/master/package_deneyapkart_index.json`
@@ -45,28 +47,34 @@ To report any issue/bug/problem etc., please make sure you have searched the sim
 ![PinoutDYDK_ENG](docs/DeneyapKart_PinoutEng_mpv1.0.png)
 
 ### Deneyap Kart Extended Pinout
-![PinoutDYDK_ENG](docs/DeneyapKart_ExtendedPinOutEng_mpv1.0.png)
+![ExPinoutDYDK_ENG](docs/DeneyapKart_ExtendedPinOutEng_mpv1.0.png)
 
 ### Deneyap Mini Pinout
 ![PinoutDYM_ENG](docs/DeneyapMini_PinOutEng_mpv1.0.png)
 
 ### Deneyap Mini Extended Pinout
-![PinoutDYM_ENG](docs/DeneyapMini_ExtendedPinOutEng_mpv1.0.png)
+![ExPinoutDYM_ENG](docs/DeneyapMini_ExtendedPinOutEng_mpv1.0.png)
 
 ### Deneyap Kart 1A Pinout
 ![PinoutDYDK1A_ENG](docs/DeneyapKart1A_PinOutEng_mpv1.0.png)
 
 ### Deneyap Kart 1A Extended Pinout
-![PinoutDYDK1A_ENG](docs/DeneyapKart1A_ExtendedPinOutEng_mpv1.0.png)
+![ExPinoutDYDK1A_ENG](docs/DeneyapKart1A_ExtendedPinOutEng_mpv1.0.png)
 
 ### Deneyap Kart G Pinout
 ![PinoutDYG_ENG](docs/DeneyapKartG_PinOutEng_mpv1.0.png)
 
 ### Deneyap Kart G Extended Pinout
-![PinoutDYG_ENG](docs/DeneyapKartG_ExtendedPinOutEng_mpv1.0.png)
+![ExPinoutDYG_ENG](docs/DeneyapKartG_ExtendedPinOutEng_mpv1.0.png)
 
 ### Deneyap Mini v2 Pinout
-![PinoutDYG_ENG](docs/DeneyapMini_PinOutEng_mpv2.0.png)
+![PinoutDYMv2_ENG](docs/DeneyapMini_PinOutEng_mpv2.0.png)
 
 ### Deneyap Mini v2 Extended Pinout
-![PinoutDYG_ENG](docs/DeneyapMini_ExtendedPinOutEng_mpv2.0.png)
+![ExPinoutDYMv2_ENG](docs/DeneyapMini_ExtendedPinOutEng_mpv2.0.png)
+
+### Deneyap Kart 1A v2 Pinout
+![PinoutDYG_ENG](docs/DeneyapKart1A_PinOutEng_mpv2.0.png)
+
+### Deneyap Kart 1A v2 Extended Pinout
+![ExPinoutDYDK1Av2_ENG](docs/DeneyapKart1A_ExtendedPinOutEng_mpv2.0.png)

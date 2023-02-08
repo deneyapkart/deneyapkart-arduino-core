@@ -22,11 +22,13 @@ Kartlar hakkında detaylı bilgiye erişmek için, lütfen [Deneyap Kart Teknik 
 - [Deneyap Kart 1A Pin Diyagramı](#deneyap-kart-1a-pin-diyagramı)
 - [Deneyap Kart G Pin Diyagramı](#deneyap-kart-g-pin-diyagramı)
 - [Deneyap Mini v2 Pin Diyagramı](#deneyap-mini-v2-pin-diyagramı)
+- [Deneyap Kart 1A v2 Pin Diyagramı](#deneyap-kart-1a-v2-pin-diyagramı)
 - [Deneyap Kart Genişletişmiş Pin Diyagramı](#deneyap-kart-genişletilmiş-pin-diyagramı)
 - [Deneyap Mini Genişletişmiş Pin Diyagramı](#deneyap-mini-genişletilmiş-pin-diyagramı)
 - [Deneyap Kart 1A Genişletişmiş Pin Diyagramı](#deneyap-kart-1a-genişletilmiş-pin-diyagramı)
 - [Deneyap Kart G Genişletişmiş Pin Diyagramı](#deneyap-kart-g-genişletilmiş-pin-diyagramı)
 - [Deneyap Mini v2 Genişletişmiş Pin Diyagramı](#deneyap-mini-v2-genişletilmiş-pin-diyagramı)
+- [Deneyap Kart 1A v2 Genişletişmiş Pin Diyagramı](#deneyap-kart-1a-v2-genişletilmiş-pin-diyagramı)
 
 ### Yükleme Talimatları
 JSON index dosyası: `https://raw.githubusercontent.com/deneyapkart/deneyapkart-arduino-core/master/package_deneyapkart_index.json`
@@ -44,28 +46,34 @@ Herhangi bir hata/sorun bildirmeden önce, lütfen karşılaşılan benzer bir h
 ![PinoutDYDK_TR](DeneyapKart_PinDiyagramı_mpv1.0.png)
 
 ### Deneyap Kart Genişletilmiş Pin Diyagramı
-![PinoutDYDK_TR](DeneyapKart_GenişletilmişPinDiyagramı_mpv1.0.png)
+![ExPinoutDYDK_TR](DeneyapKart_GenişletilmişPinDiyagramı_mpv1.0.png)
 
 ### Deneyap Mini Pin Diyagramı
 ![PinoutDYM_TR](DeneyapMini_PinDiyagrami_mpv1.0.png)
 
 ### Deneyap Mini Genişletilmiş Pin Diyagramı
-![PinoutDYM_TR](DeneyapMini_GenisletilmisPinDiyagramı_mpv1.0.png)
+![ExPinoutDYM_TR](DeneyapMini_GenisletilmisPinDiyagramı_mpv1.0.png)
 
 ### Deneyap Kart 1A Pin Diyagramı
 ![PinoutDYDK1A_TR](DeneyapKart1A_PinDiyagramı_mpv1.0.png)
 
 ### Deneyap Kart 1A Genişletilmiş Pin Diyagramı
-![PinoutDYDK1A_TR](DeneyapKart1A_GenisletilmisPinDiyagramı_mpv1.0.png)
+![ExPinoutDYDK1A_TR](DeneyapKart1A_GenisletilmisPinDiyagramı_mpv1.0.png)
 
 ### Deneyap Kart G Pin Diyagramı
 ![PinoutDYG_TR](DeneyapKartG_PinDiyagrami_mpv1.0.png)
 
 ### Deneyap Kart G Genişletilmiş Pin Diyagramı
-![PinoutDYG_TR](DeneyapKartG_GenisletilmisPinDiyagrami_mpv1.0.png)
+![ExPinoutDYG_TR](DeneyapKartG_GenisletilmisPinDiyagrami_mpv1.0.png)
 
 ### Deneyap Mini v2 Pin Diyagramı
 ![PinoutDYMv2_TR](DeneyapMini_PinDiyagramı_mpv2.0.png)
 
 ### Deneyap Mini v2 Genişletilmiş Pin Diyagramı
-![PinoutDYMv2_TR](DeneyapMini_GenisletilmisPinDiyagramı_mpv2.0.png)
+![ExPinoutDYMv2_TR](DeneyapMini_GenisletilmisPinDiyagramı_mpv2.0.png)
+
+### Deneyap Kart 1A v2 Pin Diyagramı
+![PinoutDYDK1Av2_TR](DeneyapKart1A_PinDiyagramı_mpv2.0.png)
+
+### Deneyap Kart 1A Genişletilmiş Pin Diyagramı
+![ExPinoutDYDK1Av2_TR](DeneyapKart1A_GenisletilmisPinDiyagramı_mpv2.0.png)
