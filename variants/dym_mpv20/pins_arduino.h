@@ -76,8 +76,8 @@ static const uint8_t D14 = 33;
 static const uint8_t PWM0 = 42;
 static const uint8_t PWM1 = 41;
 
-static const uint8_t DAC1 = 17;
-static const uint8_t DAC2 = 18;
+static const uint8_t DAC0 = 17;
+static const uint8_t DAC1 = 18;
 
 #define SD SDA
 #define SC SCL
@@ -86,7 +86,7 @@ static const uint8_t DAC2 = 18;
 #define MI MISO
 #define MC SCK
 
+#define DA0 DAC0
 #define DA1 DAC1
-#define DA0 DAC2
 
 #endif /* Pins_Arduino_h */
