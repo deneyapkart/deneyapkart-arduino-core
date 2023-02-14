@@ -37,13 +37,13 @@ static const uint8_t SCK = 19;
 
 static const uint8_t A0 = 36;
 static const uint8_t A1 = 39;
-static const uint8_t A2 = 32;
-static const uint8_t A3 = 33;
-static const uint8_t A4 = 34;
-static const uint8_t A5 = 35;
+static const uint8_t A2 = 34;
+static const uint8_t A3 = 35;
+static const uint8_t A4 = 32;
+static const uint8_t A5 = 33;
 
-static const uint8_t T0 = 34;
-static const uint8_t T1 = 35;
+static const uint8_t T0 = 32;
+static const uint8_t T1 = 33;
 static const uint8_t T2 = 27;
 static const uint8_t T3 = 14;
 static const uint8_t T4 = 12;
