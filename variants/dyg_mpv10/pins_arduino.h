@@ -48,8 +48,8 @@ static const uint8_t A3 = 4;
 static const uint8_t A4 = 5;
 static const uint8_t A5 = 6;
 
-static const uint8_t D0 = 21;
-static const uint8_t D1 = 20;
+static const uint8_t D0 = 20;
+static const uint8_t D1 = 21;
 static const uint8_t D2 = 9;
 static const uint8_t D3 = 10;
 static const uint8_t D4 = 8;
