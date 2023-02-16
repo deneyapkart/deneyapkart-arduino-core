@@ -2,7 +2,6 @@
 #define Pins_Arduino_h
 
 #include <stdint.h>
-#include "soc/soc_caps.h"
 
 #define EXTERNAL_NUM_INTERRUPTS 16
 #define NUM_DIGITAL_PINS        40
@@ -12,8 +11,8 @@
 #define digitalPinToInterrupt(p)    (((p)<40)?(p):-1)
 #define digitalPinHasPWM(p)         (p < 34)
 
-static const uint8_t LED_BUILTIN = SOC_GPIO_PIN_COUNT+13;
-#define BUILTIN_LED  LED_BUILTIN // backward compatibility
+static const uint8_t LED_BUILTIN = 13;
+#define BUILTIN_LED LED_BUILTIN
 #define LED_BUILTIN LED_BUILTIN
 #define RGB_BUILTIN LED_BUILTIN
 #define RGBLED LED_BUILTIN
@@ -26,6 +25,8 @@ static const uint8_t GPKEY  = 0;
 
 static const uint8_t TX = 1;
 static const uint8_t RX = 3;
+#define TX1 TX
+#define RX1 RX
 
 static const uint8_t SDA = 4;
 static const uint8_t SCL = 15;
