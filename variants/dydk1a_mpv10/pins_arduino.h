@@ -15,10 +15,10 @@ static const uint8_t LED_BUILTIN = 13;
 #define BUILTIN_LED LED_BUILTIN
 #define LED_BUILTIN LED_BUILTIN
 #define RGB_BUILTIN LED_BUILTIN
-#define RGBLED LED_BUILTIN
+#define RGBLED      LED_BUILTIN
 #define RGB_BRIGHTNESS 64
 
-static const uint8_t GPKEY  = 0;
+static const uint8_t GPKEY = 0;
 #define KEY_BUILTIN GPKEY
 #define BUILTIN_KEY GPKEY
 #define BOOT GPKEY
@@ -31,10 +31,10 @@ static const uint8_t RX = 3;
 static const uint8_t SDA = 4;
 static const uint8_t SCL = 15;
 
-static const uint8_t SS = 21;
+static const uint8_t SS   = 21;
 static const uint8_t MOSI = 5;
 static const uint8_t MISO = 18;
-static const uint8_t SCK = 19;
+static const uint8_t SCK  = 19;
 
 static const uint8_t A0 = 36;
 static const uint8_t A1 = 39;
@@ -50,16 +50,16 @@ static const uint8_t T3 = 14;
 static const uint8_t T4 = 12;
 static const uint8_t T5 = 13;
 
-static const uint8_t D0 = 23;
-static const uint8_t D1 = 22;
-static const uint8_t D2 = 1;
-static const uint8_t D3 = 3;
-static const uint8_t D4 = 21;
-static const uint8_t D5 = 19;
-static const uint8_t D6 = 18;
-static const uint8_t D7 = 5;
-static const uint8_t D8 = 0;
-static const uint8_t D9 = 2;
+static const uint8_t D0  = 23;
+static const uint8_t D1  = 22;
+static const uint8_t D2  = 1;
+static const uint8_t D3  = 3;
+static const uint8_t D4  = 21;
+static const uint8_t D5  = 19;
+static const uint8_t D6  = 18;
+static const uint8_t D7  = 5;
+static const uint8_t D8  = 0;
+static const uint8_t D9  = 2;
 static const uint8_t D10 = 4;
 static const uint8_t D11 = 15;
 static const uint8_t D12 = 13;
@@ -90,7 +90,7 @@ static const uint8_t CAMV  = 36;
 
 static const uint8_t SDMI = 2;
 static const uint8_t SDMO = 14;
-static const uint8_t SDCS  = 12;
-static const uint8_t SDCK  = 27;
+static const uint8_t SDCS = 12;
+static const uint8_t SDCK = 27;
 
 #endif /* Pins_Arduino_h */
