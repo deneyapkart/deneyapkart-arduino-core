@@ -1,3 +1,7 @@
+# Deneyap Gelistirme Kartlari
+# version=1.3.12
+
+# Official Espressif options
 menu.UploadSpeed=Upload Speed
 menu.USBMode=USB Mode
 menu.CDCOnBoot=USB CDC On Boot
@@ -11,14 +15,18 @@ menu.FlashSize=Flash Size
 menu.PartitionScheme=Partition Scheme
 menu.DebugLevel=Core Debug Level
 menu.PSRAM=PSRAM
-menu.Revision=Board Revision
-menu.LORAWAN_REGION=LoRaWan Region
-menu.LoRaWanDebugLevel=LoRaWan Debug Level
 menu.LoopCore=Arduino Runs On
 menu.EventsCore=Events Run On
 menu.MemoryType=Memory Type
 menu.EraseFlash=Erase All Flash Before Sketch Upload
 menu.JTAGAdapter=JTAG Adapter
+
+# Custom options
+menu.Revision=Board Revision
+menu.LORAWAN_REGION=LoRaWan Region
+menu.LoRaWanDebugLevel=LoRaWan Debug Level
+menu.LORAWAN_DEVEUI=LoRaWan DevEUI
+menu.LORAWAN_PREAMBLE_LENGTH=LoRaWan Preamble Length
 
 ##############################################################
 
@@ -51,17 +59,21 @@ dydk_mpv10.build.f_cpu=240000000L
 dydk_mpv10.build.flash_size=4MB
 dydk_mpv10.build.flash_freq=80m
 dydk_mpv10.build.flash_mode=dio
-dydk_mpv10.build.boot=dio
+dydk_mpv10.build.boot=qio
 dydk_mpv10.build.partitions=default
 dydk_mpv10.build.defines=
 dydk_mpv10.build.loop_core=
 dydk_mpv10.build.event_core=
 
 ## IDE 2.0 Seems to not update the value
+dydk_mpv10.menu.JTAGAdapter.default=Disabled
+dydk_mpv10.menu.JTAGAdapter.default.build.copy_jtag_files=0
 dydk_mpv10.menu.JTAGAdapter.external=FTDI Adapter
 dydk_mpv10.menu.JTAGAdapter.external.build.openocdscript=esp32-wrover-kit-3.3v.cfg
+dydk_mpv10.menu.JTAGAdapter.external.build.copy_jtag_files=1
 dydk_mpv10.menu.JTAGAdapter.bridge=ESP USB Bridge
 dydk_mpv10.menu.JTAGAdapter.bridge.build.openocdscript=esp32-bridge.cfg
+dydk_mpv10.menu.JTAGAdapter.bridge.build.copy_jtag_files=1
 
 dydk_mpv10.menu.PSRAM.enabled=Enabled
 dydk_mpv10.menu.PSRAM.enabled.build.defines=-DBOARD_HAS_PSRAM -mfix-esp32-psram-cache-issue -mfix-esp32-psram-cache-strategy=memw
@@ -144,9 +156,14 @@ dydk_mpv10.menu.FlashFreq.40.build.flash_freq=40m
 
 dydk_mpv10.menu.FlashSize.4M=4MB (32Mb)
 dydk_mpv10.menu.FlashSize.4M.build.flash_size=4MB
+dydk_mpv10.menu.FlashSize.8M=8MB (64Mb)
+dydk_mpv10.menu.FlashSize.8M.build.flash_size=8MB
+dydk_mpv10.menu.FlashSize.8M.build.partitions=default_8MB
 dydk_mpv10.menu.FlashSize.2M=2MB (16Mb)
 dydk_mpv10.menu.FlashSize.2M.build.flash_size=2MB
 dydk_mpv10.menu.FlashSize.2M.build.partitions=minimal
+dydk_mpv10.menu.FlashSize.16M=16MB (128Mb)
+dydk_mpv10.menu.FlashSize.16M.build.flash_size=16MB
 
 dydk_mpv10.menu.UploadSpeed.921600=921600
 dydk_mpv10.menu.UploadSpeed.921600.upload.speed=921600
@@ -222,17 +239,21 @@ dydk1a_mpv10.build.f_cpu=240000000L
 dydk1a_mpv10.build.flash_size=4MB
 dydk1a_mpv10.build.flash_freq=80m
 dydk1a_mpv10.build.flash_mode=dio
-dydk1a_mpv10.build.boot=dio
+dydk1a_mpv10.build.boot=qio
 dydk1a_mpv10.build.partitions=default
 dydk1a_mpv10.build.defines=
 dydk1a_mpv10.build.loop_core=
 dydk1a_mpv10.build.event_core=
 
 ## IDE 2.0 Seems to not update the value
+dydk1a_mpv10.menu.JTAGAdapter.default=Disabled
+dydk1a_mpv10.menu.JTAGAdapter.default.build.copy_jtag_files=0
 dydk1a_mpv10.menu.JTAGAdapter.external=FTDI Adapter
 dydk1a_mpv10.menu.JTAGAdapter.external.build.openocdscript=esp32-wrover-kit-3.3v.cfg
+dydk1a_mpv10.menu.JTAGAdapter.external.build.copy_jtag_files=1
 dydk1a_mpv10.menu.JTAGAdapter.bridge=ESP USB Bridge
 dydk1a_mpv10.menu.JTAGAdapter.bridge.build.openocdscript=esp32-bridge.cfg
+dydk1a_mpv10.menu.JTAGAdapter.bridge.build.copy_jtag_files=1
 
 dydk1a_mpv10.menu.PSRAM.enabled=Enabled
 dydk1a_mpv10.menu.PSRAM.enabled.build.defines=-DBOARD_HAS_PSRAM -mfix-esp32-psram-cache-issue -mfix-esp32-psram-cache-strategy=memw
@@ -315,9 +336,14 @@ dydk1a_mpv10.menu.FlashFreq.40.build.flash_freq=40m
 
 dydk1a_mpv10.menu.FlashSize.4M=4MB (32Mb)
 dydk1a_mpv10.menu.FlashSize.4M.build.flash_size=4MB
+dydk1a_mpv10.menu.FlashSize.8M=8MB (64Mb)
+dydk1a_mpv10.menu.FlashSize.8M.build.flash_size=8MB
+dydk1a_mpv10.menu.FlashSize.8M.build.partitions=default_8MB
 dydk1a_mpv10.menu.FlashSize.2M=2MB (16Mb)
 dydk1a_mpv10.menu.FlashSize.2M.build.flash_size=2MB
 dydk1a_mpv10.menu.FlashSize.2M.build.partitions=minimal
+dydk1a_mpv10.menu.FlashSize.16M=16MB (128Mb)
+dydk1a_mpv10.menu.FlashSize.16M.build.flash_size=16MB
 
 dydk1a_mpv10.menu.UploadSpeed.921600=921600
 dydk1a_mpv10.menu.UploadSpeed.921600.upload.speed=921600
@@ -405,19 +431,24 @@ dydk1a_mpv20.build.flash_mode=dio
 dydk1a_mpv20.build.boot=qio
 dydk1a_mpv20.build.boot_freq=80m
 dydk1a_mpv20.build.partitions=default
-dydk1a_mpv20.build.defines=
+dydk1a_mpv20.build.defines=-DBOARD_HAS_PSRAM
 dydk1a_mpv20.build.loop_core=
 dydk1a_mpv20.build.event_core=
 dydk1a_mpv20.build.psram_type=opi
 dydk1a_mpv20.build.memory_type={build.boot}_{build.psram_type}
 
 ## IDE 2.0 Seems to not update the value
-dydk1a_mpv20.menu.JTAGAdapter.default=Integrated USB JTAG
-dydk1a_mpv20.menu.JTAGAdapter.default.build.openocdscript=esp32s3-builtin.cfg
+dydk1a_mpv20.menu.JTAGAdapter.default=Disabled
+dydk1a_mpv20.menu.JTAGAdapter.default.build.copy_jtag_files=0
+dydk1a_mpv20.menu.JTAGAdapter.builtin=Integrated USB JTAG
+dydk1a_mpv20.menu.JTAGAdapter.builtin.build.openocdscript=esp32s3-builtin.cfg
+dydk1a_mpv20.menu.JTAGAdapter.builtin.build.copy_jtag_files=1
 dydk1a_mpv20.menu.JTAGAdapter.external=FTDI Adapter
 dydk1a_mpv20.menu.JTAGAdapter.external.build.openocdscript=esp32s3-ftdi.cfg
+dydk1a_mpv20.menu.JTAGAdapter.external.build.copy_jtag_files=1
 dydk1a_mpv20.menu.JTAGAdapter.bridge=ESP USB Bridge
 dydk1a_mpv20.menu.JTAGAdapter.bridge.build.openocdscript=esp32s3-bridge.cfg
+dydk1a_mpv20.menu.JTAGAdapter.bridge.build.copy_jtag_files=1
 
 dydk1a_mpv20.menu.PSRAM.opi=OPI PSRAM
 dydk1a_mpv20.menu.PSRAM.opi.build.defines=-DBOARD_HAS_PSRAM
@@ -425,6 +456,9 @@ dydk1a_mpv20.menu.PSRAM.opi.build.psram_type=opi
 dydk1a_mpv20.menu.PSRAM.disabled=Disabled
 dydk1a_mpv20.menu.PSRAM.disabled.build.defines=
 dydk1a_mpv20.menu.PSRAM.disabled.build.psram_type=qspi
+dydk1a_mpv20.menu.PSRAM.enabled=QSPI PSRAM
+dydk1a_mpv20.menu.PSRAM.enabled.build.defines=-DBOARD_HAS_PSRAM
+dydk1a_mpv20.menu.PSRAM.enabled.build.psram_type=qspi
 
 dydk1a_mpv20.menu.FlashMode.qio=QIO 80MHz
 dydk1a_mpv20.menu.FlashMode.qio.build.flash_mode=dio
@@ -449,6 +483,13 @@ dydk1a_mpv20.menu.FlashMode.opi.build.flash_freq=80m
 
 dydk1a_mpv20.menu.FlashSize.4M=4MB (32Mb)
 dydk1a_mpv20.menu.FlashSize.4M.build.flash_size=4MB
+dydk1a_mpv20.menu.FlashSize.8M=8MB (64Mb)
+dydk1a_mpv20.menu.FlashSize.8M.build.flash_size=8MB
+dydk1a_mpv20.menu.FlashSize.8M.build.partitions=default_8MB
+dydk1a_mpv20.menu.FlashSize.16M=16MB (128Mb)
+dydk1a_mpv20.menu.FlashSize.16M.build.flash_size=16MB
+#dydk1a_mpv20.menu.FlashSize.32M=32MB (256Mb)
+#dydk1a_mpv20.menu.FlashSize.32M.build.flash_size=32MB
 
 dydk1a_mpv20.menu.LoopCore.1=Core 1
 dydk1a_mpv20.menu.LoopCore.1.build.loop_core=-DARDUINO_RUNNING_CORE=1
@@ -614,10 +655,14 @@ dym_mpv10.build.partitions=default
 dym_mpv10.build.defines=
 
 ## IDE 2.0 Seems to not update the value
+dym_mpv10.menu.JTAGAdapter.default=Disabled
+dym_mpv10.menu.JTAGAdapter.default.build.copy_jtag_files=0
 dym_mpv10.menu.JTAGAdapter.external=FTDI Adapter
 dym_mpv10.menu.JTAGAdapter.external.build.openocdscript=esp32s2-kaluga-1.cfg
+dym_mpv10.menu.JTAGAdapter.external.build.copy_jtag_files=1
 dym_mpv10.menu.JTAGAdapter.bridge=ESP USB Bridge
 dym_mpv10.menu.JTAGAdapter.bridge.build.openocdscript=esp32s2-bridge.cfg
+dym_mpv10.menu.JTAGAdapter.bridge.build.copy_jtag_files=1
 
 dym_mpv10.menu.CDCOnBoot.cdc=Enabled
 dym_mpv10.menu.CDCOnBoot.cdc.build.cdc_on_boot=1
@@ -799,13 +844,17 @@ dym_mpv20.build.flash_freq=80m
 dym_mpv20.build.flash_mode=dio
 dym_mpv20.build.boot=qio
 dym_mpv20.build.partitions=default
-dym_mpv20.build.defines=
+dym_mpv20.build.defines=-DBOARD_HAS_PSRAM
 
 ## IDE 2.0 Seems to not update the value
+dym_mpv20.menu.JTAGAdapter.default=Disabled
+dym_mpv20.menu.JTAGAdapter.default.build.copy_jtag_files=0
 dym_mpv20.menu.JTAGAdapter.external=FTDI Adapter
 dym_mpv20.menu.JTAGAdapter.external.build.openocdscript=esp32s2-kaluga-1.cfg
+dym_mpv20.menu.JTAGAdapter.external.build.copy_jtag_files=1
 dym_mpv20.menu.JTAGAdapter.bridge=ESP USB Bridge
 dym_mpv20.menu.JTAGAdapter.bridge.build.openocdscript=esp32s2-bridge.cfg
+dym_mpv20.menu.JTAGAdapter.bridge.build.copy_jtag_files=1
 
 dym_mpv20.menu.CDCOnBoot.cdc=Enabled
 dym_mpv20.menu.CDCOnBoot.cdc.build.cdc_on_boot=1
@@ -982,18 +1031,23 @@ dyg_mpv10.build.cdc_on_boot=1
 dyg_mpv10.build.f_cpu=160000000L
 dyg_mpv10.build.flash_size=4MB
 dyg_mpv10.build.flash_freq=80m
-dyg_mpv10.build.flash_mode=qio
+dyg_mpv10.build.flash_mode=dio
 dyg_mpv10.build.boot=qio
 dyg_mpv10.build.partitions=default
 dyg_mpv10.build.defines=
 
 ## IDE 2.0 Seems to not update the value
-dyg_mpv10.menu.JTAGAdapter.default=Integrated USB JTAG
-dyg_mpv10.menu.JTAGAdapter.default.build.openocdscript=esp32c3-builtin.cfg
+dyg_mpv10.menu.JTAGAdapter.default=Disabled
+dyg_mpv10.menu.JTAGAdapter.default.build.copy_jtag_files=0
+dyg_mpv10.menu.JTAGAdapter.builtin=Integrated USB JTAG
+dyg_mpv10.menu.JTAGAdapter.builtin.build.openocdscript=esp32c3-builtin.cfg
+dyg_mpv10.menu.JTAGAdapter.builtin.build.copy_jtag_files=1
 dyg_mpv10.menu.JTAGAdapter.external=FTDI Adapter
 dyg_mpv10.menu.JTAGAdapter.external.build.openocdscript=esp32c3-ftdi.cfg
+dyg_mpv10.menu.JTAGAdapter.external.build.copy_jtag_files=1
 dyg_mpv10.menu.JTAGAdapter.bridge=ESP USB Bridge
 dyg_mpv10.menu.JTAGAdapter.bridge.build.openocdscript=esp32c3-bridge.cfg
+dyg_mpv10.menu.JTAGAdapter.bridge.build.copy_jtag_files=1
 
 dyg_mpv10.menu.CDCOnBoot.cdc=Enabled
 dyg_mpv10.menu.CDCOnBoot.cdc.build.cdc_on_boot=1
