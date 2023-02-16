@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-#define USB_VID 0x303A
-#define USB_PID 0x8141
-#define USB_MANUFACTURER "Turkish Technnology Team Foundation (T3)"
-#define USB_PRODUCT "DENEYAP MINI"
-#define USB_SERIAL ""  // Empty string for MAC adddress
+#define USB_VID             0x303A
+#define USB_PID             0x8141
+#define USB_MANUFACTURER    "Turkish Technnology Team Foundation (T3)"
+#define USB_PRODUCT         "DENEYAP MINI"
+#define USB_SERIAL          ""  // Empty string for MAC adddress
 
 #define EXTERNAL_NUM_INTERRUPTS 46
 #define NUM_DIGITAL_PINS 48
@@ -17,13 +17,13 @@
 #define digitalPinToInterrupt(p) (((p) < 48) ? (p) : -1)
 #define digitalPinHasPWM(p) (p < 46)
 
+static const uint8_t LED_BUILTIN = 35;
+#define BUILTIN_LED LED_BUILTIN
+#define LED_BUILTIN LED_BUILTIN
+#define LEDB LED_BUILTIN
 #define LEDR 34
 #define LEDG 33
 #define LEDB 35
-
-#define BUILTIN_LED LEDB
-#define LED_BUILTIN LEDB  // backward compatibility
-//#define RGB_BUILTIN LED_BUILTIN
 
 static const uint8_t GPKEY = 0;
 #define KEY_BUILTIN GPKEY
@@ -32,6 +32,8 @@ static const uint8_t GPKEY = 0;
 
 static const uint8_t TX = 43;
 static const uint8_t RX = 44;
+#define TX1 TX
+#define RX1 RX
 
 static const uint8_t SDA = 36;
 static const uint8_t SCL = 37;
