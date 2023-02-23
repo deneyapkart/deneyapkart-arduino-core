@@ -1,36 +1,25 @@
 #######################################
-# Syntax Coloring Map SPI
+# Syntax Coloring Map For Ultrasound
 #######################################
 
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
 
-SPI	KEYWORD1
+ESPmDNS	KEYWORD1
+MDNS	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
+
 begin	KEYWORD2
 end	KEYWORD2
-transfer	KEYWORD2
-setBitOrder	KEYWORD2
-setDataMode	KEYWORD2
-setClockDivider	KEYWORD2
-
+addService	KEYWORD2
+enableArduino	KEYWORD2
+disableArduino	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
-SPI_CLOCK_DIV4	LITERAL1
-SPI_CLOCK_DIV16	LITERAL1
-SPI_CLOCK_DIV64	LITERAL1
-SPI_CLOCK_DIV128	LITERAL1
-SPI_CLOCK_DIV2	LITERAL1
-SPI_CLOCK_DIV8	LITERAL1
-SPI_CLOCK_DIV32	LITERAL1
-SPI_CLOCK_DIV64	LITERAL1
-SPI_MODE0	LITERAL1
-SPI_MODE1	LITERAL1
-SPI_MODE2	LITERAL1
-SPI_MODE3	LITERAL1
+
