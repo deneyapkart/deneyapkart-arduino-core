@@ -220,6 +220,5 @@ void noTone(uint8_t _pin);
 #endif /* __cplusplus */
 
 #include "pins_arduino.h"
-#include "deneyap.h"
 
 #endif /* _ESP32_CORE_ARDUINO_H_ */
