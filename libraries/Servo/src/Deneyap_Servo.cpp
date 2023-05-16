@@ -5,7 +5,7 @@
 @maintainer   RFtek Electronics <techsupport@rftek.com.tr>
 @version      v1.0.0
 @date         October 20, 2022
-@brief        Includes functions to control servo motor Arduino library 
+@brief        Includes functions to control servo motor Arduino library
               for Deneyap Development Boards
 *************************************************************************************************
 */
@@ -22,7 +22,7 @@
 **/
 void Servo::attach(int pin, int channel, int freq, int resolution) {
   _channel = channel;
-  ledcSetup(_channel, freq, resolution);   
+  ledcSetup(_channel, freq, resolution);
   ledcAttachPin(pin, channel);
   ledcWrite(_channel, FIRSTDUTY);
 }
@@ -34,8 +34,20 @@ void Servo::attach(int pin, int channel, int freq, int resolution) {
 **/
 void Servo::write(int value) {
   if(value < 0) value = 0;
-  if(value > 180) value = 180; 
+  if(value > 180) value = 180;
   int servoValue = (value - SERVOMIN) * (DUTYCYLEMAX - DUTYCYLEMIN) / (SERVOMAX - SERVOMIN) + DUTYCYLEMIN; // mapping to SERVOMIN-SERVOMAX values from DUTYCYLEMIN-DUTYCYLEMAX values
+  ledcWrite(_channel, servoValue); // _channel select servoValue(duty) to be set for selected channel
+  //delay(DELAYMS);
+}
+/**
+ * @brief   writeMicroseconds servo value 0-3000 as degree
+ * @param   @value: servo value 0-180 as degree
+ * @retval  None
+**/
+void Servo::writeMicroseconds(int value) {
+  if(value < 0) value = 0;
+  if(value > 3000) value = 3000;
+  int servoValue = value;
   ledcWrite(_channel, servoValue); // _channel select servoValue(duty) to be set for selected channel
   //delay(DELAYMS);
 }
