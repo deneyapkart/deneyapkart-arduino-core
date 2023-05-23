@@ -1,5 +1,5 @@
 # Deneyap Gelistirme Kartlari
-# version=1.4.0
+# version=1.3.12
 
 # Official Espressif options
 menu.UploadSpeed=Upload Speed
@@ -153,6 +153,11 @@ dydk_mpv10.menu.FlashFreq.80=80MHz
 dydk_mpv10.menu.FlashFreq.80.build.flash_freq=80m
 dydk_mpv10.menu.FlashFreq.40=40MHz
 dydk_mpv10.menu.FlashFreq.40.build.flash_freq=40m
+
+dydk_mpv10.menu.UploadMode.Auto=Auto
+dydk_mpv10.menu.UploadMode.Auto.upload.mode=default_reset
+dydk_mpv10.menu.UploadMode.Manual=Manual
+dydk_mpv10.menu.UploadMode.Manual.upload.mode=no_reset
 
 dydk_mpv10.menu.FlashSize.4M=4MB (32Mb)
 dydk_mpv10.menu.FlashSize.4M.build.flash_size=4MB
@@ -333,6 +338,11 @@ dydk1a_mpv10.menu.FlashFreq.80=80MHz
 dydk1a_mpv10.menu.FlashFreq.80.build.flash_freq=80m
 dydk1a_mpv10.menu.FlashFreq.40=40MHz
 dydk1a_mpv10.menu.FlashFreq.40.build.flash_freq=40m
+
+dydk1a_mpv10.menu.UploadMode.Auto=Auto
+dydk1a_mpv10.menu.UploadMode.Auto.upload.mode=default_reset
+dydk1a_mpv10.menu.UploadMode.Manual=Manual
+dydk1a_mpv10.menu.UploadMode.Manual.upload.mode=no_reset
 
 dydk1a_mpv10.menu.FlashSize.4M=4MB (32Mb)
 dydk1a_mpv10.menu.FlashSize.4M.build.flash_size=4MB
