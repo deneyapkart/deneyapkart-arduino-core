@@ -1,7 +1,12 @@
 /*
-*   CokluServoMotor örneği,
-*   3 adet servo motoru döndürmektedir. 1. servo motor mili 30 derece, 2. servo motor mili 60 derece, 3. servo motor mili 90 derece döndürmektedir.
-*   Birden fazla servo motor bağlanıldığında attach(pin, channel) fonksiyonu içinde farklı kanal(channel) ayarlanmalıdır. 
+ *   CokluServoMotor örneği,
+ *   3 adet servo motoru döndürmektedir. 1. servo motor mili 30 derece, 2. servo motor mili 60 derece, 3. servo motor mili 90 derece döndürmektedir.
+ *   Birden fazla servo motor bağlanıldığında attach(pin, channel) fonksiyonu içinde farklı kanal(channel) ayarlanmalıdır. 
+ *   
+ *  ==============================================================================
+ *    Bu uygulama örneği için "Deneyap Servo" kütüphanesi indirilmelidir.  ->https://github.com/deneyapkart/deneyap-servo-arduino-library<-
+ *    Bu uygulama örneği Deneyap Servo kütüphanesi 1.0.0 versiyonu ile yazılmıştır.
+ *  ==============================================================================
 */
 #include <Deneyap_Servo.h>      // Deneyap Servo kütüphanesi eklenmesi 
  
