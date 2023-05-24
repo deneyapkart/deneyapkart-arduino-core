@@ -531,12 +531,12 @@ dydk1a_mpv20.menu.DFUOnBoot.default.build.dfu_on_boot=0
 dydk1a_mpv20.menu.DFUOnBoot.dfu=Enabled (Requires USB-OTG Mode)
 dydk1a_mpv20.menu.DFUOnBoot.dfu.build.dfu_on_boot=1
 
-dydk1a_mpv20.menu.UploadMode.default=UART0 / Hardware CDC
-dydk1a_mpv20.menu.UploadMode.default.upload.use_1200bps_touch=false
-dydk1a_mpv20.menu.UploadMode.default.upload.wait_for_upload_port=false
 dydk1a_mpv20.menu.UploadMode.cdc=USB-OTG CDC (TinyUSB)
 dydk1a_mpv20.menu.UploadMode.cdc.upload.use_1200bps_touch=true
 dydk1a_mpv20.menu.UploadMode.cdc.upload.wait_for_upload_port=true
+dydk1a_mpv20.menu.UploadMode.default=UART0 / Hardware CDC
+dydk1a_mpv20.menu.UploadMode.default.upload.use_1200bps_touch=false
+dydk1a_mpv20.menu.UploadMode.default.upload.wait_for_upload_port=false
 
 dydk1a_mpv20.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
 dydk1a_mpv20.menu.PartitionScheme.default.build.partitions=default
