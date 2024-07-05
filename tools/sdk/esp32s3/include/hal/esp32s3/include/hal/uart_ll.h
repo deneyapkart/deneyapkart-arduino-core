@@ -1,16 +1,8 @@
-// Copyright 2015-2020 Espressif Systems (Shanghai) PTE LTD
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * SPDX-FileCopyrightText: 2015-2023 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 // The LL layer for UART register operations.
 // Note that most of the register operations in this layer are non-atomic operations.
@@ -18,6 +10,7 @@
 
 #pragma once
 
+#include <stdlib.h>
 #include "hal/misc.h"
 #include "hal/uart_types.h"
 #include "soc/uart_periph.h"
@@ -60,6 +53,7 @@ typedef enum {
     UART_INTR_RS485_FRM_ERR    = (0x1 << 16),
     UART_INTR_RS485_CLASH      = (0x1 << 17),
     UART_INTR_CMD_CHAR_DET     = (0x1 << 18),
+    UART_INTR_WAKEUP           = (0x1 << 19),
 } uart_intr_t;
 
 /**
@@ -157,13 +151,15 @@ FORCE_INLINE_ATTR void uart_ll_set_baudrate(uart_dev_t *hw, uint32_t baud)
 #define DIV_UP(a, b)    (((a) + (b) - 1) / (b))
     uint32_t sclk_freq = uart_ll_get_sclk_freq(hw);
     const uint32_t max_div = BIT(12) - 1;   // UART divider integer part only has 12 bits
-    int sclk_div = DIV_UP(sclk_freq, max_div * baud);
+    uint32_t sclk_div = DIV_UP(sclk_freq, (uint64_t)max_div * baud);
+
+    if (sclk_div == 0) abort();
 
     uint32_t clk_div = ((sclk_freq) << 4) / (baud * sclk_div);
     // The baud rate configuration register is divided into
     // an integer part and a fractional part.
     hw->clkdiv.clkdiv = clk_div >> 4;
-    hw->clkdiv.clkdiv_frag = clk_div &  0xf;
+    hw->clkdiv.clkdiv_frag = clk_div & 0xf;
     HAL_FORCE_MODIFY_U32_REG_FIELD(hw->clk_conf, sclk_div_num, sclk_div - 1);
 #undef DIV_UP
 }
@@ -178,7 +174,8 @@ FORCE_INLINE_ATTR void uart_ll_set_baudrate(uart_dev_t *hw, uint32_t baud)
 FORCE_INLINE_ATTR uint32_t uart_ll_get_baudrate(uart_dev_t *hw)
 {
     uint32_t sclk_freq = uart_ll_get_sclk_freq(hw);
-    uart_clkdiv_reg_t div_reg = hw->clkdiv;
+    uart_clkdiv_reg_t div_reg;
+    div_reg.val = hw->clkdiv.val;
     return ((sclk_freq << 4)) /
         (((div_reg.clkdiv << 4) | div_reg.clkdiv_frag) * (HAL_FORCE_READ_U32_REG_FIELD(hw->clk_conf, sclk_div_num) + 1));
 }
@@ -207,6 +204,18 @@ FORCE_INLINE_ATTR void uart_ll_ena_intr_mask(uart_dev_t *hw, uint32_t mask)
 FORCE_INLINE_ATTR void uart_ll_disable_intr_mask(uart_dev_t *hw, uint32_t mask)
 {
     hw->int_ena.val &= (~mask);
+}
+
+/**
+ * @brief  Get the UART raw interrupt status.
+ *
+ * @param  hw Beginning address of the peripheral registers.
+ *
+ * @return The UART interrupt status.
+ */
+static inline uint32_t uart_ll_get_intraw_mask(uart_dev_t *hw)
+{
+    return hw->int_raw.val;
 }
 
 /**
@@ -818,7 +827,8 @@ FORCE_INLINE_ATTR void uart_ll_set_loop_back(uart_dev_t *hw, bool loop_back_en)
  */
 FORCE_INLINE_ATTR void uart_ll_inverse_signal(uart_dev_t *hw, uint32_t inv_mask)
 {
-    uart_conf0_reg_t conf0_reg = hw->conf0;
+    uart_conf0_reg_t conf0_reg;
+    conf0_reg.val = hw->conf0.val;
     conf0_reg.irda_tx_inv = (inv_mask & UART_SIGNAL_IRDA_TX_INV) ? 1 : 0;
     conf0_reg.irda_rx_inv = (inv_mask & UART_SIGNAL_IRDA_RX_INV) ? 1 : 0;
     conf0_reg.rxd_inv = (inv_mask & UART_SIGNAL_RXD_INV) ? 1 : 0;

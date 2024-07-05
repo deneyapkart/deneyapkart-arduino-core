@@ -110,13 +110,13 @@
 #define analogInPinToBit(P)         (P)
 #if SOC_GPIO_PIN_COUNT <= 32
 #define digitalPinToPort(pin)       (0)
-#define digitalPinToBitMask(pin)    (1UL << (pin))
+#define digitalPinToBitMask(pin)    (1UL << digitalPinToGPIONumber(pin))
 #define portOutputRegister(port)    ((volatile uint32_t*)GPIO_OUT_REG)
 #define portInputRegister(port)     ((volatile uint32_t*)GPIO_IN_REG)
 #define portModeRegister(port)      ((volatile uint32_t*)GPIO_ENABLE_REG)
 #elif SOC_GPIO_PIN_COUNT <= 64
-#define digitalPinToPort(pin)       (((pin)>31)?1:0)
-#define digitalPinToBitMask(pin)    (1UL << (((pin)>31)?((pin)-32):(pin)))
+#define digitalPinToPort(pin)       ((digitalPinToGPIONumber(pin)>31)?1:0)
+#define digitalPinToBitMask(pin)    (1UL << (digitalPinToGPIONumber(pin)&31))
 #define portOutputRegister(port)    ((volatile uint32_t*)((port)?GPIO_OUT1_REG:GPIO_OUT_REG))
 #define portInputRegister(port)     ((volatile uint32_t*)((port)?GPIO_IN1_REG:GPIO_IN_REG))
 #define portModeRegister(port)      ((volatile uint32_t*)((port)?GPIO_ENABLE1_REG:GPIO_ENABLE_REG))
@@ -128,6 +128,18 @@
 #define NOT_A_PORT -1
 #define NOT_AN_INTERRUPT -1
 #define NOT_ON_TIMER 0
+
+// some defines generic for all SoC moved from variants/board_name/pins_arduino.h
+#define NUM_DIGITAL_PINS        SOC_GPIO_PIN_COUNT // All GPIOs
+#if SOC_ADC_PERIPH_NUM == 1
+#define NUM_ANALOG_INPUTS       (SOC_ADC_CHANNEL_NUM(0))
+#elif SOC_ADC_PERIPH_NUM == 2
+#define NUM_ANALOG_INPUTS       (SOC_ADC_CHANNEL_NUM(0)+SOC_ADC_CHANNEL_NUM(1))
+#endif
+#define EXTERNAL_NUM_INTERRUPTS NUM_DIGITAL_PINS  // All GPIOs
+#define analogInputToDigitalPin(p)  (((p)<NUM_ANALOG_INPUTS)?(analogChannelToDigitalPin(p)):-1)
+#define digitalPinToInterrupt(p)    ((((uint8_t)digitalPinToGPIONumber(p))<NUM_DIGITAL_PINS)?digitalPinToGPIONumber(p):NOT_AN_INTERRUPT)
+#define digitalPinHasPWM(p)         (((uint8_t)digitalPinToGPIONumber(p))<NUM_DIGITAL_PINS)
 
 typedef bool boolean;
 typedef uint8_t byte;
@@ -220,5 +232,6 @@ void noTone(uint8_t _pin);
 #endif /* __cplusplus */
 
 #include "pins_arduino.h"
+#include "io_pin_remap.h"
 
 #endif /* _ESP32_CORE_ARDUINO_H_ */

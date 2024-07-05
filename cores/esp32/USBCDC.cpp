@@ -74,7 +74,7 @@ void tud_cdc_tx_complete_cb(uint8_t itf){
 
 static void ARDUINO_ISR_ATTR cdc0_write_char(char c){
     if(devices[0] != NULL){
-        devices[0]->write(c);
+        tud_cdc_n_write_char(0, c);
     }
 }
 
@@ -432,9 +432,9 @@ void USBCDC::setDebugOutput(bool en)
 {
     if(en) {
         uartSetDebug(NULL);
-        ets_install_putc1((void (*)(char)) &cdc0_write_char);
+        ets_install_putc2((void (*)(char)) &cdc0_write_char);
     } else {
-        ets_install_putc1(NULL);
+        ets_install_putc2(NULL);
     }
 }
 

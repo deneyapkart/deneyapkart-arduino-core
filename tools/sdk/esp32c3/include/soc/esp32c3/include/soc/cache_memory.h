@@ -19,18 +19,17 @@ extern "C" {
 #endif
 
 /*IRAM0 is connected with Cache IBUS0*/
-#define IRAM0_ADDRESS_LOW               0x40000000
-#define IRAM0_ADDRESS_HIGH              0x44000000
+#define IRAM0_ADDRESS_LOW               0x4037C000
+#define IRAM0_ADDRESS_HIGH              0x403E0000
 #define IRAM0_CACHE_ADDRESS_LOW	        0x42000000
 #define IRAM0_CACHE_ADDRESS_HIGH        0x42800000
 
 /*DRAM0 is connected with Cache DBUS0*/
-#define DRAM0_ADDRESS_LOW               0x3C000000
-#define DRAM0_ADDRESS_HIGH              0x40000000
+#define DRAM0_ADDRESS_LOW               0x3FC80000
+#define DRAM0_ADDRESS_HIGH              0x3FCE0000
 #define DRAM0_CACHE_ADDRESS_LOW         0x3C000000
 #define DRAM0_CACHE_ADDRESS_HIGH        0x3C800000
 #define DRAM0_CACHE_OPERATION_HIGH      DRAM0_CACHE_ADDRESS_HIGH
-#define ESP_CACHE_TEMP_ADDR             0x3C000000
 
 #define BUS_SIZE(bus_name)                 (bus_name##_ADDRESS_HIGH - bus_name##_ADDRESS_LOW)
 #define ADDRESS_IN_BUS(bus_name, vaddr)    ((vaddr) >= bus_name##_ADDRESS_LOW && (vaddr) < bus_name##_ADDRESS_HIGH)
@@ -55,7 +54,7 @@ extern "C" {
 #define CACHE_IROM_MMU_END              Cache_Get_IROM_MMU_End()
 #define CACHE_IROM_MMU_SIZE             (CACHE_IROM_MMU_END - CACHE_IROM_MMU_START)
 
-#define CACHE_DROM_MMU_START            CACHE_IROM_MMU_END
+#define CACHE_DROM_MMU_START            0
 #define CACHE_DROM_MMU_END              Cache_Get_DROM_MMU_End()
 #define CACHE_DROM_MMU_SIZE             (CACHE_DROM_MMU_END - CACHE_DROM_MMU_START)
 
