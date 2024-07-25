@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2024 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #ifndef ESP32UPDATER_H
 #define ESP32UPDATER_H
 
@@ -190,6 +196,8 @@ class UpdateClass {
     uint8_t _ledOn;
 };
 
+#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_UPDATE)
 extern UpdateClass Update;
+#endif
 
 #endif

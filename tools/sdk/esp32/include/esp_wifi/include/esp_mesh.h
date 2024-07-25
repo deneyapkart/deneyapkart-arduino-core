@@ -188,7 +188,8 @@ typedef enum {
     MESH_EVENT_PARENT_DISCONNECTED,     /**< parent is disconnected on station interface */
     MESH_EVENT_NO_PARENT_FOUND,         /**< no parent found */
     MESH_EVENT_LAYER_CHANGE,            /**< layer changes over the mesh network */
-    MESH_EVENT_TODS_STATE,              /**< state represents whether the root is able to access external IP network */
+    MESH_EVENT_TODS_STATE,              /**< state represents whether the root is able to access external IP network.
+                                             This state is a manual event that needs to be triggered with esp_mesh_post_toDS_state(). */
     MESH_EVENT_VOTE_STARTED,            /**< the process of voting a new root is started either by children or by the root */
     MESH_EVENT_VOTE_STOPPED,            /**< the process of voting a new root is stopped */
     MESH_EVENT_ROOT_ADDRESS,            /**< the root address is obtained. It is posted by mesh stack automatically. */
@@ -1189,7 +1190,10 @@ esp_err_t esp_mesh_get_rx_pending(mesh_rx_pending_t *pending);
 int esp_mesh_available_txupQ_num(const mesh_addr_t *addr, uint32_t *xseqno_in);
 
 /**
- * @brief      Set the number of queue
+ * @brief      Set the number of RX queue for the node, the average number of window allocated to one of
+ *             its child node is: wnd = xon_qsize / (2 * max_connection + 1).
+ *             However, the window of each child node is not strictly equal to the average value,
+ *             it is affected by the traffic also.
  *
  * @attention  This API shall be called before mesh is started.
  *
@@ -1410,7 +1414,7 @@ esp_err_t esp_mesh_set_parent(const wifi_config_t *parent, const mesh_addr_t *pa
  * @return
  *    - ESP_OK
  *    - ESP_ERR_WIFI_NOT_INIT
- *    - ESP_ERR_WIFI_ARG
+ *    - ESP_ERR_INVALID_ARG
  *    - ESP_ERR_WIFI_FAIL
  */
 esp_err_t esp_mesh_scan_get_ap_ie_len(int *len);
@@ -1427,7 +1431,7 @@ esp_err_t esp_mesh_scan_get_ap_ie_len(int *len);
  * @return
  *    - ESP_OK
  *    - ESP_ERR_WIFI_NOT_INIT
- *    - ESP_ERR_WIFI_ARG
+ *    - ESP_ERR_INVALID_ARG
  *    - ESP_ERR_WIFI_FAIL
  */
 esp_err_t esp_mesh_scan_get_ap_record(wifi_ap_record_t *ap_record, void *buffer);
@@ -1516,7 +1520,7 @@ esp_err_t esp_mesh_switch_channel(const uint8_t *new_bssid, int csa_newchan, int
  * @return
  *    - ESP_OK
  *    - ESP_ERR_WIFI_NOT_INIT
- *    - ESP_ERR_WIFI_ARG
+ *    - ESP_ERR_INVALID_ARG
  */
 esp_err_t esp_mesh_get_router_bssid(uint8_t *router_bssid);
 

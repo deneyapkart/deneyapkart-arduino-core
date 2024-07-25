@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2015-2021 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2015-2023 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -21,10 +21,19 @@ extern "C" {
 /**
  * @brief Logic function used for EXT1 wakeup mode.
  */
+#if CONFIG_IDF_TARGET_ESP32
 typedef enum {
     ESP_EXT1_WAKEUP_ALL_LOW = 0,    //!< Wake the chip when all selected GPIOs go low
     ESP_EXT1_WAKEUP_ANY_HIGH = 1    //!< Wake the chip when any of the selected GPIOs go high
 } esp_sleep_ext1_wakeup_mode_t;
+#else
+typedef enum {
+    ESP_EXT1_WAKEUP_ANY_LOW = 0,    //!< Wake the chip when any of the selected GPIOs go low
+    ESP_EXT1_WAKEUP_ANY_HIGH = 1,   //!< Wake the chip when any of the selected GPIOs go high
+    ESP_EXT1_WAKEUP_ALL_LOW __attribute__((deprecated("wakeup mode \"ALL_LOW\" is no longer supported after ESP32, \
+    please use ESP_EXT1_WAKEUP_ANY_LOW instead"))) = ESP_EXT1_WAKEUP_ANY_LOW
+} esp_sleep_ext1_wakeup_mode_t;
+#endif
 
 #if SOC_GPIO_SUPPORT_DEEPSLEEP_WAKEUP
 typedef enum {
@@ -234,25 +243,29 @@ esp_err_t esp_sleep_enable_ext1_wakeup(uint64_t mask, esp_sleep_ext1_wakeup_mode
  * This function enables an IO pin to wake the chip from deep sleep
  *
  * @note This function does not modify pin configuration. The pins are
- *       configured in esp_sleep_start, immediately before
- *       entering sleep mode.
+ *       configured inside esp_deep_sleep_start, immediately before entering sleep mode.
  *
- * @note You don't need to care to pull-up or pull-down before using this
- *       function, because this will be done in esp_sleep_start based on
- *       param mask you give. BTW, when you use low level to wake up the
- *       chip, we strongly recommand you to add external registors(pull-up).
+ * @note You don't need to worry about pull-up or pull-down resistors before
+ *       using this function because the ESP_SLEEP_GPIO_ENABLE_INTERNAL_RESISTORS
+ *       option is enabled by default. It will automatically set pull-up or pull-down
+ *       resistors internally in esp_deep_sleep_start based on the wakeup mode. However,
+ *       when using external pull-up or pull-down resistors, please be sure to disable
+ *       the ESP_SLEEP_GPIO_ENABLE_INTERNAL_RESISTORS option, as the combination of internal
+ *       and external resistors may cause interference. BTW, when you use low level to wake up the
+ *       chip, we strongly recommend you to add external resistors (pull-up).
  *
  * @param gpio_pin_mask  Bit mask of GPIO numbers which will cause wakeup. Only GPIOs
- *              which are have RTC functionality can be used in this bit map.
+ *              which have RTC functionality (pads that powered by VDD3P3_RTC) can be used in this bit map.
  * @param mode Select logic function used to determine wakeup condition:
  *            - ESP_GPIO_WAKEUP_GPIO_LOW: wake up when the gpio turn to low.
  *            - ESP_GPIO_WAKEUP_GPIO_HIGH: wake up when the gpio turn to high.
  * @return
  *      - ESP_OK on success
- *      - ESP_ERR_INVALID_ARG if gpio num is more than 5 or mode is invalid,
+ *      - ESP_ERR_INVALID_ARG if the mask contains any invalid deep sleep wakeup pin or wakeup mode is invalid
  */
 esp_err_t esp_deep_sleep_enable_gpio_wakeup(uint64_t gpio_pin_mask, esp_deepsleep_gpio_wake_up_mode_t mode);
 #endif
+
 /**
  * @brief Enable wakeup from light sleep using GPIOs
  *
@@ -458,7 +471,6 @@ void esp_deep_sleep_disable_rom_logging(void);
 esp_err_t esp_sleep_cpu_pd_low_init(bool enable);
 #endif
 
-#if SOC_GPIO_SUPPORT_SLP_SWITCH
 /**
  * @brief Configure to isolate all GPIO pins in sleep state
  */
@@ -469,7 +481,6 @@ void esp_sleep_config_gpio_isolate(void);
  * @param enable decide whether to switch status or not
  */
 void esp_sleep_enable_gpio_switch(bool enable);
-#endif
 
 #if CONFIG_MAC_BB_PD
 /**
