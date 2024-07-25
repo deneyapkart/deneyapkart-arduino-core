@@ -5,10 +5,10 @@
 #include "soc/soc_caps.h"
 
 #define USB_VID            0x303A
-#define USB_PID            0x8147
+#define USB_PID            0x8149
 #define USB_MANUFACTURER   "Turkish Technnology Team Foundation (T3)"
 #define USB_PRODUCT        "DENEYAP KART 1A v3"
-#define USB_SERIAL         "" // Empty string for MAC adddress
+#define USB_SERIAL         "" // Empty string for MAC address
 
 #define EXTERNAL_NUM_INTERRUPTS	46
 #define NUM_DIGITAL_PINS	48
