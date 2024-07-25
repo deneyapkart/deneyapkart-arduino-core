@@ -13,8 +13,8 @@
           "category": "Contributed",
           "name": "Deneyap Gelistirme Kartlari",
           "url": "https://github.com/deneyapkart/deneyapkart-arduino-core/releases/download/1.3.13/deneyapkart-1.3.13.zip",
-          "checksum": "SHA-256:99e1abfc66d0fe05c379addc97e19cc2125f7459c1a74d17c67edb2b999f830c",
-          "size": "307493879",
+          "checksum": "SHA-256:0daa975068b8961ee9b9a1661d89341e31ba1ab1cdcf10ef50b150da90e12f92",
+          "size": "307495071",
           "help": {
             "online": ""
           },
@@ -30,9 +30,6 @@
             },
             {
               "name": "Deneyap Kart 1A v2"
-            },
-            {
-              "name": "Deneyap Kart 1A v3"
             },
             {
               "name": "Deneyap Mini"
