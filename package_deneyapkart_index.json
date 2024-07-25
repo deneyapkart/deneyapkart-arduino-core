@@ -3,7 +3,7 @@
     {
       "name": "deneyap",
       "maintainer": "Turkish Technnology Team Foundation (T3)",
-      "websiteURL": "https://github.com/halak0013/deneyapkart-arduino-core",
+      "websiteURL": "https://github.com/deneyapkart/deneyapkart-arduino-core/deneyapkart-arduino-core",
       "email": "destek@deneyapkart.org",
       "help": {
         "online": "http://forum.deneyapkart.org"
@@ -12,8 +12,8 @@
         {
           "category": "Contributed",
           "name": "Deneyap Gelistirme Kartlari",
-          "url": "https://github.com/halak0013/deneyapkart-arduino-core/releases/download/1.3.13/deneyapkart-1.3.13.zip",
-          "checksum": "SHA-256:68105dea50c172fc59629f2f6d46595df36c3553a6743941c08c4acb288b92d4",
+          "url": "https://github.com/deneyapkart/deneyapkart-arduino-core/releases/download/1.3.13/deneyapkart-1.3.13.zip",
+          "checksum": "SHA-256:99e1abfc66d0fe05c379addc97e19cc2125f7459c1a74d17c67edb2b999f830c",
           "size": "307493879",
           "help": {
             "online": ""
@@ -30,6 +30,9 @@
             },
             {
               "name": "Deneyap Kart 1A v2"
+            },
+            {
+              "name": "Deneyap Kart 1A v3"
             },
             {
               "name": "Deneyap Mini"
