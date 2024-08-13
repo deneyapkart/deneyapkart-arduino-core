@@ -246,7 +246,7 @@ static int run_face_recognition(fb_data_t *fb, std::list<dl::detect::result_t> *
 
   if (enrolled_count < FACE_ID_SAVE_NUMBER && is_enrolling) {
     id = recognizer.enroll_id(tensor, landmarks, "", true);
-    ESP_LOGI(TAG, "Kayıtlı ID: %d", id);
+    ESP_LOGI(TAG, "Kayitli ID: %d", id);
     rgb_printf(fb, FACE_COLOR_CYAN, "ID[%u]", id);
   }
 
@@ -254,7 +254,7 @@ static int run_face_recognition(fb_data_t *fb, std::list<dl::detect::result_t> *
   if (recognize.id >= 0) {
     rgb_printf(fb, FACE_COLOR_GREEN, "ID[%u]: %.2f", recognize.id, recognize.similarity);
   } else {
-    rgb_print(fb, FACE_COLOR_RED, "Davetsiz Misafir Uyarısı!");
+    rgb_print(fb, FACE_COLOR_RED, "Bilinmeyen Kisi!");
   }
   return recognize.id;
 }
