@@ -2,43 +2,46 @@
  *   WatcgdogTimer örneği, 
  * 
 */
-#include "esp_system.h"
+#include <esp_task_wdt.h>
 
-const int wdtTimeout = 3000;  //watchdog'u tetiklemek için ms cinsinden süre
-hw_timer_t *timer = NULL;
+const int wdtTimeout = 3;
 
-void ARDUINO_ISR_ATTR resetModule() {
-  ets_printf("reboot\n");
-  esp_restart();
-}
+#ifndef CORE_DK_VERSION
+  #define CORE_DK_VERSION 0
+#endif
+
 
 void setup() {
   Serial.begin(115200);
-  Serial.println();
-  Serial.println("Setup konfigürasyon");
+  pinMode(GPKEY, INPUT);
 
-  //Buton gecikmeyi tetiklemek için kullanılacak
-  pinMode(GPKEY, INPUT);                            // Genel amacli buton pini giris olarak ayarlandi. 
-  
-  timer = timerBegin(0, 80, true);                  //timer 0, div 80
-  timerAttachInterrupt(timer, &resetModule, true);  //callback ekle
-  timerAlarmWrite(timer, wdtTimeout * 1000, false); //zamanı ayarla
-  timerAlarmEnable(timer);                          //interrupt etkinleştir
+  #if CORE_DK_VERSION > 103013
+    esp_task_wdt_config_t wdt_config = {
+      .timeout_ms = wdtTimeout * 1000,
+      .idle_core_mask = 0x1,
+      .trigger_panic = true
+    };
+    esp_task_wdt_init(&wdt_config);
+    esp_task_wdt_add(NULL);
+  #else
+    esp_task_wdt_init(wdtTimeout, true);
+    esp_task_wdt_add(NULL);
+  #endif
 }
 
 void loop() {
   Serial.println("Döngüde");
-
-  timerWrite(timer, 0); //timer sıfırla (watchdog besleme)
   long loopTime = millis();
-  //düğmeye basılıyken, Timer'ı tetiklemek için 3 saniyeye kadar gecikme
+
+  esp_task_wdt_reset();
+
   while (!digitalRead(GPKEY)) {
     Serial.println("Butona basıldı");
     delay(500);
   }
-  delay(1000); //simule et 
+  delay(1000);
+
   loopTime = millis() - loopTime;
-  
   Serial.print("Döngü süresi = ");
-  Serial.println(loopTime); //3000 ms'in altında olmalı
+  Serial.println(loopTime);
 }
