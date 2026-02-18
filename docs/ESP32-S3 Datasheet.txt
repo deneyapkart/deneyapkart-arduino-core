@@ -1,0 +1,1 @@
+https://documentation.espressif.com/esp32-s3_datasheet_en.pdf
