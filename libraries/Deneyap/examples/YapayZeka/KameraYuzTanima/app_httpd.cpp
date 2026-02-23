@@ -254,7 +254,7 @@ static int run_face_recognition(fb_data_t *fb, std::list<dl::detect::result_t> *
   if (recognize.id >= 0) {
     rgb_printf(fb, FACE_COLOR_GREEN, "ID[%u]: %.2f", recognize.id, recognize.similarity);
   } else {
-    rgb_print(fb, FACE_COLOR_RED, "Bilinmeyen Kisi!");
+    rgb_print(fb, FACE_COLOR_RED, "Davetsiz Misafir Uyarisi!");
   }
   return recognize.id;
 }
