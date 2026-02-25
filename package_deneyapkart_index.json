@@ -1,7 +1,7 @@
 {
   "packages": [
     {
-      "name": "deneyap",
+      "name": "deneyapkart",
       "maintainer": "Turkish Technnology Team Foundation (T3)",
       "websiteURL": "https://github.com/deneyapkart/deneyapkart-arduino-core",
       "email": "destek@deneyapkart.org",
@@ -9,6 +9,99 @@
         "online": "http://forum.deneyapkart.org"
       },
       "platforms": [
+        {
+          "category": "Contributed",
+          "name": "Deneyap Gelistirme Kartlari",
+          "url": "https://github.com/deneyapkart/deneyapkart-arduino-core/releases/download/2.0.0-beta/deneyapkart-2.0.0-beta.zip",
+          "checksum": "SHA-256:69d9c445ec08f68a069d1de5e4cdf0c2dac3023e0bddaeb63dcff0eb66662083",
+          "size": "308393997",
+          "help": {
+            "online": ""
+          },
+          "version": "2.0.0-beta",
+          "architecture": "esp32",
+          "archiveFileName": "deneyapkart-2.0.0-beta.zip",
+          "boards": [
+            {
+              "name": "Deneyap Kart"
+            },
+            {
+              "name": "Deneyap Kart v2"
+            },
+            {
+              "name": "Deneyap Kart 1A"
+            },
+            {
+              "name": "Deneyap Kart 1A v2"
+            },
+            {
+              "name": "Deneyap Mini"
+            },
+            {
+              "name": "Deneyap Mini v2"
+            },
+            {
+              "name": "Deneyap Kart G"
+            }
+          ],
+          "toolsDependencies": [
+              {
+                "packager": "deneyapkart",
+                "name": "xtensa-esp32-elf-gcc",
+                "version": "esp-2021r2-patch5-8.4.0"
+              },
+              {
+                "packager": "deneyapkart",
+                "name": "xtensa-esp32s2-elf-gcc",
+                "version": "esp-2021r2-patch5-8.4.0"
+              },
+              {
+                "packager": "deneyapkart",
+                "name": "xtensa-esp32s3-elf-gcc",
+                "version": "esp-2021r2-patch5-8.4.0"
+              },
+              {
+                "packager": "deneyapkart",
+                "name": "xtensa-esp-elf-gdb",
+                "version": "11.2_20220823"
+              },
+              {
+                "packager": "deneyapkart",
+                "name": "riscv32-esp-elf-gcc",
+                "version": "esp-2021r2-patch5-8.4.0"
+              },
+              {
+                "packager": "deneyapkart",
+                "name": "riscv32-esp-elf-gdb",
+                "version": "11.2_20220823"
+              },
+              {
+                "packager": "deneyapkart",
+                "name": "openocd-esp32",
+                "version": "v0.12.0-esp32-20230921"
+              },
+              {
+                "packager": "deneyapkart",
+                "name": "esptool_py",
+                "version": "4.5.1"
+              },
+              {
+                "packager": "deneyapkart",
+                "name": "mkspiffs",
+                "version": "0.2.3"
+              },
+              {
+                "packager": "deneyapkart",
+                "name": "mklittlefs",
+                "version": "3.0.0-gnu12-dc7f933"
+              },
+              {
+                "packager": "arduino",
+                "name": "dfu-util",
+                "version": "0.11.0-arduino5"
+              }
+            ]
+        },
         {
           "category": "Contributed",
           "name": "Deneyap Gelistirme Kartlari",
@@ -43,52 +136,52 @@
           ],
           "toolsDependencies": [
               {
-                "packager": "esp32",
+                "packager": "deneyapkart",
                 "name": "xtensa-esp32-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "esp32",
+                "packager": "deneyapkart",
                 "name": "xtensa-esp32s2-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "esp32",
+                "packager": "deneyapkart",
                 "name": "xtensa-esp32s3-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "esp32",
+                "packager": "deneyapkart",
                 "name": "xtensa-esp-elf-gdb",
                 "version": "11.2_20220823"
               },
               {
-                "packager": "esp32",
+                "packager": "deneyapkart",
                 "name": "riscv32-esp-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "esp32",
+                "packager": "deneyapkart",
                 "name": "riscv32-esp-elf-gdb",
                 "version": "11.2_20220823"
               },
               {
-                "packager": "esp32",
+                "packager": "deneyapkart",
                 "name": "openocd-esp32",
                 "version": "v0.12.0-esp32-20230921"
               },
               {
-                "packager": "esp32",
+                "packager": "deneyapkart",
                 "name": "esptool_py",
                 "version": "4.5.1"
               },
               {
-                "packager": "esp32",
+                "packager": "deneyapkart",
                 "name": "mkspiffs",
                 "version": "0.2.3"
               },
               {
-                "packager": "esp32",
+                "packager": "deneyapkart",
                 "name": "mklittlefs",
                 "version": "3.0.0-gnu12-dc7f933"
               },
