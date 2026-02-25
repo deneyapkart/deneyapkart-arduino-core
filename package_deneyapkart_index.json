@@ -12,15 +12,15 @@
         {
           "category": "Contributed",
           "name": "Deneyap Gelistirme Kartlari",
-          "url": "https://github.com/deneyapkart/deneyapkart-arduino-core/releases/download/2.0.0/deneyapkart-2.0.0.zip",
+          "url": "https://github.com/deneyapkart/deneyapkart-arduino-core/releases/download/2.0.0-beta/deneyapkart-2.0.0-beta.zip",
           "checksum": "SHA-256:e9fbaf09a1c739594d334ad674c3c572d547148fa3910a52d247f394eeb554e0",
           "size": "308272397",
           "help": {
             "online": ""
           },
-          "version": "2.0.0",
+          "version": "2.0.0-beta",
           "architecture": "esp32",
-          "archiveFileName": "deneyapkart-2.0.0.zip",
+          "archiveFileName": "deneyapkart-2.0.0-beta.zip",
           "boards": [
             {
               "name": "Deneyap Kart"
