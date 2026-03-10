@@ -46,52 +46,52 @@
           ],
           "toolsDependencies": [
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "xtensa-esp32-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "xtensa-esp32s2-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "xtensa-esp32s3-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "xtensa-esp-elf-gdb",
                 "version": "11.2_20220823"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "riscv32-esp-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "riscv32-esp-elf-gdb",
                 "version": "11.2_20220823"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "openocd-esp32",
                 "version": "v0.12.0-esp32-20230921"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "esptool_py",
                 "version": "4.5.1"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "mkspiffs",
                 "version": "0.2.3"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "mklittlefs",
                 "version": "3.0.0-gnu12-dc7f933"
               },
@@ -139,52 +139,52 @@
           ],
           "toolsDependencies": [
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "xtensa-esp32-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "xtensa-esp32s2-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "xtensa-esp32s3-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "xtensa-esp-elf-gdb",
                 "version": "11.2_20220823"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "riscv32-esp-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "riscv32-esp-elf-gdb",
                 "version": "11.2_20220823"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "openocd-esp32",
                 "version": "v0.12.0-esp32-20230921"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "esptool_py",
                 "version": "4.5.1"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "mkspiffs",
                 "version": "0.2.3"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "mklittlefs",
                 "version": "3.0.0-gnu12-dc7f933"
               },
@@ -229,52 +229,52 @@
           ],
           "toolsDependencies": [
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "xtensa-esp32-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "xtensa-esp32s2-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "xtensa-esp32s3-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "xtensa-esp-elf-gdb",
                 "version": "11.2_20220823"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "riscv32-esp-elf-gcc",
                 "version": "esp-2021r2-patch5-8.4.0"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "riscv32-esp-elf-gdb",
                 "version": "11.2_20220823"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "openocd-esp32",
                 "version": "v0.12.0-esp32-20230921"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "esptool_py",
                 "version": "4.5.1"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "mkspiffs",
                 "version": "0.2.3"
               },
               {
-                "packager": "deneyapkart",
+                "packager": "deneyap",
                 "name": "mklittlefs",
                 "version": "3.0.0-gnu12-dc7f933"
               },
