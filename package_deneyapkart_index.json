@@ -12,6 +12,99 @@
         {
           "category": "Contributed",
           "name": "Deneyap Gelistirme Kartlari",
+          "url": "https://github.com/deneyapkart/deneyapkart-arduino-core/releases/download/2.0.1/deneyapkart-2.0.1.zip",
+          "checksum": "SHA-256:0b0b2c58022017afd2a34696801ab1a3e53764004b26181d6c318a189305df4a",
+          "size": "308267598",
+          "help": {
+            "online": ""
+          },
+          "version": "2.0.1",
+          "architecture": "esp32",
+          "archiveFileName": "deneyapkart-2.0.1.zip",
+          "boards": [
+            {
+              "name": "Deneyap Kart"
+            },
+            {
+              "name": "Deneyap Kart v2"
+            },
+            {
+              "name": "Deneyap Kart 1A"
+            },
+            {
+              "name": "Deneyap Kart 1A v2"
+            },
+            {
+              "name": "Deneyap Mini"
+            },
+            {
+              "name": "Deneyap Mini v2"
+            },
+            {
+              "name": "Deneyap Kart G"
+            }
+          ],
+          "toolsDependencies": [
+              {
+                "packager": "deneyap",
+                "name": "xtensa-esp32-elf-gcc",
+                "version": "esp-2021r2-patch5-8.4.0"
+              },
+              {
+                "packager": "deneyap",
+                "name": "xtensa-esp32s2-elf-gcc",
+                "version": "esp-2021r2-patch5-8.4.0"
+              },
+              {
+                "packager": "deneyap",
+                "name": "xtensa-esp32s3-elf-gcc",
+                "version": "esp-2021r2-patch5-8.4.0"
+              },
+              {
+                "packager": "deneyap",
+                "name": "xtensa-esp-elf-gdb",
+                "version": "11.2_20220823"
+              },
+              {
+                "packager": "deneyap",
+                "name": "riscv32-esp-elf-gcc",
+                "version": "esp-2021r2-patch5-8.4.0"
+              },
+              {
+                "packager": "deneyap",
+                "name": "riscv32-esp-elf-gdb",
+                "version": "11.2_20220823"
+              },
+              {
+                "packager": "deneyap",
+                "name": "openocd-esp32",
+                "version": "v0.12.0-esp32-20230921"
+              },
+              {
+                "packager": "deneyap",
+                "name": "esptool_py",
+                "version": "4.5.1"
+              },
+              {
+                "packager": "deneyap",
+                "name": "mkspiffs",
+                "version": "0.2.3"
+              },
+              {
+                "packager": "deneyap",
+                "name": "mklittlefs",
+                "version": "3.0.0-gnu12-dc7f933"
+              },
+              {
+                "packager": "arduino",
+                "name": "dfu-util",
+                "version": "0.11.0-arduino5"
+              }
+            ]
+        },
+        {
+          "category": "Contributed",
+          "name": "Deneyap Gelistirme Kartlari",
           "url": "https://github.com/deneyapkart/deneyapkart-arduino-core/releases/download/2.0.0/deneyapkart-2.0.0.zip",
           "checksum": "SHA-256:8abcd04c4cbf98eeba608adf8927088d3da5c0bfcb2ec269d0c14ca8450d8913",
           "size": "308272867",
