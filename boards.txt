@@ -1,4 +1,6 @@
-# Official Espressif options
+# Deneyap Development Boards
+# Based on arduino-esp32 3.3.6 (https://github.com/espressif/arduino-esp32)
+
 menu.UploadSpeed=Upload Speed
 menu.USBMode=USB Mode
 menu.CDCOnBoot=USB CDC On Boot
@@ -19,8 +21,7 @@ menu.EraseFlash=Erase All Flash Before Sketch Upload
 menu.JTAGAdapter=JTAG Adapter
 menu.ZigbeeMode=Zigbee Mode
 menu.PinNumbers=Pin Numbering
-
-# Custom options
+menu.ChipVariant=Chip Variant
 menu.Revision=Board Revision
 menu.LORAWAN_REGION=LoRaWan Region
 menu.LoRaWanDebugLevel=LoRaWan Debug Level
@@ -29,11 +30,9 @@ menu.LORAWAN_PREAMBLE_LENGTH=LoRaWan Preamble Length
 menu.SLOW_CLK_TPYE=Slow Clk Type(only for LoRaWAN)
 menu.einksize=E-Ink Display Size
 menu.NetworkLogLevel=Network Log Level
-##############################################################
-### DO NOT PUT BOARDS ABOVE THE OFFICIAL ESPRESSIF BOARDS! ###
-##############################################################
+menu.DisplayModel=Display Model
 
-# Generic definition to be used for USB discovery of CDC/JTAG
+##############################################################
 esp32_family.name=ESP32 Family Device
 esp32_family.hide=true
 esp32_family.vid.0=0x303a
@@ -43,24 +42,18 @@ esp32_family.upload_port.0.pid=0x1001
 esp32_family.build.board=ESP32_FAMILY
 
 ##############################################################
-
 deneyapkart.name=Deneyap Kart
-
 deneyapkart.bootloader.tool=esptool_py
 deneyapkart.bootloader.tool.default=esptool_py
-
 deneyapkart.upload.tool=esptool_py
 deneyapkart.upload.tool.default=esptool_py
 deneyapkart.upload.tool.network=esp_ota
-
 deneyapkart.upload.maximum_size=1310720
 deneyapkart.upload.maximum_data_size=327680
 deneyapkart.upload.flags=
 deneyapkart.upload.extra_flags=
-
 deneyapkart.serial.disableDTR=true
 deneyapkart.serial.disableRTS=true
-
 deneyapkart.build.tarch=xtensa
 deneyapkart.build.bootloader_addr=0x1000
 deneyapkart.build.target=esp32
@@ -68,7 +61,6 @@ deneyapkart.build.mcu=esp32
 deneyapkart.build.core=esp32
 deneyapkart.build.variant=deneyapkart
 deneyapkart.build.board=DYDK
-
 deneyapkart.build.f_cpu=240000000L
 deneyapkart.build.flash_size=4MB
 deneyapkart.build.flash_freq=80m
@@ -78,8 +70,6 @@ deneyapkart.build.partitions=default
 deneyapkart.build.defines=
 deneyapkart.build.loop_core=
 deneyapkart.build.event_core=
-
-## IDE 2.0 Seems to not update the value
 deneyapkart.menu.JTAGAdapter.default=Disabled
 deneyapkart.menu.JTAGAdapter.default.build.copy_jtag_files=0
 deneyapkart.menu.JTAGAdapter.external=FTDI Adapter
@@ -88,14 +78,12 @@ deneyapkart.menu.JTAGAdapter.external.build.copy_jtag_files=1
 deneyapkart.menu.JTAGAdapter.bridge=ESP USB Bridge
 deneyapkart.menu.JTAGAdapter.bridge.build.openocdscript=esp32-bridge.cfg
 deneyapkart.menu.JTAGAdapter.bridge.build.copy_jtag_files=1
-
 deneyapkart.menu.PSRAM.enabled=Enabled
 deneyapkart.menu.PSRAM.enabled.build.defines=-DBOARD_HAS_PSRAM -mfix-esp32-psram-cache-issue -mfix-esp32-psram-cache-strategy=memw
 deneyapkart.menu.PSRAM.enabled.build.extra_libs=
 deneyapkart.menu.PSRAM.disabled=Disabled
 deneyapkart.menu.PSRAM.disabled.build.defines=
 deneyapkart.menu.PSRAM.disabled.build.extra_libs=
-
 deneyapkart.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
 deneyapkart.menu.PartitionScheme.default.build.partitions=default
 deneyapkart.menu.PartitionScheme.defaultffat=Default 4MB with ffat (1.2MB APP/1.5MB FATFS)
@@ -120,7 +108,7 @@ deneyapkart.menu.PartitionScheme.noota_3gffat.upload.maximum_size=1048576
 deneyapkart.menu.PartitionScheme.huge_app=Huge APP (3MB No OTA/1MB SPIFFS)
 deneyapkart.menu.PartitionScheme.huge_app.build.partitions=huge_app
 deneyapkart.menu.PartitionScheme.huge_app.upload.maximum_size=3145728
-deneyapkart.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)
+deneyapkart.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/128KB SPIFFS)
 deneyapkart.menu.PartitionScheme.min_spiffs.build.partitions=min_spiffs
 deneyapkart.menu.PartitionScheme.min_spiffs.upload.maximum_size=1966080
 deneyapkart.menu.PartitionScheme.fatflash=16M Flash (2MB APP/12.5MB FATFS)
@@ -137,8 +125,7 @@ deneyapkart.menu.PartitionScheme.rainmaker_4MB.build.partitions=rainmaker_4MB_no
 deneyapkart.menu.PartitionScheme.rainmaker_4MB.upload.maximum_size=4038656
 deneyapkart.menu.PartitionScheme.rainmaker_8MB=RainMaker 8MB
 deneyapkart.menu.PartitionScheme.rainmaker_8MB.build.partitions=rainmaker_8MB
-deneyapkart.menu.PartitionScheme.rainmaker_8MB.upload.maximum_size=4116480
-
+deneyapkart.menu.PartitionScheme.rainmaker_8MB.upload.maximum_size=4096000
 deneyapkart.menu.CPUFreq.240=240MHz (WiFi/BT)
 deneyapkart.menu.CPUFreq.240.build.f_cpu=240000000L
 deneyapkart.menu.CPUFreq.160=160MHz (WiFi/BT)
@@ -155,19 +142,16 @@ deneyapkart.menu.CPUFreq.13=13MHz (26MHz XTAL)
 deneyapkart.menu.CPUFreq.13.build.f_cpu=13000000L
 deneyapkart.menu.CPUFreq.10=10MHz (40MHz XTAL)
 deneyapkart.menu.CPUFreq.10.build.f_cpu=10000000L
-
 deneyapkart.menu.FlashMode.qio=QIO
 deneyapkart.menu.FlashMode.qio.build.flash_mode=dio
 deneyapkart.menu.FlashMode.qio.build.boot=qio
 deneyapkart.menu.FlashMode.dio=DIO
 deneyapkart.menu.FlashMode.dio.build.flash_mode=dio
 deneyapkart.menu.FlashMode.dio.build.boot=dio
-
 deneyapkart.menu.FlashFreq.80=80MHz
 deneyapkart.menu.FlashFreq.80.build.flash_freq=80m
 deneyapkart.menu.FlashFreq.40=40MHz
 deneyapkart.menu.FlashFreq.40.build.flash_freq=40m
-
 deneyapkart.menu.FlashSize.4M=4MB (32Mb)
 deneyapkart.menu.FlashSize.4M.build.flash_size=4MB
 deneyapkart.menu.FlashSize.8M=8MB (64Mb)
@@ -176,7 +160,6 @@ deneyapkart.menu.FlashSize.2M=2MB (16Mb)
 deneyapkart.menu.FlashSize.2M.build.flash_size=2MB
 deneyapkart.menu.FlashSize.16M=16MB (128Mb)
 deneyapkart.menu.FlashSize.16M.build.flash_size=16MB
-
 deneyapkart.menu.UploadSpeed.921600=921600
 deneyapkart.menu.UploadSpeed.921600.upload.speed=921600
 deneyapkart.menu.UploadSpeed.115200=115200
@@ -191,17 +174,14 @@ deneyapkart.menu.UploadSpeed.460800.macosx=460800
 deneyapkart.menu.UploadSpeed.460800.upload.speed=460800
 deneyapkart.menu.UploadSpeed.512000.windows=512000
 deneyapkart.menu.UploadSpeed.512000.upload.speed=512000
-
 deneyapkart.menu.LoopCore.1=Core 1
 deneyapkart.menu.LoopCore.1.build.loop_core=-DARDUINO_RUNNING_CORE=1
 deneyapkart.menu.LoopCore.0=Core 0
 deneyapkart.menu.LoopCore.0.build.loop_core=-DARDUINO_RUNNING_CORE=0
-
 deneyapkart.menu.EventsCore.1=Core 1
 deneyapkart.menu.EventsCore.1.build.event_core=-DARDUINO_EVENT_RUNNING_CORE=1
 deneyapkart.menu.EventsCore.0=Core 0
 deneyapkart.menu.EventsCore.0.build.event_core=-DARDUINO_EVENT_RUNNING_CORE=0
-
 deneyapkart.menu.DebugLevel.none=None
 deneyapkart.menu.DebugLevel.none.build.code_debug=0
 deneyapkart.menu.DebugLevel.error=Error
@@ -214,36 +194,28 @@ deneyapkart.menu.DebugLevel.debug=Debug
 deneyapkart.menu.DebugLevel.debug.build.code_debug=4
 deneyapkart.menu.DebugLevel.verbose=Verbose
 deneyapkart.menu.DebugLevel.verbose.build.code_debug=5
-
 deneyapkart.menu.EraseFlash.none=Disabled
 deneyapkart.menu.EraseFlash.none.upload.erase_cmd=
 deneyapkart.menu.EraseFlash.all=Enabled
 deneyapkart.menu.EraseFlash.all.upload.erase_cmd=-e
 
 ##############################################################
-
 deneyapkartv2.name=Deneyap Kart v2
-
 deneyapkartv2.vid.0=0x303a
 deneyapkartv2.pid.0=0x82EB
-
 deneyapkartv2.bootloader.tool=esptool_py
 deneyapkartv2.bootloader.tool.default=esptool_py
-
 deneyapkartv2.upload.tool=esptool_py
 deneyapkartv2.upload.tool.default=esptool_py
 deneyapkartv2.upload.tool.network=esp_ota
-
 deneyapkartv2.upload.maximum_size=1310720
 deneyapkartv2.upload.maximum_data_size=327680
 deneyapkartv2.upload.flags=
 deneyapkartv2.upload.extra_flags=
 deneyapkartv2.upload.use_1200bps_touch=false
 deneyapkartv2.upload.wait_for_upload_port=false
-
 deneyapkartv2.serial.disableDTR=false
 deneyapkartv2.serial.disableRTS=false
-
 deneyapkartv2.build.tarch=xtensa
 deneyapkartv2.build.bootloader_addr=0x0
 deneyapkartv2.build.target=esp32s3
@@ -251,7 +223,6 @@ deneyapkartv2.build.mcu=esp32s3
 deneyapkartv2.build.core=esp32
 deneyapkartv2.build.variant=deneyapkartv2
 deneyapkartv2.build.board=DYDKV2
-
 deneyapkartv2.build.usb_mode=1
 deneyapkartv2.build.cdc_on_boot=1
 deneyapkartv2.build.msc_on_boot=0
@@ -268,8 +239,6 @@ deneyapkartv2.build.loop_core=
 deneyapkartv2.build.event_core=
 deneyapkartv2.build.psram_type=opi
 deneyapkartv2.build.memory_type={build.boot}_{build.psram_type}
-
-## IDE 2.0 Seems to not update the value
 deneyapkartv2.menu.JTAGAdapter.default=Disabled
 deneyapkartv2.menu.JTAGAdapter.default.build.copy_jtag_files=0
 deneyapkartv2.menu.JTAGAdapter.builtin=Integrated USB JTAG
@@ -281,14 +250,12 @@ deneyapkartv2.menu.JTAGAdapter.external.build.copy_jtag_files=1
 deneyapkartv2.menu.JTAGAdapter.bridge=ESP USB Bridge
 deneyapkartv2.menu.JTAGAdapter.bridge.build.openocdscript=esp32s3-bridge.cfg
 deneyapkartv2.menu.JTAGAdapter.bridge.build.copy_jtag_files=1
-
 deneyapkartv2.menu.PSRAM.opi=OPI PSRAM
 deneyapkartv2.menu.PSRAM.opi.build.defines=-DBOARD_HAS_PSRAM
 deneyapkartv2.menu.PSRAM.opi.build.psram_type=opi
 deneyapkartv2.menu.PSRAM.disabled=Disabled
 deneyapkartv2.menu.PSRAM.disabled.build.defines=
 deneyapkartv2.menu.PSRAM.disabled.build.psram_type=qspi
-
 deneyapkartv2.menu.FlashMode.qio=QIO 80MHz
 deneyapkartv2.menu.FlashMode.qio.build.flash_mode=dio
 deneyapkartv2.menu.FlashMode.qio.build.boot=qio
@@ -309,47 +276,38 @@ deneyapkartv2.menu.FlashMode.opi.build.flash_mode=dout
 deneyapkartv2.menu.FlashMode.opi.build.boot=opi
 deneyapkartv2.menu.FlashMode.opi.build.boot_freq=80m
 deneyapkartv2.menu.FlashMode.opi.build.flash_freq=80m
-
 deneyapkartv2.menu.FlashSize.4M=4MB (32Mb)
 deneyapkartv2.menu.FlashSize.4M.build.flash_size=4MB
-
 deneyapkartv2.menu.LoopCore.1=Core 1
 deneyapkartv2.menu.LoopCore.1.build.loop_core=-DARDUINO_RUNNING_CORE=1
 deneyapkartv2.menu.LoopCore.0=Core 0
 deneyapkartv2.menu.LoopCore.0.build.loop_core=-DARDUINO_RUNNING_CORE=0
-
 deneyapkartv2.menu.EventsCore.1=Core 1
 deneyapkartv2.menu.EventsCore.1.build.event_core=-DARDUINO_EVENT_RUNNING_CORE=1
 deneyapkartv2.menu.EventsCore.0=Core 0
 deneyapkartv2.menu.EventsCore.0.build.event_core=-DARDUINO_EVENT_RUNNING_CORE=0
-
 deneyapkartv2.menu.USBMode.hwcdc=Hardware CDC and JTAG
 deneyapkartv2.menu.USBMode.hwcdc.build.usb_mode=1
 deneyapkartv2.menu.USBMode.default=USB-OTG (TinyUSB)
 deneyapkartv2.menu.USBMode.default.build.usb_mode=0
-
 deneyapkartv2.menu.CDCOnBoot.cdc=Enabled
 deneyapkartv2.menu.CDCOnBoot.cdc.build.cdc_on_boot=1
 deneyapkartv2.menu.CDCOnBoot.default=Disabled
 deneyapkartv2.menu.CDCOnBoot.default.build.cdc_on_boot=0
-
 deneyapkartv2.menu.MSCOnBoot.default=Disabled
 deneyapkartv2.menu.MSCOnBoot.default.build.msc_on_boot=0
 deneyapkartv2.menu.MSCOnBoot.msc=Enabled (Requires USB-OTG Mode)
 deneyapkartv2.menu.MSCOnBoot.msc.build.msc_on_boot=1
-
 deneyapkartv2.menu.DFUOnBoot.default=Disabled
 deneyapkartv2.menu.DFUOnBoot.default.build.dfu_on_boot=0
 deneyapkartv2.menu.DFUOnBoot.dfu=Enabled (Requires USB-OTG Mode)
 deneyapkartv2.menu.DFUOnBoot.dfu.build.dfu_on_boot=1
-
 deneyapkartv2.menu.UploadMode.default=UART0 / Hardware CDC
 deneyapkartv2.menu.UploadMode.default.upload.use_1200bps_touch=false
 deneyapkartv2.menu.UploadMode.default.upload.wait_for_upload_port=false
 deneyapkartv2.menu.UploadMode.cdc=USB-OTG CDC (TinyUSB)
 deneyapkartv2.menu.UploadMode.cdc.upload.use_1200bps_touch=true
 deneyapkartv2.menu.UploadMode.cdc.upload.wait_for_upload_port=true
-
 deneyapkartv2.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
 deneyapkartv2.menu.PartitionScheme.default.build.partitions=default
 deneyapkartv2.menu.PartitionScheme.defaultffat=Default 4MB with ffat (1.2MB APP/1.5MB FATFS)
@@ -374,7 +332,7 @@ deneyapkartv2.menu.PartitionScheme.noota_3gffat.upload.maximum_size=1048576
 deneyapkartv2.menu.PartitionScheme.huge_app=Huge APP (3MB No OTA/1MB SPIFFS)
 deneyapkartv2.menu.PartitionScheme.huge_app.build.partitions=huge_app
 deneyapkartv2.menu.PartitionScheme.huge_app.upload.maximum_size=3145728
-deneyapkartv2.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)
+deneyapkartv2.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/128KB SPIFFS)
 deneyapkartv2.menu.PartitionScheme.min_spiffs.build.partitions=min_spiffs
 deneyapkartv2.menu.PartitionScheme.min_spiffs.upload.maximum_size=1966080
 deneyapkartv2.menu.PartitionScheme.rainmaker=RainMaker 4MB
@@ -388,8 +346,7 @@ deneyapkartv2.menu.PartitionScheme.zigbee_zczr.build.partitions=zigbee_zczr
 deneyapkartv2.menu.PartitionScheme.zigbee_zczr.upload.maximum_size=1310720
 deneyapkartv2.menu.PartitionScheme.custom=Custom
 deneyapkartv2.menu.PartitionScheme.custom.build.partitions=
-deneyapkartv2.menu.PartitionScheme.custom.upload.maximum_size=16777216
-
+deneyapkartv2.menu.PartitionScheme.custom.upload.maximum_size=4194304
 deneyapkartv2.menu.CPUFreq.240=240MHz (WiFi)
 deneyapkartv2.menu.CPUFreq.240.build.f_cpu=240000000L
 deneyapkartv2.menu.CPUFreq.160=160MHz (WiFi)
@@ -402,7 +359,6 @@ deneyapkartv2.menu.CPUFreq.20=20MHz
 deneyapkartv2.menu.CPUFreq.20.build.f_cpu=20000000L
 deneyapkartv2.menu.CPUFreq.10=10MHz
 deneyapkartv2.menu.CPUFreq.10.build.f_cpu=10000000L
-
 deneyapkartv2.menu.UploadSpeed.921600=921600
 deneyapkartv2.menu.UploadSpeed.921600.upload.speed=921600
 deneyapkartv2.menu.UploadSpeed.115200=115200
@@ -417,7 +373,6 @@ deneyapkartv2.menu.UploadSpeed.460800.macosx=460800
 deneyapkartv2.menu.UploadSpeed.460800.upload.speed=460800
 deneyapkartv2.menu.UploadSpeed.512000.windows=512000
 deneyapkartv2.menu.UploadSpeed.512000.upload.speed=512000
-
 deneyapkartv2.menu.DebugLevel.none=None
 deneyapkartv2.menu.DebugLevel.none.build.code_debug=0
 deneyapkartv2.menu.DebugLevel.error=Error
@@ -430,12 +385,10 @@ deneyapkartv2.menu.DebugLevel.debug=Debug
 deneyapkartv2.menu.DebugLevel.debug.build.code_debug=4
 deneyapkartv2.menu.DebugLevel.verbose=Verbose
 deneyapkartv2.menu.DebugLevel.verbose.build.code_debug=5
-
 deneyapkartv2.menu.EraseFlash.none=Disabled
 deneyapkartv2.menu.EraseFlash.none.upload.erase_cmd=
 deneyapkartv2.menu.EraseFlash.all=Enabled
 deneyapkartv2.menu.EraseFlash.all.upload.erase_cmd=-e
-
 deneyapkartv2.menu.ZigbeeMode.default=Disabled
 deneyapkartv2.menu.ZigbeeMode.default.build.zigbee_mode=
 deneyapkartv2.menu.ZigbeeMode.default.build.zigbee_libs=
@@ -444,24 +397,18 @@ deneyapkartv2.menu.ZigbeeMode.zczr.build.zigbee_mode=-DZIGBEE_MODE_ZCZR
 deneyapkartv2.menu.ZigbeeMode.zczr.build.zigbee_libs=-lesp_zb_api.zczr -lzboss_stack.zczr -lzboss_port.remote
 
 ##############################################################
-
 deneyapkart1A.name=Deneyap Kart 1A
-
 deneyapkart1A.bootloader.tool=esptool_py
 deneyapkart1A.bootloader.tool.default=esptool_py
-
 deneyapkart1A.upload.tool=esptool_py
 deneyapkart1A.upload.tool.default=esptool_py
 deneyapkart1A.upload.tool.network=esp_ota
-
 deneyapkart1A.upload.maximum_size=1310720
 deneyapkart1A.upload.maximum_data_size=327680
 deneyapkart1A.upload.flags=
 deneyapkart1A.upload.extra_flags=
-
 deneyapkart1A.serial.disableDTR=true
 deneyapkart1A.serial.disableRTS=true
-
 deneyapkart1A.build.tarch=xtensa
 deneyapkart1A.build.bootloader_addr=0x1000
 deneyapkart1A.build.target=esp32
@@ -469,7 +416,6 @@ deneyapkart1A.build.mcu=esp32
 deneyapkart1A.build.core=esp32
 deneyapkart1A.build.variant=deneyapkart1A
 deneyapkart1A.build.board=DYDK1A
-
 deneyapkart1A.build.f_cpu=240000000L
 deneyapkart1A.build.flash_size=4MB
 deneyapkart1A.build.flash_freq=80m
@@ -479,8 +425,6 @@ deneyapkart1A.build.partitions=default
 deneyapkart1A.build.defines=
 deneyapkart1A.build.loop_core=
 deneyapkart1A.build.event_core=
-
-## IDE 2.0 Seems to not update the value
 deneyapkart1A.menu.JTAGAdapter.default=Disabled
 deneyapkart1A.menu.JTAGAdapter.default.build.copy_jtag_files=0
 deneyapkart1A.menu.JTAGAdapter.external=FTDI Adapter
@@ -489,14 +433,12 @@ deneyapkart1A.menu.JTAGAdapter.external.build.copy_jtag_files=1
 deneyapkart1A.menu.JTAGAdapter.bridge=ESP USB Bridge
 deneyapkart1A.menu.JTAGAdapter.bridge.build.openocdscript=esp32-bridge.cfg
 deneyapkart1A.menu.JTAGAdapter.bridge.build.copy_jtag_files=1
-
 deneyapkart1A.menu.PSRAM.enabled=Enabled
 deneyapkart1A.menu.PSRAM.enabled.build.defines=-DBOARD_HAS_PSRAM -mfix-esp32-psram-cache-issue -mfix-esp32-psram-cache-strategy=memw
 deneyapkart1A.menu.PSRAM.enabled.build.extra_libs=
 deneyapkart1A.menu.PSRAM.disabled=Disabled
 deneyapkart1A.menu.PSRAM.disabled.build.defines=
 deneyapkart1A.menu.PSRAM.disabled.build.extra_libs=
-
 deneyapkart1A.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
 deneyapkart1A.menu.PartitionScheme.default.build.partitions=default
 deneyapkart1A.menu.PartitionScheme.defaultffat=Default 4MB with ffat (1.2MB APP/1.5MB FATFS)
@@ -521,7 +463,7 @@ deneyapkart1A.menu.PartitionScheme.noota_3gffat.upload.maximum_size=1048576
 deneyapkart1A.menu.PartitionScheme.huge_app=Huge APP (3MB No OTA/1MB SPIFFS)
 deneyapkart1A.menu.PartitionScheme.huge_app.build.partitions=huge_app
 deneyapkart1A.menu.PartitionScheme.huge_app.upload.maximum_size=3145728
-deneyapkart1A.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)
+deneyapkart1A.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/128KB SPIFFS)
 deneyapkart1A.menu.PartitionScheme.min_spiffs.build.partitions=min_spiffs
 deneyapkart1A.menu.PartitionScheme.min_spiffs.upload.maximum_size=1966080
 deneyapkart1A.menu.PartitionScheme.fatflash=16M Flash (2MB APP/12.5MB FATFS)
@@ -538,8 +480,7 @@ deneyapkart1A.menu.PartitionScheme.rainmaker_4MB.build.partitions=rainmaker_4MB_
 deneyapkart1A.menu.PartitionScheme.rainmaker_4MB.upload.maximum_size=4038656
 deneyapkart1A.menu.PartitionScheme.rainmaker_8MB=RainMaker 8MB
 deneyapkart1A.menu.PartitionScheme.rainmaker_8MB.build.partitions=rainmaker_8MB
-deneyapkart1A.menu.PartitionScheme.rainmaker_8MB.upload.maximum_size=4116480
-
+deneyapkart1A.menu.PartitionScheme.rainmaker_8MB.upload.maximum_size=4096000
 deneyapkart1A.menu.CPUFreq.240=240MHz (WiFi/BT)
 deneyapkart1A.menu.CPUFreq.240.build.f_cpu=240000000L
 deneyapkart1A.menu.CPUFreq.160=160MHz (WiFi/BT)
@@ -556,19 +497,16 @@ deneyapkart1A.menu.CPUFreq.13=13MHz (26MHz XTAL)
 deneyapkart1A.menu.CPUFreq.13.build.f_cpu=13000000L
 deneyapkart1A.menu.CPUFreq.10=10MHz (40MHz XTAL)
 deneyapkart1A.menu.CPUFreq.10.build.f_cpu=10000000L
-
 deneyapkart1A.menu.FlashMode.qio=QIO
 deneyapkart1A.menu.FlashMode.qio.build.flash_mode=dio
 deneyapkart1A.menu.FlashMode.qio.build.boot=qio
 deneyapkart1A.menu.FlashMode.dio=DIO
 deneyapkart1A.menu.FlashMode.dio.build.flash_mode=dio
 deneyapkart1A.menu.FlashMode.dio.build.boot=dio
-
 deneyapkart1A.menu.FlashFreq.80=80MHz
 deneyapkart1A.menu.FlashFreq.80.build.flash_freq=80m
 deneyapkart1A.menu.FlashFreq.40=40MHz
 deneyapkart1A.menu.FlashFreq.40.build.flash_freq=40m
-
 deneyapkart1A.menu.FlashSize.4M=4MB (32Mb)
 deneyapkart1A.menu.FlashSize.4M.build.flash_size=4MB
 deneyapkart1A.menu.FlashSize.8M=8MB (64Mb)
@@ -577,7 +515,6 @@ deneyapkart1A.menu.FlashSize.2M=2MB (16Mb)
 deneyapkart1A.menu.FlashSize.2M.build.flash_size=2MB
 deneyapkart1A.menu.FlashSize.16M=16MB (128Mb)
 deneyapkart1A.menu.FlashSize.16M.build.flash_size=16MB
-
 deneyapkart1A.menu.UploadSpeed.921600=921600
 deneyapkart1A.menu.UploadSpeed.921600.upload.speed=921600
 deneyapkart1A.menu.UploadSpeed.115200=115200
@@ -592,17 +529,14 @@ deneyapkart1A.menu.UploadSpeed.460800.macosx=460800
 deneyapkart1A.menu.UploadSpeed.460800.upload.speed=460800
 deneyapkart1A.menu.UploadSpeed.512000.windows=512000
 deneyapkart1A.menu.UploadSpeed.512000.upload.speed=512000
-
 deneyapkart1A.menu.LoopCore.1=Core 1
 deneyapkart1A.menu.LoopCore.1.build.loop_core=-DARDUINO_RUNNING_CORE=1
 deneyapkart1A.menu.LoopCore.0=Core 0
 deneyapkart1A.menu.LoopCore.0.build.loop_core=-DARDUINO_RUNNING_CORE=0
-
 deneyapkart1A.menu.EventsCore.1=Core 1
 deneyapkart1A.menu.EventsCore.1.build.event_core=-DARDUINO_EVENT_RUNNING_CORE=1
 deneyapkart1A.menu.EventsCore.0=Core 0
 deneyapkart1A.menu.EventsCore.0.build.event_core=-DARDUINO_EVENT_RUNNING_CORE=0
-
 deneyapkart1A.menu.DebugLevel.none=None
 deneyapkart1A.menu.DebugLevel.none.build.code_debug=0
 deneyapkart1A.menu.DebugLevel.error=Error
@@ -615,36 +549,28 @@ deneyapkart1A.menu.DebugLevel.debug=Debug
 deneyapkart1A.menu.DebugLevel.debug.build.code_debug=4
 deneyapkart1A.menu.DebugLevel.verbose=Verbose
 deneyapkart1A.menu.DebugLevel.verbose.build.code_debug=5
-
 deneyapkart1A.menu.EraseFlash.none=Disabled
 deneyapkart1A.menu.EraseFlash.none.upload.erase_cmd=
 deneyapkart1A.menu.EraseFlash.all=Enabled
 deneyapkart1A.menu.EraseFlash.all.upload.erase_cmd=-e
 
 ##############################################################
-
 deneyapkart1Av2.name=Deneyap Kart 1A v2
-
 deneyapkart1Av2.vid.0=0x303a
 deneyapkart1Av2.pid.0=0x8147
-
 deneyapkart1Av2.bootloader.tool=esptool_py
 deneyapkart1Av2.bootloader.tool.default=esptool_py
-
 deneyapkart1Av2.upload.tool=esptool_py
 deneyapkart1Av2.upload.tool.default=esptool_py
 deneyapkart1Av2.upload.tool.network=esp_ota
-
 deneyapkart1Av2.upload.maximum_size=1310720
 deneyapkart1Av2.upload.maximum_data_size=327680
 deneyapkart1Av2.upload.flags=
 deneyapkart1Av2.upload.extra_flags=
 deneyapkart1Av2.upload.use_1200bps_touch=false
 deneyapkart1Av2.upload.wait_for_upload_port=false
-
 deneyapkart1Av2.serial.disableDTR=false
 deneyapkart1Av2.serial.disableRTS=false
-
 deneyapkart1Av2.build.tarch=xtensa
 deneyapkart1Av2.build.bootloader_addr=0x0
 deneyapkart1Av2.build.target=esp32s3
@@ -652,7 +578,6 @@ deneyapkart1Av2.build.mcu=esp32s3
 deneyapkart1Av2.build.core=esp32
 deneyapkart1Av2.build.variant=deneyapkart1Av2
 deneyapkart1Av2.build.board=DYDK1Av2
-
 deneyapkart1Av2.build.usb_mode=1
 deneyapkart1Av2.build.cdc_on_boot=1
 deneyapkart1Av2.build.msc_on_boot=0
@@ -669,8 +594,6 @@ deneyapkart1Av2.build.loop_core=
 deneyapkart1Av2.build.event_core=
 deneyapkart1Av2.build.psram_type=opi
 deneyapkart1Av2.build.memory_type={build.boot}_{build.psram_type}
-
-## IDE 2.0 Seems to not update the value
 deneyapkart1Av2.menu.JTAGAdapter.default=Disabled
 deneyapkart1Av2.menu.JTAGAdapter.default.build.copy_jtag_files=0
 deneyapkart1Av2.menu.JTAGAdapter.builtin=Integrated USB JTAG
@@ -682,7 +605,6 @@ deneyapkart1Av2.menu.JTAGAdapter.external.build.copy_jtag_files=1
 deneyapkart1Av2.menu.JTAGAdapter.bridge=ESP USB Bridge
 deneyapkart1Av2.menu.JTAGAdapter.bridge.build.openocdscript=esp32s3-bridge.cfg
 deneyapkart1Av2.menu.JTAGAdapter.bridge.build.copy_jtag_files=1
-
 deneyapkart1Av2.menu.PSRAM.opi=OPI PSRAM
 deneyapkart1Av2.menu.PSRAM.opi.build.defines=-DBOARD_HAS_PSRAM
 deneyapkart1Av2.menu.PSRAM.opi.build.psram_type=opi
@@ -692,7 +614,6 @@ deneyapkart1Av2.menu.PSRAM.disabled.build.psram_type=qspi
 deneyapkart1Av2.menu.PSRAM.enabled=QSPI PSRAM
 deneyapkart1Av2.menu.PSRAM.enabled.build.defines=-DBOARD_HAS_PSRAM
 deneyapkart1Av2.menu.PSRAM.enabled.build.psram_type=qspi
-
 deneyapkart1Av2.menu.FlashMode.qio=QIO 80MHz
 deneyapkart1Av2.menu.FlashMode.qio.build.flash_mode=dio
 deneyapkart1Av2.menu.FlashMode.qio.build.boot=qio
@@ -713,53 +634,42 @@ deneyapkart1Av2.menu.FlashMode.opi.build.flash_mode=dout
 deneyapkart1Av2.menu.FlashMode.opi.build.boot=opi
 deneyapkart1Av2.menu.FlashMode.opi.build.boot_freq=80m
 deneyapkart1Av2.menu.FlashMode.opi.build.flash_freq=80m
-
 deneyapkart1Av2.menu.FlashSize.4M=4MB (32Mb)
 deneyapkart1Av2.menu.FlashSize.4M.build.flash_size=4MB
 deneyapkart1Av2.menu.FlashSize.8M=8MB (64Mb)
 deneyapkart1Av2.menu.FlashSize.8M.build.flash_size=8MB
 deneyapkart1Av2.menu.FlashSize.16M=16MB (128Mb)
 deneyapkart1Av2.menu.FlashSize.16M.build.flash_size=16MB
-#deneyapkart1Av2.menu.FlashSize.32M=32MB (256Mb)
-#deneyapkart1Av2.menu.FlashSize.32M.build.flash_size=32MB
-
 deneyapkart1Av2.menu.LoopCore.1=Core 1
 deneyapkart1Av2.menu.LoopCore.1.build.loop_core=-DARDUINO_RUNNING_CORE=1
 deneyapkart1Av2.menu.LoopCore.0=Core 0
 deneyapkart1Av2.menu.LoopCore.0.build.loop_core=-DARDUINO_RUNNING_CORE=0
-
 deneyapkart1Av2.menu.EventsCore.1=Core 1
 deneyapkart1Av2.menu.EventsCore.1.build.event_core=-DARDUINO_EVENT_RUNNING_CORE=1
 deneyapkart1Av2.menu.EventsCore.0=Core 0
 deneyapkart1Av2.menu.EventsCore.0.build.event_core=-DARDUINO_EVENT_RUNNING_CORE=0
-
 deneyapkart1Av2.menu.USBMode.hwcdc=Hardware CDC and JTAG
 deneyapkart1Av2.menu.USBMode.hwcdc.build.usb_mode=1
 deneyapkart1Av2.menu.USBMode.default=USB-OTG (TinyUSB)
 deneyapkart1Av2.menu.USBMode.default.build.usb_mode=0
-
 deneyapkart1Av2.menu.CDCOnBoot.cdc=Enabled
 deneyapkart1Av2.menu.CDCOnBoot.cdc.build.cdc_on_boot=1
 deneyapkart1Av2.menu.CDCOnBoot.default=Disabled
 deneyapkart1Av2.menu.CDCOnBoot.default.build.cdc_on_boot=0
-
 deneyapkart1Av2.menu.MSCOnBoot.default=Disabled
 deneyapkart1Av2.menu.MSCOnBoot.default.build.msc_on_boot=0
 deneyapkart1Av2.menu.MSCOnBoot.msc=Enabled (Requires USB-OTG Mode)
 deneyapkart1Av2.menu.MSCOnBoot.msc.build.msc_on_boot=1
-
 deneyapkart1Av2.menu.DFUOnBoot.default=Disabled
 deneyapkart1Av2.menu.DFUOnBoot.default.build.dfu_on_boot=0
 deneyapkart1Av2.menu.DFUOnBoot.dfu=Enabled (Requires USB-OTG Mode)
 deneyapkart1Av2.menu.DFUOnBoot.dfu.build.dfu_on_boot=1
-
 deneyapkart1Av2.menu.UploadMode.cdc=USB-OTG CDC (TinyUSB)
 deneyapkart1Av2.menu.UploadMode.cdc.upload.use_1200bps_touch=true
 deneyapkart1Av2.menu.UploadMode.cdc.upload.wait_for_upload_port=true
 deneyapkart1Av2.menu.UploadMode.default=UART0 / Hardware CDC
 deneyapkart1Av2.menu.UploadMode.default.upload.use_1200bps_touch=false
 deneyapkart1Av2.menu.UploadMode.default.upload.wait_for_upload_port=false
-
 deneyapkart1Av2.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
 deneyapkart1Av2.menu.PartitionScheme.default.build.partitions=default
 deneyapkart1Av2.menu.PartitionScheme.defaultffat=Default 4MB with ffat (1.2MB APP/1.5MB FATFS)
@@ -784,7 +694,7 @@ deneyapkart1Av2.menu.PartitionScheme.noota_3gffat.upload.maximum_size=1048576
 deneyapkart1Av2.menu.PartitionScheme.huge_app=Huge APP (3MB No OTA/1MB SPIFFS)
 deneyapkart1Av2.menu.PartitionScheme.huge_app.build.partitions=huge_app
 deneyapkart1Av2.menu.PartitionScheme.huge_app.upload.maximum_size=3145728
-deneyapkart1Av2.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)
+deneyapkart1Av2.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/128KB SPIFFS)
 deneyapkart1Av2.menu.PartitionScheme.min_spiffs.build.partitions=min_spiffs
 deneyapkart1Av2.menu.PartitionScheme.min_spiffs.upload.maximum_size=1966080
 deneyapkart1Av2.menu.PartitionScheme.fatflash=16M Flash (2MB APP/12.5MB FATFS)
@@ -801,8 +711,7 @@ deneyapkart1Av2.menu.PartitionScheme.rainmaker_4MB.build.partitions=rainmaker_4M
 deneyapkart1Av2.menu.PartitionScheme.rainmaker_4MB.upload.maximum_size=4038656
 deneyapkart1Av2.menu.PartitionScheme.rainmaker_8MB=RainMaker 8MB
 deneyapkart1Av2.menu.PartitionScheme.rainmaker_8MB.build.partitions=rainmaker_8MB
-deneyapkart1Av2.menu.PartitionScheme.rainmaker_8MB.upload.maximum_size=4116480
-
+deneyapkart1Av2.menu.PartitionScheme.rainmaker_8MB.upload.maximum_size=4096000
 deneyapkart1Av2.menu.CPUFreq.240=240MHz (WiFi)
 deneyapkart1Av2.menu.CPUFreq.240.build.f_cpu=240000000L
 deneyapkart1Av2.menu.CPUFreq.160=160MHz (WiFi)
@@ -815,7 +724,6 @@ deneyapkart1Av2.menu.CPUFreq.20=20MHz
 deneyapkart1Av2.menu.CPUFreq.20.build.f_cpu=20000000L
 deneyapkart1Av2.menu.CPUFreq.10=10MHz
 deneyapkart1Av2.menu.CPUFreq.10.build.f_cpu=10000000L
-
 deneyapkart1Av2.menu.UploadSpeed.921600=921600
 deneyapkart1Av2.menu.UploadSpeed.921600.upload.speed=921600
 deneyapkart1Av2.menu.UploadSpeed.115200=115200
@@ -830,7 +738,6 @@ deneyapkart1Av2.menu.UploadSpeed.460800.macosx=460800
 deneyapkart1Av2.menu.UploadSpeed.460800.upload.speed=460800
 deneyapkart1Av2.menu.UploadSpeed.512000.windows=512000
 deneyapkart1Av2.menu.UploadSpeed.512000.upload.speed=512000
-
 deneyapkart1Av2.menu.DebugLevel.none=None
 deneyapkart1Av2.menu.DebugLevel.none.build.code_debug=0
 deneyapkart1Av2.menu.DebugLevel.error=Error
@@ -843,36 +750,28 @@ deneyapkart1Av2.menu.DebugLevel.debug=Debug
 deneyapkart1Av2.menu.DebugLevel.debug.build.code_debug=4
 deneyapkart1Av2.menu.DebugLevel.verbose=Verbose
 deneyapkart1Av2.menu.DebugLevel.verbose.build.code_debug=5
-
 deneyapkart1Av2.menu.EraseFlash.none=Disabled
 deneyapkart1Av2.menu.EraseFlash.none.upload.erase_cmd=
 deneyapkart1Av2.menu.EraseFlash.all=Enabled
 deneyapkart1Av2.menu.EraseFlash.all.upload.erase_cmd=-e
 
 ##############################################################
-
 deneyapmini.name=Deneyap Mini
-
 deneyapmini.vid.0=0x303a
 deneyapmini.pid.0=0x8141
-
 deneyapmini.bootloader.tool=esptool_py
 deneyapmini.bootloader.tool.default=esptool_py
-
 deneyapmini.upload.tool=esptool_py
 deneyapmini.upload.tool.default=esptool_py
 deneyapmini.upload.tool.network=esp_ota
-
 deneyapmini.upload.maximum_size=1310720
 deneyapmini.upload.maximum_data_size=327680
 deneyapmini.upload.flags=
 deneyapmini.upload.extra_flags=
 deneyapmini.upload.use_1200bps_touch=false
 deneyapmini.upload.wait_for_upload_port=false
-
 deneyapmini.serial.disableDTR=false
 deneyapmini.serial.disableRTS=false
-
 deneyapmini.build.tarch=xtensa
 deneyapmini.build.bootloader_addr=0x1000
 deneyapmini.build.target=esp32s2
@@ -880,7 +779,6 @@ deneyapmini.build.mcu=esp32s2
 deneyapmini.build.core=esp32
 deneyapmini.build.variant=deneyapmini
 deneyapmini.build.board=DYM
-
 deneyapmini.build.cdc_on_boot=1
 deneyapmini.build.msc_on_boot=0
 deneyapmini.build.dfu_on_boot=0
@@ -891,8 +789,6 @@ deneyapmini.build.flash_mode=dio
 deneyapmini.build.boot=qio
 deneyapmini.build.partitions=default
 deneyapmini.build.defines=
-
-## IDE 2.0 Seems to not update the value
 deneyapmini.menu.JTAGAdapter.default=Disabled
 deneyapmini.menu.JTAGAdapter.default.build.copy_jtag_files=0
 deneyapmini.menu.JTAGAdapter.external=FTDI Adapter
@@ -901,34 +797,28 @@ deneyapmini.menu.JTAGAdapter.external.build.copy_jtag_files=1
 deneyapmini.menu.JTAGAdapter.bridge=ESP USB Bridge
 deneyapmini.menu.JTAGAdapter.bridge.build.openocdscript=esp32s2-bridge.cfg
 deneyapmini.menu.JTAGAdapter.bridge.build.copy_jtag_files=1
-
 deneyapmini.menu.CDCOnBoot.cdc=Enabled
 deneyapmini.menu.CDCOnBoot.cdc.build.cdc_on_boot=1
 deneyapmini.menu.CDCOnBoot.default=Disabled
 deneyapmini.menu.CDCOnBoot.default.build.cdc_on_boot=0
-
 deneyapmini.menu.MSCOnBoot.default=Disabled
 deneyapmini.menu.MSCOnBoot.default.build.msc_on_boot=0
 deneyapmini.menu.MSCOnBoot.msc=Enabled
 deneyapmini.menu.MSCOnBoot.msc.build.msc_on_boot=1
-
 deneyapmini.menu.DFUOnBoot.default=Disabled
 deneyapmini.menu.DFUOnBoot.default.build.dfu_on_boot=0
 deneyapmini.menu.DFUOnBoot.dfu=Enabled
 deneyapmini.menu.DFUOnBoot.dfu.build.dfu_on_boot=1
-
 deneyapmini.menu.UploadMode.cdc=Internal USB
 deneyapmini.menu.UploadMode.cdc.upload.use_1200bps_touch=true
 deneyapmini.menu.UploadMode.cdc.upload.wait_for_upload_port=true
 deneyapmini.menu.UploadMode.default=UART0
 deneyapmini.menu.UploadMode.default.upload.use_1200bps_touch=false
 deneyapmini.menu.UploadMode.default.upload.wait_for_upload_port=false
-
 deneyapmini.menu.PSRAM.disabled=Disabled
 deneyapmini.menu.PSRAM.disabled.build.defines=
 deneyapmini.menu.PSRAM.enabled=Enabled
 deneyapmini.menu.PSRAM.enabled.build.defines=-DBOARD_HAS_PSRAM
-
 deneyapmini.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
 deneyapmini.menu.PartitionScheme.default.build.partitions=default
 deneyapmini.menu.PartitionScheme.defaultffat=Default 4MB with ffat (1.2MB APP/1.5MB FATFS)
@@ -953,7 +843,7 @@ deneyapmini.menu.PartitionScheme.noota_3gffat.upload.maximum_size=1048576
 deneyapmini.menu.PartitionScheme.huge_app=Huge APP (3MB No OTA/1MB SPIFFS)
 deneyapmini.menu.PartitionScheme.huge_app.build.partitions=huge_app
 deneyapmini.menu.PartitionScheme.huge_app.upload.maximum_size=3145728
-deneyapmini.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)
+deneyapmini.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/128KB SPIFFS)
 deneyapmini.menu.PartitionScheme.min_spiffs.build.partitions=min_spiffs
 deneyapmini.menu.PartitionScheme.min_spiffs.upload.maximum_size=1966080
 deneyapmini.menu.PartitionScheme.fatflash=16M Flash (2MB APP/12.5MB FATFS)
@@ -970,8 +860,7 @@ deneyapmini.menu.PartitionScheme.rainmaker_4MB.build.partitions=rainmaker_4MB_no
 deneyapmini.menu.PartitionScheme.rainmaker_4MB.upload.maximum_size=4038656
 deneyapmini.menu.PartitionScheme.rainmaker_8MB=RainMaker 8MB
 deneyapmini.menu.PartitionScheme.rainmaker_8MB.build.partitions=rainmaker_8MB
-deneyapmini.menu.PartitionScheme.rainmaker_8MB.upload.maximum_size=4116480
-
+deneyapmini.menu.PartitionScheme.rainmaker_8MB.upload.maximum_size=4096000
 deneyapmini.menu.CPUFreq.240=240MHz (WiFi)
 deneyapmini.menu.CPUFreq.240.build.f_cpu=240000000L
 deneyapmini.menu.CPUFreq.160=160MHz (WiFi)
@@ -984,19 +873,16 @@ deneyapmini.menu.CPUFreq.20=20MHz
 deneyapmini.menu.CPUFreq.20.build.f_cpu=20000000L
 deneyapmini.menu.CPUFreq.10=10MHz
 deneyapmini.menu.CPUFreq.10.build.f_cpu=10000000L
-
 deneyapmini.menu.FlashMode.qio=QIO
 deneyapmini.menu.FlashMode.qio.build.flash_mode=dio
 deneyapmini.menu.FlashMode.qio.build.boot=qio
 deneyapmini.menu.FlashMode.dio=DIO
 deneyapmini.menu.FlashMode.dio.build.flash_mode=dio
 deneyapmini.menu.FlashMode.dio.build.boot=dio
-
 deneyapmini.menu.FlashFreq.80=80MHz
 deneyapmini.menu.FlashFreq.80.build.flash_freq=80m
 deneyapmini.menu.FlashFreq.40=40MHz
 deneyapmini.menu.FlashFreq.40.build.flash_freq=40m
-
 deneyapmini.menu.FlashSize.4M=4MB (32Mb)
 deneyapmini.menu.FlashSize.4M.build.flash_size=4MB
 deneyapmini.menu.FlashSize.8M=8MB (64Mb)
@@ -1005,7 +891,6 @@ deneyapmini.menu.FlashSize.2M=2MB (16Mb)
 deneyapmini.menu.FlashSize.2M.build.flash_size=2MB
 deneyapmini.menu.FlashSize.16M=16MB (128Mb)
 deneyapmini.menu.FlashSize.16M.build.flash_size=16MB
-
 deneyapmini.menu.UploadSpeed.921600=921600
 deneyapmini.menu.UploadSpeed.921600.upload.speed=921600
 deneyapmini.menu.UploadSpeed.115200=115200
@@ -1020,7 +905,6 @@ deneyapmini.menu.UploadSpeed.460800.macosx=460800
 deneyapmini.menu.UploadSpeed.460800.upload.speed=460800
 deneyapmini.menu.UploadSpeed.512000.windows=512000
 deneyapmini.menu.UploadSpeed.512000.upload.speed=512000
-
 deneyapmini.menu.DebugLevel.none=None
 deneyapmini.menu.DebugLevel.none.build.code_debug=0
 deneyapmini.menu.DebugLevel.error=Error
@@ -1033,36 +917,28 @@ deneyapmini.menu.DebugLevel.debug=Debug
 deneyapmini.menu.DebugLevel.debug.build.code_debug=4
 deneyapmini.menu.DebugLevel.verbose=Verbose
 deneyapmini.menu.DebugLevel.verbose.build.code_debug=5
-
 deneyapmini.menu.EraseFlash.none=Disabled
 deneyapmini.menu.EraseFlash.none.upload.erase_cmd=
 deneyapmini.menu.EraseFlash.all=Enabled
 deneyapmini.menu.EraseFlash.all.upload.erase_cmd=-e
 
 ##############################################################
-
 deneyapminiv2.name=Deneyap Mini v2
-
 deneyapminiv2.vid.0=0x303a
 deneyapminiv2.pid.0=0x8144
-
 deneyapminiv2.bootloader.tool=esptool_py
 deneyapminiv2.bootloader.tool.default=esptool_py
-
 deneyapminiv2.upload.tool=esptool_py
 deneyapminiv2.upload.tool.default=esptool_py
 deneyapminiv2.upload.tool.network=esp_ota
-
 deneyapminiv2.upload.maximum_size=1310720
 deneyapminiv2.upload.maximum_data_size=327680
 deneyapminiv2.upload.flags=
 deneyapminiv2.upload.extra_flags=
 deneyapminiv2.upload.use_1200bps_touch=false
 deneyapminiv2.upload.wait_for_upload_port=false
-
 deneyapminiv2.serial.disableDTR=false
 deneyapminiv2.serial.disableRTS=false
-
 deneyapminiv2.build.tarch=xtensa
 deneyapminiv2.build.bootloader_addr=0x1000
 deneyapminiv2.build.target=esp32s2
@@ -1070,7 +946,6 @@ deneyapminiv2.build.mcu=esp32s2
 deneyapminiv2.build.core=esp32
 deneyapminiv2.build.variant=deneyapminiv2
 deneyapminiv2.build.board=DYMv2
-
 deneyapminiv2.build.cdc_on_boot=1
 deneyapminiv2.build.msc_on_boot=0
 deneyapminiv2.build.dfu_on_boot=0
@@ -1081,8 +956,6 @@ deneyapminiv2.build.flash_mode=dio
 deneyapminiv2.build.boot=qio
 deneyapminiv2.build.partitions=default
 deneyapminiv2.build.defines=-DBOARD_HAS_PSRAM
-
-## IDE 2.0 Seems to not update the value
 deneyapminiv2.menu.JTAGAdapter.default=Disabled
 deneyapminiv2.menu.JTAGAdapter.default.build.copy_jtag_files=0
 deneyapminiv2.menu.JTAGAdapter.external=FTDI Adapter
@@ -1091,34 +964,28 @@ deneyapminiv2.menu.JTAGAdapter.external.build.copy_jtag_files=1
 deneyapminiv2.menu.JTAGAdapter.bridge=ESP USB Bridge
 deneyapminiv2.menu.JTAGAdapter.bridge.build.openocdscript=esp32s2-bridge.cfg
 deneyapminiv2.menu.JTAGAdapter.bridge.build.copy_jtag_files=1
-
 deneyapminiv2.menu.CDCOnBoot.cdc=Enabled
 deneyapminiv2.menu.CDCOnBoot.cdc.build.cdc_on_boot=1
 deneyapminiv2.menu.CDCOnBoot.default=Disabled
 deneyapminiv2.menu.CDCOnBoot.default.build.cdc_on_boot=0
-
 deneyapminiv2.menu.MSCOnBoot.default=Disabled
 deneyapminiv2.menu.MSCOnBoot.default.build.msc_on_boot=0
 deneyapminiv2.menu.MSCOnBoot.msc=Enabled
 deneyapminiv2.menu.MSCOnBoot.msc.build.msc_on_boot=1
-
 deneyapminiv2.menu.DFUOnBoot.default=Disabled
 deneyapminiv2.menu.DFUOnBoot.default.build.dfu_on_boot=0
 deneyapminiv2.menu.DFUOnBoot.dfu=Enabled
 deneyapminiv2.menu.DFUOnBoot.dfu.build.dfu_on_boot=1
-
 deneyapminiv2.menu.UploadMode.cdc=Internal USB
 deneyapminiv2.menu.UploadMode.cdc.upload.use_1200bps_touch=true
 deneyapminiv2.menu.UploadMode.cdc.upload.wait_for_upload_port=true
 deneyapminiv2.menu.UploadMode.default=UART0
 deneyapminiv2.menu.UploadMode.default.upload.use_1200bps_touch=false
 deneyapminiv2.menu.UploadMode.default.upload.wait_for_upload_port=false
-
 deneyapminiv2.menu.PSRAM.enabled=Enabled
 deneyapminiv2.menu.PSRAM.enabled.build.defines=-DBOARD_HAS_PSRAM
 deneyapminiv2.menu.PSRAM.disabled=Disabled
 deneyapminiv2.menu.PSRAM.disabled.build.defines=
-
 deneyapminiv2.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
 deneyapminiv2.menu.PartitionScheme.default.build.partitions=default
 deneyapminiv2.menu.PartitionScheme.defaultffat=Default 4MB with ffat (1.2MB APP/1.5MB FATFS)
@@ -1143,7 +1010,7 @@ deneyapminiv2.menu.PartitionScheme.noota_3gffat.upload.maximum_size=1048576
 deneyapminiv2.menu.PartitionScheme.huge_app=Huge APP (3MB No OTA/1MB SPIFFS)
 deneyapminiv2.menu.PartitionScheme.huge_app.build.partitions=huge_app
 deneyapminiv2.menu.PartitionScheme.huge_app.upload.maximum_size=3145728
-deneyapminiv2.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)
+deneyapminiv2.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/128KB SPIFFS)
 deneyapminiv2.menu.PartitionScheme.min_spiffs.build.partitions=min_spiffs
 deneyapminiv2.menu.PartitionScheme.min_spiffs.upload.maximum_size=1966080
 deneyapminiv2.menu.PartitionScheme.fatflash=16M Flash (2MB APP/12.5MB FATFS)
@@ -1160,8 +1027,7 @@ deneyapminiv2.menu.PartitionScheme.rainmaker_4MB.build.partitions=rainmaker_4MB_
 deneyapminiv2.menu.PartitionScheme.rainmaker_4MB.upload.maximum_size=4038656
 deneyapminiv2.menu.PartitionScheme.rainmaker_8MB=RainMaker 8MB
 deneyapminiv2.menu.PartitionScheme.rainmaker_8MB.build.partitions=rainmaker_8MB
-deneyapminiv2.menu.PartitionScheme.rainmaker_8MB.upload.maximum_size=4116480
-
+deneyapminiv2.menu.PartitionScheme.rainmaker_8MB.upload.maximum_size=4096000
 deneyapminiv2.menu.CPUFreq.240=240MHz (WiFi)
 deneyapminiv2.menu.CPUFreq.240.build.f_cpu=240000000L
 deneyapminiv2.menu.CPUFreq.160=160MHz (WiFi)
@@ -1174,19 +1040,16 @@ deneyapminiv2.menu.CPUFreq.20=20MHz
 deneyapminiv2.menu.CPUFreq.20.build.f_cpu=20000000L
 deneyapminiv2.menu.CPUFreq.10=10MHz
 deneyapminiv2.menu.CPUFreq.10.build.f_cpu=10000000L
-
 deneyapminiv2.menu.FlashMode.qio=QIO
 deneyapminiv2.menu.FlashMode.qio.build.flash_mode=dio
 deneyapminiv2.menu.FlashMode.qio.build.boot=qio
 deneyapminiv2.menu.FlashMode.dio=DIO
 deneyapminiv2.menu.FlashMode.dio.build.flash_mode=dio
 deneyapminiv2.menu.FlashMode.dio.build.boot=dio
-
 deneyapminiv2.menu.FlashFreq.80=80MHz
 deneyapminiv2.menu.FlashFreq.80.build.flash_freq=80m
 deneyapminiv2.menu.FlashFreq.40=40MHz
 deneyapminiv2.menu.FlashFreq.40.build.flash_freq=40m
-
 deneyapminiv2.menu.FlashSize.4M=4MB (32Mb)
 deneyapminiv2.menu.FlashSize.4M.build.flash_size=4MB
 deneyapminiv2.menu.FlashSize.8M=8MB (64Mb)
@@ -1195,7 +1058,6 @@ deneyapminiv2.menu.FlashSize.2M=2MB (16Mb)
 deneyapminiv2.menu.FlashSize.2M.build.flash_size=2MB
 deneyapminiv2.menu.FlashSize.16M=16MB (128Mb)
 deneyapminiv2.menu.FlashSize.16M.build.flash_size=16MB
-
 deneyapminiv2.menu.UploadSpeed.921600=921600
 deneyapminiv2.menu.UploadSpeed.921600.upload.speed=921600
 deneyapminiv2.menu.UploadSpeed.115200=115200
@@ -1210,7 +1072,6 @@ deneyapminiv2.menu.UploadSpeed.460800.macosx=460800
 deneyapminiv2.menu.UploadSpeed.460800.upload.speed=460800
 deneyapminiv2.menu.UploadSpeed.512000.windows=512000
 deneyapminiv2.menu.UploadSpeed.512000.upload.speed=512000
-
 deneyapminiv2.menu.DebugLevel.none=None
 deneyapminiv2.menu.DebugLevel.none.build.code_debug=0
 deneyapminiv2.menu.DebugLevel.error=Error
@@ -1223,36 +1084,28 @@ deneyapminiv2.menu.DebugLevel.debug=Debug
 deneyapminiv2.menu.DebugLevel.debug.build.code_debug=4
 deneyapminiv2.menu.DebugLevel.verbose=Verbose
 deneyapminiv2.menu.DebugLevel.verbose.build.code_debug=5
-
 deneyapminiv2.menu.EraseFlash.none=Disabled
 deneyapminiv2.menu.EraseFlash.none.upload.erase_cmd=
 deneyapminiv2.menu.EraseFlash.all=Enabled
 deneyapminiv2.menu.EraseFlash.all.upload.erase_cmd=-e
 
 ##############################################################
-
 deneyapkartg.name=Deneyap Kart G
-
 deneyapkartg.vid.0=0x303a
 deneyapkartg.pid.0=0x814A
-
 deneyapkartg.bootloader.tool=esptool_py
 deneyapkartg.bootloader.tool.default=esptool_py
-
 deneyapkartg.upload.tool=esptool_py
 deneyapkartg.upload.tool.default=esptool_py
 deneyapkartg.upload.tool.network=esp_ota
-
 deneyapkartg.upload.maximum_size=1310720
 deneyapkartg.upload.maximum_data_size=327680
 deneyapkartg.upload.flags=
 deneyapkartg.upload.extra_flags=
 deneyapkartg.upload.use_1200bps_touch=false
 deneyapkartg.upload.wait_for_upload_port=false
-
 deneyapkartg.serial.disableDTR=false
 deneyapkartg.serial.disableRTS=false
-
 deneyapkartg.build.tarch=riscv32
 deneyapkartg.build.target=esp
 deneyapkartg.build.mcu=esp32c3
@@ -1260,7 +1113,6 @@ deneyapkartg.build.core=esp32
 deneyapkartg.build.variant=deneyapkartg
 deneyapkartg.build.board=DYG
 deneyapkartg.build.bootloader_addr=0x0
-
 deneyapkartg.build.cdc_on_boot=1
 deneyapkartg.build.f_cpu=160000000L
 deneyapkartg.build.flash_size=4MB
@@ -1269,8 +1121,6 @@ deneyapkartg.build.flash_mode=dio
 deneyapkartg.build.boot=qio
 deneyapkartg.build.partitions=default
 deneyapkartg.build.defines=
-
-## IDE 2.0 Seems to not update the value
 deneyapkartg.menu.JTAGAdapter.default=Disabled
 deneyapkartg.menu.JTAGAdapter.default.build.copy_jtag_files=0
 deneyapkartg.menu.JTAGAdapter.builtin=Integrated USB JTAG
@@ -1282,12 +1132,10 @@ deneyapkartg.menu.JTAGAdapter.external.build.copy_jtag_files=1
 deneyapkartg.menu.JTAGAdapter.bridge=ESP USB Bridge
 deneyapkartg.menu.JTAGAdapter.bridge.build.openocdscript=esp32c3-bridge.cfg
 deneyapkartg.menu.JTAGAdapter.bridge.build.copy_jtag_files=1
-
 deneyapkartg.menu.CDCOnBoot.cdc=Enabled
 deneyapkartg.menu.CDCOnBoot.cdc.build.cdc_on_boot=1
 deneyapkartg.menu.CDCOnBoot.default=Disabled
 deneyapkartg.menu.CDCOnBoot.default.build.cdc_on_boot=0
-
 deneyapkartg.menu.PartitionScheme.default=Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)
 deneyapkartg.menu.PartitionScheme.default.build.partitions=default
 deneyapkartg.menu.PartitionScheme.defaultffat=Default 4MB with ffat (1.2MB APP/1.5MB FATFS)
@@ -1312,7 +1160,7 @@ deneyapkartg.menu.PartitionScheme.noota_3gffat.upload.maximum_size=1048576
 deneyapkartg.menu.PartitionScheme.huge_app=Huge APP (3MB No OTA/1MB SPIFFS)
 deneyapkartg.menu.PartitionScheme.huge_app.build.partitions=huge_app
 deneyapkartg.menu.PartitionScheme.huge_app.upload.maximum_size=3145728
-deneyapkartg.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)
+deneyapkartg.menu.PartitionScheme.min_spiffs=Minimal SPIFFS (1.9MB APP with OTA/128KB SPIFFS)
 deneyapkartg.menu.PartitionScheme.min_spiffs.build.partitions=min_spiffs
 deneyapkartg.menu.PartitionScheme.min_spiffs.upload.maximum_size=1966080
 deneyapkartg.menu.PartitionScheme.fatflash=16M Flash (2MB APP/12.5MB FATFS)
@@ -1329,8 +1177,7 @@ deneyapkartg.menu.PartitionScheme.rainmaker_4MB.build.partitions=rainmaker_4MB_n
 deneyapkartg.menu.PartitionScheme.rainmaker_4MB.upload.maximum_size=4038656
 deneyapkartg.menu.PartitionScheme.rainmaker_8MB=RainMaker 8MB
 deneyapkartg.menu.PartitionScheme.rainmaker_8MB.build.partitions=rainmaker_8MB
-deneyapkartg.menu.PartitionScheme.rainmaker_8MB.upload.maximum_size=4116480
-
+deneyapkartg.menu.PartitionScheme.rainmaker_8MB.upload.maximum_size=4096000
 deneyapkartg.menu.CPUFreq.160=160MHz (WiFi)
 deneyapkartg.menu.CPUFreq.160.build.f_cpu=160000000L
 deneyapkartg.menu.CPUFreq.80=80MHz (WiFi)
@@ -1341,19 +1188,16 @@ deneyapkartg.menu.CPUFreq.20=20MHz
 deneyapkartg.menu.CPUFreq.20.build.f_cpu=20000000L
 deneyapkartg.menu.CPUFreq.10=10MHz
 deneyapkartg.menu.CPUFreq.10.build.f_cpu=10000000L
-
 deneyapkartg.menu.FlashMode.qio=QIO
 deneyapkartg.menu.FlashMode.qio.build.flash_mode=dio
 deneyapkartg.menu.FlashMode.qio.build.boot=qio
 deneyapkartg.menu.FlashMode.dio=DIO
 deneyapkartg.menu.FlashMode.dio.build.flash_mode=dio
 deneyapkartg.menu.FlashMode.dio.build.boot=dio
-
 deneyapkartg.menu.FlashFreq.80=80MHz
 deneyapkartg.menu.FlashFreq.80.build.flash_freq=80m
 deneyapkartg.menu.FlashFreq.40=40MHz
 deneyapkartg.menu.FlashFreq.40.build.flash_freq=40m
-
 deneyapkartg.menu.FlashSize.4M=4MB (32Mb)
 deneyapkartg.menu.FlashSize.4M.build.flash_size=4MB
 deneyapkartg.menu.FlashSize.8M=8MB (64Mb)
@@ -1362,7 +1206,6 @@ deneyapkartg.menu.FlashSize.2M=2MB (16Mb)
 deneyapkartg.menu.FlashSize.2M.build.flash_size=2MB
 deneyapkartg.menu.FlashSize.16M=16MB (128Mb)
 deneyapkartg.menu.FlashSize.16M.build.flash_size=16MB
-
 deneyapkartg.menu.UploadSpeed.921600=921600
 deneyapkartg.menu.UploadSpeed.921600.upload.speed=921600
 deneyapkartg.menu.UploadSpeed.115200=115200
@@ -1377,7 +1220,6 @@ deneyapkartg.menu.UploadSpeed.460800.macosx=460800
 deneyapkartg.menu.UploadSpeed.460800.upload.speed=460800
 deneyapkartg.menu.UploadSpeed.512000.windows=512000
 deneyapkartg.menu.UploadSpeed.512000.upload.speed=512000
-
 deneyapkartg.menu.DebugLevel.none=None
 deneyapkartg.menu.DebugLevel.none.build.code_debug=0
 deneyapkartg.menu.DebugLevel.error=Error
@@ -1390,10 +1232,8 @@ deneyapkartg.menu.DebugLevel.debug=Debug
 deneyapkartg.menu.DebugLevel.debug.build.code_debug=4
 deneyapkartg.menu.DebugLevel.verbose=Verbose
 deneyapkartg.menu.DebugLevel.verbose.build.code_debug=5
-
 deneyapkartg.menu.EraseFlash.none=Disabled
 deneyapkartg.menu.EraseFlash.none.upload.erase_cmd=
 deneyapkartg.menu.EraseFlash.all=Enabled
 deneyapkartg.menu.EraseFlash.all.upload.erase_cmd=-e
 
-##############################################################

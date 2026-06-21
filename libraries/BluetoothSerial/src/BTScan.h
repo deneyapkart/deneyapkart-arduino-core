@@ -5,8 +5,11 @@
  *      Author: Thomas M. (ArcticSnowSky)
  */
 
-#ifndef __BTSCAN_H__
-#define __BTSCAN_H__
+#pragma once
+#include "sdkconfig.h"
+#include "soc/soc_caps.h"
+
+#if SOC_BT_SUPPORTED && defined(CONFIG_BT_ENABLED) && defined(CONFIG_BLUEDROID_ENABLED)
 
 #include <map>
 #include <string>
@@ -17,26 +20,25 @@
 class BTAdvertisedDevice;
 class BTAdvertisedDeviceSet;
 
-
 class BTScanResults {
 public:
-	virtual ~BTScanResults() = default;
+  virtual ~BTScanResults() = default;
 
-    virtual void        		dump(Print *print = nullptr);
-    virtual int         		getCount();
-    virtual BTAdvertisedDevice* getDevice(int i);
+  virtual void dump(Print *print = nullptr) = 0;
+  virtual int getCount() = 0;
+  virtual BTAdvertisedDevice *getDevice(int i) = 0;
 };
 
 class BTScanResultsSet : public BTScanResults {
 public:
-    void                	dump(Print *print = nullptr);
-    int                 	getCount();
-    BTAdvertisedDevice*		getDevice(int i);
+  void dump(Print *print = nullptr);
+  int getCount();
+  BTAdvertisedDevice *getDevice(int i);
 
-	bool add(BTAdvertisedDeviceSet advertisedDevice, bool unique = true);
-	void clear();
+  bool add(BTAdvertisedDeviceSet advertisedDevice, bool unique = true);
+  void clear();
 
-    std::map<std::string, BTAdvertisedDeviceSet> m_vectorAdvertisedDevices;
+  std::map<std::string, BTAdvertisedDeviceSet> m_vectorAdvertisedDevices;
 };
 
 #endif
