@@ -17,6 +17,10 @@
 #ifndef _ESP32_HAL_I2C_H_
 #define _ESP32_HAL_I2C_H_
 
+#include "soc/soc_caps.h"
+#if SOC_I2C_SUPPORTED
+#include "esp_idf_version.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -28,14 +32,21 @@ extern "C" {
 esp_err_t i2cInit(uint8_t i2c_num, int8_t sda, int8_t scl, uint32_t clk_speed);
 esp_err_t i2cDeinit(uint8_t i2c_num);
 esp_err_t i2cSetClock(uint8_t i2c_num, uint32_t frequency);
-esp_err_t i2cGetClock(uint8_t i2c_num, uint32_t * frequency);
-esp_err_t i2cWrite(uint8_t i2c_num, uint16_t address, const uint8_t* buff, size_t size, uint32_t timeOutMillis);
-esp_err_t i2cRead(uint8_t i2c_num, uint16_t address, uint8_t* buff, size_t size, uint32_t timeOutMillis, size_t *readCount);
-esp_err_t i2cWriteReadNonStop(uint8_t i2c_num, uint16_t address, const uint8_t* wbuff, size_t wsize, uint8_t* rbuff, size_t rsize, uint32_t timeOutMillis, size_t *readCount);
+esp_err_t i2cGetClock(uint8_t i2c_num, uint32_t *frequency);
+esp_err_t i2cWrite(uint8_t i2c_num, uint16_t address, const uint8_t *buff, size_t size, uint32_t timeOutMillis);
+esp_err_t i2cRead(uint8_t i2c_num, uint16_t address, uint8_t *buff, size_t size, uint32_t timeOutMillis, size_t *readCount);
+esp_err_t i2cWriteReadNonStop(
+  uint8_t i2c_num, uint16_t address, const uint8_t *wbuff, size_t wsize, uint8_t *rbuff, size_t rsize, uint32_t timeOutMillis, size_t *readCount
+);
 bool i2cIsInit(uint8_t i2c_num);
+
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 4, 0)
+void *i2cBusHandle(uint8_t i2c_num);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
 
+#endif /* SOC_I2C_SUPPORTED */
 #endif /* _ESP32_HAL_I2C_H_ */
