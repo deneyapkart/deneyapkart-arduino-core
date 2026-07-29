@@ -23,15 +23,13 @@ void setup() {
   pinMode(MOT_DIR1, OUTPUT);                            // Motor yon secme pin1 cikis olarak ayarlandi
   pinMode(MOT_DIR2, OUTPUT);                            // Motor yon secme pin2 cikis olarak ayarlandi
   
-  ledcSetup(PWM_CH, PWM_FREQ, PWM_RES);                 // PWM zamanlayicisi ayarlandi 
-  ledcAttachPin(MOT_PIN, PWM_CH);                       // Motor PWM pini ile zamanlayici iliskilendirildi
+  ledcAttach(MOT_PIN, PWM_FREQ, PWM_RES);               // PWM pini frekans ve cozunurlukle ayarlandi
   Serial.begin(115200);                                 // Seri haberlesme baslatildi
   Serial.println("\nMotor Surme Ornegi");
 }
 
 void loop() {
-  ledcWrite(PWM_CH, dutyCycle);                         // Motor PWM hiz ayari yapildi
-
+  ledcWrite(MOT_PIN, dutyCycle);                        // Motor PWM hiz ayari yapildiD
   if(motorDir == 1 && changeDirFlag == 1)               // Ileri yon
   {   
     digitalWrite(MOT_DIR1, LOW);

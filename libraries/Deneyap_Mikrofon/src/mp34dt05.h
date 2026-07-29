@@ -1,7 +1,7 @@
 #ifndef _MP34DT05_H_
 #define _MP34DT05_H_
 
-#include "driver/i2s.h"
+#include <ESP_I2S.h>
 #include "dsps_fft2r.h"
 
 #define I2S_PORT I2S_NUM_0
@@ -32,7 +32,7 @@ public:
 
 void micBegin();
 void micQuit();
-void micRead(size_t *dataReadNumber, void *dataRead);
+void micRead(size_t *dataReadNumber, void *dataRead, size_t byte_count = BUFFER_SIZE);
 int16_t dataFilter(FilterBeHp2 filter, size_t num_bytes_read, int *samples);
 
 #endif // _MP34DT05_H_

@@ -92,7 +92,7 @@ bool create_wav_file(const char *song_name, uint32_t duration, uint16_t num_chan
 
 void microphone_record(const char *song_name, uint32_t duration) {
   /* Daha sonra PC'den oynatabilmemiz için wav dosyası oluşturma */
-  if (!create_wav_file(song_name, duration, 1, SAMPLE_RATE, I2S_BITS_PER_SAMPLE_16BIT)) {
+   if (!create_wav_file(song_name, duration, 1, SAMPLE_RATE, 16)) {
     Serial.println("wav dosyası oluşturma hatası");
     return;
   }
@@ -117,7 +117,7 @@ void microphone_record(const char *song_name, uint32_t duration) {
   micBegin();
 
   /* bayt cinsinden veri boyutu - > bu miktarda veriyi mikrofondan kaydetme */
-  uint32_t data_size = SAMPLE_RATE * I2S_BITS_PER_SAMPLE_16BIT * duration / 8;
+  uint32_t data_size = SAMPLE_RATE * 16 * duration / 8;
 
   /* Mikrofondan "file_size" bayt okunana kadar kaydetme */
   uint32_t counter = 0;
@@ -132,10 +132,9 @@ void microphone_record(const char *song_name, uint32_t duration) {
       break;
     }
     /* Mikrofondan veri okuma */
-    if (i2s_read(I2S_PORT, buf, BUFFER_SIZE, &bytes_written, portMAX_DELAY) != ESP_OK) {
-      Serial.println("i2s_read() hatası");
-    }
-
+        size_t bytes_read_now = 0;
+    micRead(&bytes_read_now, buf, BUFFER_SIZE);
+    bytes_written = bytes_read_now;
     if (bytes_written != BUFFER_SIZE) {
       Serial.println("Byte yazma hatası");
     }

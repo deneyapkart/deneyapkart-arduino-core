@@ -18,7 +18,7 @@ class MyCallbacks: public BLECharacteristicCallbacks {
   
   void onWrite(BLECharacteristic *pCharacteristic) { // Yazma isteği için callback fonksiyonu
       
-    std::string value = pCharacteristic->getValue(); // Karakteristiğin değeri alındı
+     String value = pCharacteristic->getValue(); // Karakteristiğin değeri alındı
 
     if (value.length() > 0) { // Karakteristik değerinin uzunluğu (karakter cinsinden) 0'dan büyük ise
       
