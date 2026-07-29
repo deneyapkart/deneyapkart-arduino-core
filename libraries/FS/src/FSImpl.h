@@ -23,50 +23,113 @@
 #include <stddef.h>
 #include <stdint.h>
 
-namespace fs
-{
+#if defined(ARDUINO_ARCH_ESP32)
+#include <freertos/FreeRTOS.h>
+#include <freertos/semphr.h>
+using FSMutexHandle = SemaphoreHandle_t;
+inline void fsLockTake(FSMutexHandle mtx) {
+  if (mtx) {
+    xSemaphoreTakeRecursive(mtx, portMAX_DELAY);
+  }
+}
+inline void fsLockGive(FSMutexHandle mtx) {
+  if (mtx) {
+    xSemaphoreGiveRecursive(mtx);
+  }
+}
+inline void fsLockDelete(FSMutexHandle mtx) {
+  if (mtx) {
+    vSemaphoreDelete(mtx);
+  }
+}
+inline FSMutexHandle fsMutexCreate() {
+  return xSemaphoreCreateRecursiveMutex();
+}
+inline bool fsMutexEnabled() {
+  return true;
+}
+#else
+using FSMutexHandle = void *;
+inline void fsLockTake(FSMutexHandle) {}
+inline void fsLockGive(FSMutexHandle) {}
+inline void fsLockDelete(FSMutexHandle) {}
+inline FSMutexHandle fsMutexCreate() {
+  return nullptr;
+}
+inline bool fsMutexEnabled() {
+  return false;
+}
+#endif
 
-class FileImpl
-{
+namespace fs {
+
+// RAII lock guard for the per-filesystem recursive mutex (no-op when _mtx is null).
+class FSLockGuard {
 public:
-    virtual ~FileImpl() { }
-    virtual size_t write(const uint8_t *buf, size_t size) = 0;
-    virtual size_t read(uint8_t* buf, size_t size) = 0;
-    virtual void flush() = 0;
-    virtual bool seek(uint32_t pos, SeekMode mode) = 0;
-    virtual size_t position() const = 0;
-    virtual size_t size() const = 0;
-    virtual bool setBufferSize(size_t size) = 0;
-    virtual void close() = 0;
-    virtual time_t getLastWrite() = 0;
-    virtual const char* path() const = 0;
-    virtual const char* name() const = 0;
-    virtual boolean isDirectory(void) = 0;
-    virtual FileImplPtr openNextFile(const char* mode) = 0;
-    virtual boolean seekDir(long position) = 0;
-    virtual String getNextFileName(void) = 0;
-    virtual String getNextFileName(bool *isDir) = 0;
-    virtual void rewindDirectory(void) = 0;
-    virtual operator bool() = 0;
+  explicit FSLockGuard(FSMutexHandle mtx = nullptr) : _mtx(mtx) {
+    fsLockTake(_mtx);
+  }
+  ~FSLockGuard() {
+    fsLockGive(_mtx);
+  }
+  FSLockGuard(const FSLockGuard &) = delete;
+  FSLockGuard &operator=(const FSLockGuard &) = delete;
+  FSLockGuard(FSLockGuard &&other) noexcept : _mtx(other._mtx) {
+    other._mtx = nullptr;
+  }
+  FSLockGuard &operator=(FSLockGuard &&) = delete;
+
+private:
+  FSMutexHandle _mtx;
 };
 
-class FSImpl
-{
+class FileImpl {
+public:
+  virtual ~FileImpl() {}
+  virtual size_t write(const uint8_t *buf, size_t size) = 0;
+  virtual size_t read(uint8_t *buf, size_t size) = 0;
+  virtual void flush() = 0;
+  virtual bool seek(uint32_t pos, SeekMode mode) = 0;
+  virtual size_t position() const = 0;
+  virtual size_t size() const = 0;
+  virtual bool setBufferSize(size_t size) = 0;
+  virtual void close() = 0;
+  virtual time_t getLastWrite() = 0;
+  virtual const char *path() const = 0;
+  virtual const char *name() const = 0;
+  virtual boolean isDirectory(void) = 0;
+  virtual FileImplPtr openNextFile(const char *mode) = 0;
+  virtual boolean seekDir(long position) = 0;
+  virtual String getNextFileName(void) = 0;
+  virtual String getNextFileName(bool *isDir) = 0;
+  virtual void rewindDirectory(void) = 0;
+  virtual operator bool() = 0;
+};
+
+class FSImpl {
 protected:
-    const char * _mountpoint;
+  const char *_mountpoint;
+  FSMutexHandle _mtx;
+  FSLockGuard fsLock() {
+    return FSLockGuard(_mtx);
+  }
+
 public:
-    FSImpl() : _mountpoint(NULL) { }
-    virtual ~FSImpl() { }
-    virtual FileImplPtr open(const char* path, const char* mode, const bool create) = 0;
-    virtual bool exists(const char* path) = 0;
-    virtual bool rename(const char* pathFrom, const char* pathTo) = 0;
-    virtual bool remove(const char* path) = 0;
-    virtual bool mkdir(const char *path) = 0;
-    virtual bool rmdir(const char *path) = 0;
-    void mountpoint(const char *);
-    const char * mountpoint();
+  FSImpl() : _mountpoint(NULL), _mtx(nullptr) {}
+  virtual ~FSImpl() {
+    fsLockDelete(_mtx);
+  }
+
+  virtual FileImplPtr open(const char *path, const char *mode, const bool create) = 0;
+  virtual bool exists(const char *path) = 0;
+  virtual bool rename(const char *pathFrom, const char *pathTo) = 0;
+  virtual bool remove(const char *path) = 0;
+  virtual bool mkdir(const char *path) = 0;
+  virtual bool rmdir(const char *path) = 0;
+  void mountpoint(const char *);
+  const char *mountpoint();
 };
 
-} // namespace fs
+}  // namespace fs
 
-#endif //FSIMPL_H
+#endif  //FSIMPL_H
