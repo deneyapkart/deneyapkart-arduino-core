@@ -2,7 +2,6 @@ name=Deneyap Gelistirme Kartlari
 version=2.1.0
 
 tools.esp32-arduino-libs.path={runtime.tools.esp32-arduino-libs.path}
-tools.esp32-arduino-libs.path.windows={runtime.platform.path}\tools\esp32-arduino-libs
 tools.xtensa-esp-elf-gcc.path={runtime.tools.xtensa-esp-elf-gcc.path}
 tools.xtensa-esp-elf-gdb.path={runtime.tools.xtensa-esp-elf-gdb.path}
 tools.riscv32-esp-elf-gcc.path={runtime.tools.riscv32-esp-elf-gcc.path}
