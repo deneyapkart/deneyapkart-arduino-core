@@ -1,5 +1,5 @@
 name=Deneyap Gelistirme Kartlari
-version=2.1.0
+version=2.1.1
 
 tools.esp32-arduino-libs.path={runtime.tools.esp32-arduino-libs.path}
 tools.xtensa-esp-elf-gcc.path={runtime.tools.xtensa-esp-elf-gcc.path}
