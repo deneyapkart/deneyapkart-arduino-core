@@ -26,8 +26,8 @@ tools.gen_insights_pkg.cmd.windows="{runtime.platform.path}\tools\gen_insights_p
 compiler.path={tools.{build.tarch}-esp-elf-gcc.path}/bin/
 compiler.prefix={build.tarch}-{build.target}-elf-
 
-compiler.sdk.path={tools.esp32-arduino-libs.path}/{build.chip_variant}
-compiler.sdk.path.windows={tools.esp32-arduino-libs.path}\{build.chip_variant}
+compiler.sdk.path={tools.esp32-arduino-libs.path}
+compiler.sdk.path.windows={tools.esp32-arduino-libs.path}
 
 # EXPERIMENTAL feature: optimization flags
 #  - this is alpha and may be subject to change without notice
