@@ -9,12 +9,12 @@
         "online": "http://forum.deneyapkart.org"
       },
       "platforms": [
-               {
+        {
           "category": "Contributed",
           "name": "Deneyap Gelistirme Kartlari",
           "url": "https://github.com/yerdenizthecoder/deneyapkart-arduino-core/releases/download/2.1.4/deneyapkart-2.1.4.zip",
-          "checksum": "SHA-256:cfbdaf2a44a68e4343a42869ef1758ce86277be6aa7a03d8532f0005fa29894d",
-          "size": "120480069",
+          "checksum": "SHA-256:e00faf6b96f8fa17c25a361780108ab1ce0f93df9d859f26a5b5b540de281c7f",
+          "size": "84334395",
           "help": {
             "online": ""
           },
@@ -133,62 +133,62 @@
             }
           ],
           "toolsDependencies": [
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp32-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp32s2-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp32s3-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp-elf-gdb",
-                "version": "11.2_20220823"
-              },
-              {
-                "packager": "deneyap",
-                "name": "riscv32-esp-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "riscv32-esp-elf-gdb",
-                "version": "11.2_20220823"
-              },
-              {
-                "packager": "deneyap",
-                "name": "openocd-esp32",
-                "version": "v0.12.0-esp32-20230921"
-              },
-              {
-                "packager": "deneyap",
-                "name": "esptool_py",
-                "version": "4.5.1"
-              },
-              {
-                "packager": "deneyap",
-                "name": "mkspiffs",
-                "version": "0.2.3"
-              },
-              {
-                "packager": "deneyap",
-                "name": "mklittlefs",
-                "version": "3.0.0-gnu12-dc7f933"
-              },
-              {
-                "packager": "arduino",
-                "name": "dfu-util",
-                "version": "0.11.0-arduino5"
-              }
-            ]
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp32-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp32s2-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp32s3-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp-elf-gdb",
+              "version": "11.2_20220823"
+            },
+            {
+              "packager": "deneyap",
+              "name": "riscv32-esp-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "riscv32-esp-elf-gdb",
+              "version": "11.2_20220823"
+            },
+            {
+              "packager": "deneyap",
+              "name": "openocd-esp32",
+              "version": "v0.12.0-esp32-20230921"
+            },
+            {
+              "packager": "deneyap",
+              "name": "esptool_py",
+              "version": "4.5.1"
+            },
+            {
+              "packager": "deneyap",
+              "name": "mkspiffs",
+              "version": "0.2.3"
+            },
+            {
+              "packager": "deneyap",
+              "name": "mklittlefs",
+              "version": "3.0.0-gnu12-dc7f933"
+            },
+            {
+              "packager": "arduino",
+              "name": "dfu-util",
+              "version": "0.11.0-arduino5"
+            }
+          ]
         },
         {
           "category": "Contributed",
@@ -226,62 +226,62 @@
             }
           ],
           "toolsDependencies": [
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp32-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp32s2-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp32s3-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp-elf-gdb",
-                "version": "11.2_20220823"
-              },
-              {
-                "packager": "deneyap",
-                "name": "riscv32-esp-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "riscv32-esp-elf-gdb",
-                "version": "11.2_20220823"
-              },
-              {
-                "packager": "deneyap",
-                "name": "openocd-esp32",
-                "version": "v0.12.0-esp32-20230921"
-              },
-              {
-                "packager": "deneyap",
-                "name": "esptool_py",
-                "version": "4.5.1"
-              },
-              {
-                "packager": "deneyap",
-                "name": "mkspiffs",
-                "version": "0.2.3"
-              },
-              {
-                "packager": "deneyap",
-                "name": "mklittlefs",
-                "version": "3.0.0-gnu12-dc7f933"
-              },
-              {
-                "packager": "arduino",
-                "name": "dfu-util",
-                "version": "0.11.0-arduino5"
-              }
-            ]
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp32-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp32s2-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp32s3-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp-elf-gdb",
+              "version": "11.2_20220823"
+            },
+            {
+              "packager": "deneyap",
+              "name": "riscv32-esp-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "riscv32-esp-elf-gdb",
+              "version": "11.2_20220823"
+            },
+            {
+              "packager": "deneyap",
+              "name": "openocd-esp32",
+              "version": "v0.12.0-esp32-20230921"
+            },
+            {
+              "packager": "deneyap",
+              "name": "esptool_py",
+              "version": "4.5.1"
+            },
+            {
+              "packager": "deneyap",
+              "name": "mkspiffs",
+              "version": "0.2.3"
+            },
+            {
+              "packager": "deneyap",
+              "name": "mklittlefs",
+              "version": "3.0.0-gnu12-dc7f933"
+            },
+            {
+              "packager": "arduino",
+              "name": "dfu-util",
+              "version": "0.11.0-arduino5"
+            }
+          ]
         },
         {
           "category": "Contributed",
@@ -319,62 +319,62 @@
             }
           ],
           "toolsDependencies": [
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp32-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp32s2-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp32s3-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp-elf-gdb",
-                "version": "11.2_20220823"
-              },
-              {
-                "packager": "deneyap",
-                "name": "riscv32-esp-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "riscv32-esp-elf-gdb",
-                "version": "11.2_20220823"
-              },
-              {
-                "packager": "deneyap",
-                "name": "openocd-esp32",
-                "version": "v0.12.0-esp32-20230921"
-              },
-              {
-                "packager": "deneyap",
-                "name": "esptool_py",
-                "version": "4.5.1"
-              },
-              {
-                "packager": "deneyap",
-                "name": "mkspiffs",
-                "version": "0.2.3"
-              },
-              {
-                "packager": "deneyap",
-                "name": "mklittlefs",
-                "version": "3.0.0-gnu12-dc7f933"
-              },
-              {
-                "packager": "arduino",
-                "name": "dfu-util",
-                "version": "0.11.0-arduino5"
-              }
-            ]
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp32-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp32s2-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp32s3-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp-elf-gdb",
+              "version": "11.2_20220823"
+            },
+            {
+              "packager": "deneyap",
+              "name": "riscv32-esp-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "riscv32-esp-elf-gdb",
+              "version": "11.2_20220823"
+            },
+            {
+              "packager": "deneyap",
+              "name": "openocd-esp32",
+              "version": "v0.12.0-esp32-20230921"
+            },
+            {
+              "packager": "deneyap",
+              "name": "esptool_py",
+              "version": "4.5.1"
+            },
+            {
+              "packager": "deneyap",
+              "name": "mkspiffs",
+              "version": "0.2.3"
+            },
+            {
+              "packager": "deneyap",
+              "name": "mklittlefs",
+              "version": "3.0.0-gnu12-dc7f933"
+            },
+            {
+              "packager": "arduino",
+              "name": "dfu-util",
+              "version": "0.11.0-arduino5"
+            }
+          ]
         },
         {
           "category": "Contributed",
@@ -409,62 +409,62 @@
             }
           ],
           "toolsDependencies": [
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp32-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp32s2-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp32s3-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "xtensa-esp-elf-gdb",
-                "version": "11.2_20220823"
-              },
-              {
-                "packager": "deneyap",
-                "name": "riscv32-esp-elf-gcc",
-                "version": "esp-2021r2-patch5-8.4.0"
-              },
-              {
-                "packager": "deneyap",
-                "name": "riscv32-esp-elf-gdb",
-                "version": "11.2_20220823"
-              },
-              {
-                "packager": "deneyap",
-                "name": "openocd-esp32",
-                "version": "v0.12.0-esp32-20230921"
-              },
-              {
-                "packager": "deneyap",
-                "name": "esptool_py",
-                "version": "4.5.1"
-              },
-              {
-                "packager": "deneyap",
-                "name": "mkspiffs",
-                "version": "0.2.3"
-              },
-              {
-                "packager": "deneyap",
-                "name": "mklittlefs",
-                "version": "3.0.0-gnu12-dc7f933"
-              },
-              {
-                "packager": "arduino",
-                "name": "dfu-util",
-                "version": "0.11.0-arduino5"
-              }
-            ]
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp32-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp32s2-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp32s3-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "xtensa-esp-elf-gdb",
+              "version": "11.2_20220823"
+            },
+            {
+              "packager": "deneyap",
+              "name": "riscv32-esp-elf-gcc",
+              "version": "esp-2021r2-patch5-8.4.0"
+            },
+            {
+              "packager": "deneyap",
+              "name": "riscv32-esp-elf-gdb",
+              "version": "11.2_20220823"
+            },
+            {
+              "packager": "deneyap",
+              "name": "openocd-esp32",
+              "version": "v0.12.0-esp32-20230921"
+            },
+            {
+              "packager": "deneyap",
+              "name": "esptool_py",
+              "version": "4.5.1"
+            },
+            {
+              "packager": "deneyap",
+              "name": "mkspiffs",
+              "version": "0.2.3"
+            },
+            {
+              "packager": "deneyap",
+              "name": "mklittlefs",
+              "version": "3.0.0-gnu12-dc7f933"
+            },
+            {
+              "packager": "arduino",
+              "name": "dfu-util",
+              "version": "0.11.0-arduino5"
+            }
+          ]
         },
         {
           "category": "Contributed",
@@ -1564,7 +1564,7 @@
         }
       ],
       "tools": [
-                {
+        {
           "name": "esp32-libs",
           "version": "3.3.11",
           "systems": [
@@ -2115,7 +2115,6 @@
             }
           ]
         },
-
         {
           "name": "xtensa-esp32-elf-gcc",
           "version": "esp-2021r2-patch5-8.4.0",
