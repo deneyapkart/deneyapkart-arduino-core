@@ -1,44 +1,76 @@
-/*
- *   WatcgdogTimer örneği, 
- * 
-*/
+#include <Arduino.h>
 #include "esp_system.h"
+#include "rom/ets_sys.h"
 
-const int wdtTimeout = 3000;  //watchdog'u tetiklemek için ms cinsinden süre
+// Buton pini
+const int button = GPKEY;
+
+// Watchdog süresi: 3000 ms = 3 saniye
+const int wdtTimeout = 3000;
+
+// Timer nesnesi
 hw_timer_t *timer = NULL;
 
+
+// Timer süresi dolduğunda çalışacak fonksiyon
 void ARDUINO_ISR_ATTR resetModule() {
-  ets_printf("reboot\n");
+  ets_printf("Watchdog tetiklendi! Kart yeniden baslatiliyor...\n");
   esp_restart();
 }
 
-void setup() {
-  Serial.begin(115200);
-  Serial.println();
-  Serial.println("Setup konfigürasyon");
 
-  //Buton gecikmeyi tetiklemek için kullanılacak
-  pinMode(GPKEY, INPUT);                            // Genel amacli buton pini giris olarak ayarlandi. 
-  
-  timer = timerBegin(0, 80, true);                  //timer 0, div 80
-  timerAttachInterrupt(timer, &resetModule, true);  //callback ekle
-  timerAlarmWrite(timer, wdtTimeout * 1000, false); //zamanı ayarla
-  timerAlarmEnable(timer);                          //interrupt etkinleştir
+void setup() {
+
+  Serial.begin(115200);
+
+  Serial.println();
+  Serial.println("Program baslatildi");
+
+  // Butonu giriş olarak ayarla
+  pinMode(button, INPUT_PULLUP);
+
+  // Timer frekansı: 1 MHz
+  // 1 tick = 1 mikrosaniye
+  timer = timerBegin(1000000);
+
+  // Timer interrupt fonksiyonunu bağla
+  timerAttachInterrupt(timer, &resetModule);
+
+  // 3 saniye sonra interrupt oluştur
+  // wdtTimeout = 3000 ms
+  // 3000 * 1000 = 3.000.000 mikrosaniye
+  timerAlarm(timer, wdtTimeout * 1000, false, 0);
+
+  Serial.println("Watchdog timer hazir.");
 }
 
-void loop() {
-  Serial.println("Döngüde");
 
-  timerWrite(timer, 0); //timer sıfırla (watchdog besleme)
+void loop() {
+
+  Serial.println("Ana dongu calisiyor");
+
+  // Watchdog'u besle
+  // Timer sayacını tekrar sıfırla
+  timerWrite(timer, 0);
+
   long loopTime = millis();
-  //düğmeye basılıyken, Timer'ı tetiklemek için 3 saniyeye kadar gecikme
-  while (!digitalRead(GPKEY)) {
-    Serial.println("Butona basıldı");
+
+
+  // Butona basılı tutulduğunda
+  // program burada bekleyecek.
+  // 3 saniyeden uzun tutulursa watchdog devreye girer.
+  while (!digitalRead(button)) {
+
+    Serial.println("Butona basiliyor...");
+
     delay(500);
   }
-  delay(1000); //simule et 
+  delay(1000);
+
+
   loopTime = millis() - loopTime;
-  
-  Serial.print("Döngü süresi = ");
-  Serial.println(loopTime); //3000 ms'in altında olmalı
+
+  Serial.print("Dongu suresi = ");
+  Serial.print(loopTime);
+  Serial.println(" ms");
 }

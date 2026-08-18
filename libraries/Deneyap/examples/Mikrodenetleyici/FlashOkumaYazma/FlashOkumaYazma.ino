@@ -10,6 +10,7 @@ Preferences preferences;
 
 void setup() {
   Serial.begin(115200);
+  delay(1500);
   Serial.println();
 
    // Prefence'i uygulamam ad alanıyla açın. Her uygulama modülü, kitaplık vb.

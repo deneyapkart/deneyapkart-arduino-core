@@ -11,10 +11,11 @@
 class Button
 {
 public:
-  Button(uint8_t reqPin) : PIN(reqPin){
-     pinMode(PIN, INPUT_PULLUP);
-     attachInterrupt(PIN, std::bind(&Button::isr,this), FALLING);
-  };
+  Button(uint8_t reqPin) : PIN(reqPin), numberKeyPresses(0), pressed(false) {
+   pinMode(PIN, INPUT_PULLUP);
+   attachInterrupt(PIN, std::bind(&Button::isr,this), FALLING);
+};
+
   ~Button() {
     detachInterrupt(PIN);
   }
