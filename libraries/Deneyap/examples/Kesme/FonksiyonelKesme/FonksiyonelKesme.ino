@@ -1,7 +1,7 @@
 /*
  *  FonksiyonelKesme (interrupt) örneği,
- *  Bu uygulamada FunctionalInterrupt kütüphanesi kullanarak kesme işlemleri gerçekleştirilmiştir. 
- *  Örnekte karttaki butona veya harici bağlanan bir botuna basıldığında interrupt ile butona kaç defa basıldığı bilgisi seri port ekranına yazdırmaktadır. 
+ *  Bu uygulamada FunctionalInterrupt kütüphanesi kullanarak kesme işlemleri gerçekleştirilmiştir.
+ *  Örnekte karttaki butona veya harici bağlanan bir botuna basıldığında interrupt ile butona kaç defa basıldığı bilgisi seri port ekranına yazdırmaktadır.
  */
 #include <FunctionalInterrupt.h>
 
@@ -11,10 +11,12 @@
 class Button
 {
 public:
-  Button(uint8_t reqPin) : PIN(reqPin), numberKeyPresses(0), pressed(false) {
-   pinMode(PIN, INPUT_PULLUP);
-   attachInterrupt(PIN, std::bind(&Button::isr,this), FALLING);
-};
+  Button(uint8_t reqPin) : PIN(reqPin), numberKeyPresses(0), pressed(false) {}
+
+  void begin() {
+    pinMode(PIN, INPUT_PULLUP);
+    attachInterrupt(PIN, std::bind(&Button::isr,this), FALLING);
+  }
 
   ~Button() {
     detachInterrupt(PIN);
@@ -43,6 +45,9 @@ Button button2(BUTTON2);
 
 void setup() {
      Serial.begin(115200);
+     delay(200);              // Cift cekirdekli kartlarda IPC/interrupt alt sisteminin hazir olmasini bekle
+     button1.begin();
+     button2.begin();
 }
 
 void loop() {
