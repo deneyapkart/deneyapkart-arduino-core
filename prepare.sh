@@ -1,5 +1,5 @@
 #!/bin/bash
-version="1.3.13"
+version="2.1.0"
 rm -rf deneyapkart-$version.zip
 mkdir deneyapkart-$version
 cp -r cores/ deneyapkart-$version
