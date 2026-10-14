@@ -1,23 +1,55 @@
 /*
+ * Copyright 2017-2026 Espressif Systems (Shanghai) PTE LTD
+ * Copyright 2017 Neil Kolban
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
  * BLEServiceMap.cpp
  *
  *  Created on: Jun 22, 2017
  *      Author: kolban
+ *
+ *  Modified on: Feb 18, 2025
+ *      Author: lucasssvaz (based on kolban's and h2zero's work)
+ *      Description: Added support for NimBLE
  */
+
+#include "soc/soc_caps.h"
 #include "sdkconfig.h"
-#if defined(CONFIG_BLUEDROID_ENABLED)
+#if defined(SOC_BLE_SUPPORTED) || defined(CONFIG_ESP_HOSTED_ENABLE_BT_NIMBLE)
+#if defined(CONFIG_BLUEDROID_ENABLED) || defined(CONFIG_NIMBLE_ENABLED)
+
+/*****************************************************************************
+ *                             Common includes                               *
+ *****************************************************************************/
+
 #include <stdio.h>
 #include <iomanip>
 #include "BLEService.h"
 
+/*****************************************************************************
+ *                             Common functions                              *
+ *****************************************************************************/
 
 /**
  * @brief Return the service by UUID.
  * @param [in] UUID The UUID to look up the service.
  * @return The characteristic.
  */
-BLEService* BLEServiceMap::getByUUID(const char* uuid) {
-	return getByUUID(BLEUUID(uuid));
+BLEService *BLEServiceMap::getByUUID(const char *uuid) {
+  return getByUUID(BLEUUID(uuid));
 }
 
 /**
@@ -25,26 +57,24 @@ BLEService* BLEServiceMap::getByUUID(const char* uuid) {
  * @param [in] UUID The UUID to look up the service.
  * @return The characteristic.
  */
-BLEService* BLEServiceMap::getByUUID(BLEUUID uuid, uint8_t inst_id) {
-	for (auto &myPair : m_uuidMap) {
-		if (myPair.first->getUUID().equals(uuid)) {
-			return myPair.first;
-		}
-	}
-	//return m_uuidMap.at(uuid.toString());
-	return nullptr;
-} // getByUUID
-
+BLEService *BLEServiceMap::getByUUID(BLEUUID uuid, uint8_t inst_id) {
+  for (auto &myPair : m_uuidMap) {
+    if (myPair.first->getUUID().equals(uuid)) {
+      return myPair.first;
+    }
+  }
+  //return m_uuidMap.at(uuid.toString());
+  return nullptr;
+}  // getByUUID
 
 /**
  * @brief Return the service by handle.
  * @param [in] handle The handle to look up the service.
  * @return The service.
  */
-BLEService* BLEServiceMap::getByHandle(uint16_t handle) {
-	return m_handleMap.at(handle);
-} // getByHandle
-
+BLEService *BLEServiceMap::getByHandle(uint16_t handle) {
+  return m_handleMap.at(handle);
+}  // getByHandle
 
 /**
  * @brief Set the service by UUID.
@@ -52,10 +82,9 @@ BLEService* BLEServiceMap::getByHandle(uint16_t handle) {
  * @param [in] characteristic The service to cache.
  * @return N/A.
  */
-void BLEServiceMap::setByUUID(BLEUUID uuid, BLEService* service) {
-	m_uuidMap.insert(std::pair<BLEService*, std::string>(service, uuid.toString()));
-} // setByUUID
-
+void BLEServiceMap::setByUUID(BLEUUID uuid, BLEService *service) {
+  m_uuidMap.insert(std::pair<BLEService *, String>(service, uuid.toString()));
+}  // setByUUID
 
 /**
  * @brief Set the service by handle.
@@ -63,75 +92,82 @@ void BLEServiceMap::setByUUID(BLEUUID uuid, BLEService* service) {
  * @param [in] service The service to cache.
  * @return N/A.
  */
-void BLEServiceMap::setByHandle(uint16_t handle, BLEService* service) {
-	m_handleMap.insert(std::pair<uint16_t, BLEService*>(handle, service));
-} // setByHandle
-
+void BLEServiceMap::setByHandle(uint16_t handle, BLEService *service) {
+  m_handleMap.insert(std::pair<uint16_t, BLEService *>(handle, service));
+}  // setByHandle
 
 /**
  * @brief Return a string representation of the service map.
  * @return A string representation of the service map.
  */
-std::string BLEServiceMap::toString() {
-	std::string res;
-	char hex[5];
-	for (auto &myPair: m_handleMap) {
-		res += "handle: 0x";
-		snprintf(hex, sizeof(hex), "%04x", myPair.first);
-		res += hex;
-		res += ", uuid: " + myPair.second->getUUID().toString() + "\n";
-	}
-	return res;
-} // toString
-
-void BLEServiceMap::handleGATTServerEvent(
-		esp_gatts_cb_event_t      event,
-		esp_gatt_if_t             gatts_if,
-		esp_ble_gatts_cb_param_t* param) {
-	// Invoke the handler for every Service we have.
-	for (auto &myPair : m_uuidMap) {
-		myPair.first->handleGATTServerEvent(event, gatts_if, param);
-	}
-}
+String BLEServiceMap::toString() {
+  String res;
+  char hex[5];
+  for (auto &myPair : m_handleMap) {
+    res += "handle: 0x";
+    snprintf(hex, sizeof(hex), "%04x", myPair.first);
+    res += hex;
+    res += ", uuid: " + myPair.second->getUUID().toString() + "\n";
+  }
+  return res;
+}  // toString
 
 /**
  * @brief Get the first service in the map.
  * @return The first service in the map.
  */
-BLEService* BLEServiceMap::getFirst() {
-	m_iterator = m_uuidMap.begin();
-	if (m_iterator == m_uuidMap.end()) return nullptr;
-	BLEService* pRet = m_iterator->first;
-	m_iterator++;
-	return pRet;
-} // getFirst
+BLEService *BLEServiceMap::getFirst() {
+  m_iterator = m_uuidMap.begin();
+  if (m_iterator == m_uuidMap.end()) {
+    return nullptr;
+  }
+  BLEService *pRet = m_iterator->first;
+  m_iterator++;
+  return pRet;
+}  // getFirst
 
 /**
  * @brief Get the next service in the map.
  * @return The next service in the map.
  */
-BLEService* BLEServiceMap::getNext() {
-	if (m_iterator == m_uuidMap.end()) return nullptr;
-	BLEService* pRet = m_iterator->first;
-	m_iterator++;
-	return pRet;
-} // getNext
+BLEService *BLEServiceMap::getNext() {
+  if (m_iterator == m_uuidMap.end()) {
+    return nullptr;
+  }
+  BLEService *pRet = m_iterator->first;
+  m_iterator++;
+  return pRet;
+}  // getNext
 
 /**
  * @brief Removes service from maps.
  * @return N/A.
  */
-void BLEServiceMap::removeService(BLEService* service) {
-	m_handleMap.erase(service->getHandle());
-	m_uuidMap.erase(service);
-} // removeService
+void BLEServiceMap::removeService(BLEService *service) {
+  m_handleMap.erase(service->getHandle());
+  m_uuidMap.erase(service);
+}  // removeService
 
 /**
  * @brief Returns the amount of registered services
  * @return amount of registered services
  */
-int BLEServiceMap::getRegisteredServiceCount(){
-	return m_handleMap.size();
+int BLEServiceMap::getRegisteredServiceCount() {
+  return m_uuidMap.size();
 }
 
-#endif /* CONFIG_BLUEDROID_ENABLED */
+/*****************************************************************************
+ *                            Bluedroid functions                            *
+ *****************************************************************************/
+
+#if defined(CONFIG_BLUEDROID_ENABLED)
+void BLEServiceMap::handleGATTServerEvent(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param) {
+  // Invoke the handler for every Service we have.
+  for (auto &myPair : m_uuidMap) {
+    myPair.first->handleGATTServerEvent(event, gatts_if, param);
+  }
+}
+#endif
+
+#endif /* CONFIG_BLUEDROID_ENABLED || CONFIG_NIMBLE_ENABLED */
+#endif /* SOC_BLE_SUPPORTED || CONFIG_ESP_HOSTED_ENABLE_BT_NIMBLE */

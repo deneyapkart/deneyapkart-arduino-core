@@ -63,7 +63,7 @@ int32_t raw_samples[BUFFER_SIZE];
 void loop() {
   // Mikrofondan veri okuma
   size_t bytes_read = 0;
-  i2s_read(I2S_NUM_0, raw_samples, sizeof(int32_t) * BUFFER_SIZE, &bytes_read, portMAX_DELAY);
+   micRead(&bytes_read, raw_samples, sizeof(int32_t) * BUFFER_SIZE);
   int samples_read = bytes_read / sizeof(int32_t);
   if (_drawStatusBar) {
     for (int i = 0; i < samples_read; i++) {

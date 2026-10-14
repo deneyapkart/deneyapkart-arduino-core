@@ -18,12 +18,12 @@ Some ESP32 modules have different pin outs!
 ## Default SPI pins:
 Note that SPI pins can be configured by using `SPI.begin(sck, miso, mosi, cs);` alternatively, you can change only the CS pin with `SD.begin(CSpin)`
 
-| SPI Pin Name | ESP8266 | ESP32 | ESP32-S2 | ESP32-C3 | ESP32-S3 |
-|--------------|---------|-------|----------|----------|----------|
-| CS (SS)      | GPIO15  | GPIO5 | GPIO5    | GPIO13   | GPIO13   |
-| DI (MOSI)    | GPIO13  | GPIO23| GPIO24   | GPIO14   | GPIO14   |
-| DO (MISO)    | GPIO12  | GPIO19| GPIO25   | GPIO15   | GPIO15   |
-| SCK (SCLK)   | GPIO14  | GPIO18| GPIO19   | GPIO16   | GPIO16   |
+| SPI Pin Name | ESP8266 | ESP32 | ESP32‑S2 | ESP32‑S3 | ESP32‑C3 | ESP32‑C6 | ESP32‑H2 |
+|--------------|---------|-------|----------|----------|----------|----------|----------|
+| CS (SS)      | GPIO15  | GPIO5 | GPIO34   | GPIO10   | GPIO7    | GPIO18   | GPIO0    |
+| DI (MOSI)    | GPIO13  | GPIO23| GPIO35   | GPIO11   | GPIO6    | GPIO19   | GPIO25    |
+| DO (MISO)    | GPIO12  | GPIO19| GPIO37   | GPIO13   | GPIO5    | GPIO20   | GPIO11    |
+| SCK (SCLK)   | GPIO14  | GPIO18| GPIO36   | GPIO12   | GPIO4    | GPIO21   | GPIO10    |
 
 ## FAQ:
 
@@ -37,7 +37,7 @@ Tip: If you are using a microSD card and have a spare adapter to full-sized SD, 
 **What is the difference between SD and SD_MMC libraries?**
 
 SD runs on SPI, and SD_MMC uses the SDMMC hardware bus on the ESP32.
-The SPI uses 4 communication pins + 2 power connections and operates on up to 80MHz. The SPI option offers flexibility on pin connection because the data connections can be routed through GPIO matrix to any data pin.
+The SPI uses 4 communication pins + 2 power connections and operates on up to 80 MHz. The SPI option offers flexibility on pin connection because the data connections can be routed through GPIO matrix to any data pin.
 SD-SPI speed is approximately half of the SD-MMC even when used on 1-bit line.
 You can read more about SD SPI in the [documentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/sdspi_host.html)
 

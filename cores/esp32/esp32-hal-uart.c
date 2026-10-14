@@ -1,4 +1,4 @@
-// Copyright 2015-2024 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2015-2026 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "esp32-hal-uart.h"
+
+#if SOC_UART_SUPPORTED
 #include "esp32-hal.h"
+#include "esp32-hal-periman.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
@@ -21,33 +25,69 @@
 #include "hal/uart_ll.h"
 #include "soc/soc_caps.h"
 #include "soc/uart_struct.h"
-#include "soc/uart_periph.h"
 #include "rom/ets_sys.h"
 #include "rom/gpio.h"
 
 #include "driver/gpio.h"
 #include "hal/gpio_hal.h"
 #include "esp_rom_gpio.h"
+#include "esp_private/gpio.h"
 
-static int s_uart_debug_nr = 0;               // UART number for debug output
+#include "driver/rtc_io.h"
+#include "driver/lp_io.h"
+#include "soc/uart_pins.h"
+#if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(6, 1, 0)
+#include "esp_private/uart_share_hw_ctrl.h"
+#else
+#include "esp_private/periph_ctrl.h"
+#if SOC_PERIPH_CLK_CTRL_SHARED
+#define HP_UART_SRC_CLK_ATOMIC() PERIPH_RCC_ATOMIC()
+#else
+#define HP_UART_SRC_CLK_ATOMIC()
+#endif
+#endif
+#include "esp_private/esp_clk_tree_common.h"
+
+#if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(6, 0, 0)
+#include "soc/uart_periph.h"
+#else
+#include "hal/uart_periph.h"
+#define SOC_UART_RX_PIN_IDX  SOC_UART_PERIPH_SIGNAL_RX
+#define SOC_UART_TX_PIN_IDX  SOC_UART_PERIPH_SIGNAL_TX
+#define SOC_UART_CTS_PIN_IDX SOC_UART_PERIPH_SIGNAL_CTS
+#define SOC_UART_RTS_PIN_IDX SOC_UART_PERIPH_SIGNAL_RTS
+#endif
+
+// Weak function that is overridden by Arduino layer when HardwareSerial.cpp is linked
+// This removes the upward dependency from HAL to Arduino (HAL calls weak, Arduino provides strong implementation)
+void __attribute__((weak)) hardware_serial_end(uint8_t uart_num) {
+  (void)uart_num;  // Avoid unused parameter warning
+}
+
+static int s_uart_debug_nr = 0;         // UART number for debug output
+#define REF_TICK_BAUDRATE_LIMIT 250000  // this is maximum UART badrate using REF_TICK as clock
 
 struct uart_struct_t {
 
 #if !CONFIG_DISABLE_HAL_LOCKS
-    SemaphoreHandle_t lock;                   // UART lock
+  SemaphoreHandle_t lock;  // UART lock
 #endif
 
-    uint8_t num;                               // UART number for IDF driver API
-    bool has_peek;                             // flag to indicate that there is a peek byte pending to be read
-    uint8_t peek_byte;                         // peek byte that has been read but not consumed
-    QueueHandle_t uart_event_queue;            // export it by some uartGetEventQueue() function
-    // configuration data:: Arduino API tipical data
-    int8_t _rxPin, _txPin, _ctsPin, _rtsPin;   // UART GPIOs
-    uint32_t _baudrate, _config;               // UART baudrate and config
-    // UART ESP32 specific data
-    uint16_t _rx_buffer_size, _tx_buffer_size; // UART RX and TX buffer sizes
-    bool _inverted;                            // UART inverted signal
-    uint8_t _rxfifo_full_thrhd;                // UART RX FIFO full threshold
+  uint8_t num;                     // UART number for IDF driver API
+  bool has_peek;                   // flag to indicate that there is a peek byte pending to be read
+  uint8_t peek_byte;               // peek byte that has been read but not consumed
+  QueueHandle_t uart_event_queue;  // export it by some uartGetEventQueue() function
+  // configuration data:: Arduino API typical data
+  int8_t _rxPin, _txPin, _ctsPin, _rtsPin;  // UART GPIOs
+  uint32_t _baudrate, _config;              // UART baudrate and config
+  // UART ESP32 specific data
+  uint16_t _rx_buffer_size, _tx_buffer_size;  // UART RX and TX buffer sizes
+  bool _inverted;                             // UART inverted signal
+  uint8_t _rxfifo_full_thrhd;                 // UART RX FIFO full threshold
+  int8_t _uart_clock_source;                  // UART Clock Source that should be used if user defines an specific one with setClockSource()
+  uint32_t inv_mask;                          // UART inverse mask used to maintain related pin state
+  bool _rxPullEnabled;                        // internal pull on RX pad (default true)
+  uart_mode_t _uart_mode;                     // current UART mode for pin validation
 };
 
 #if CONFIG_DISABLE_HAL_LOCKS
@@ -56,777 +96,1985 @@ struct uart_struct_t {
 #define UART_MUTEX_UNLOCK()
 
 static uart_t _uart_bus_array[] = {
-    {0, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0},
+  {0, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0, -1, 0, true, UART_MODE_UART},
 #if SOC_UART_NUM > 1
-    {1, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0},
+  {1, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0, -1, 0, true, UART_MODE_UART},
 #endif
 #if SOC_UART_NUM > 2
-    {2, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0},
+  {2, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0, -1, 0, true, UART_MODE_UART},
+#endif
+#if SOC_UART_NUM > 3
+  {3, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0, -1, 0, true, UART_MODE_UART},
+#endif
+#if SOC_UART_NUM > 4
+  {4, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0, -1, 0, true, UART_MODE_UART},
+#endif
+#if SOC_UART_NUM > 5
+  {5, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0, -1, 0, true, UART_MODE_UART},
 #endif
 };
 
 #else
 
-#define UART_MUTEX_LOCK()    if(uart->lock != NULL) do {} while (xSemaphoreTake(uart->lock, portMAX_DELAY) != pdPASS)
-#define UART_MUTEX_UNLOCK()  if(uart->lock != NULL) xSemaphoreGive(uart->lock)
+#define UART_MUTEX_LOCK() \
+  if (uart->lock != NULL) \
+    do {                  \
+  } while (xSemaphoreTake(uart->lock, portMAX_DELAY) != pdPASS)
+#define UART_MUTEX_UNLOCK() \
+  if (uart->lock != NULL)   \
+  xSemaphoreGive(uart->lock)
 
 static uart_t _uart_bus_array[] = {
-    {NULL, 0, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0},
+  {NULL, 0, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0, -1, 0, true, UART_MODE_UART},
 #if SOC_UART_NUM > 1
-    {NULL, 1, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0},
+  {NULL, 1, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0, -1, 0, true, UART_MODE_UART},
 #endif
 #if SOC_UART_NUM > 2
-    {NULL, 2, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0},
+  {NULL, 2, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0, -1, 0, true, UART_MODE_UART},
+#endif
+#if SOC_UART_NUM > 3
+  {NULL, 3, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0, -1, 0, true, UART_MODE_UART},
+#endif
+#if SOC_UART_NUM > 4
+  {NULL, 4, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0, -1, 0, true, UART_MODE_UART},
+#endif
+#if SOC_UART_NUM > 5
+  {NULL, 5, false, 0, NULL, -1, -1, -1, -1, 0, 0, 0, 0, false, 0, -1, 0, true, UART_MODE_UART},
 #endif
 };
 
 #endif
 
-// Negative Pin Number will keep it unmodified, thus this function can detach individual pins
-// This function will set the pin to -1 after detaching
-static bool _uartDetachPins(uint8_t uart_num, int8_t rxPin, int8_t txPin, int8_t ctsPin, int8_t rtsPin)
-{
-    if(uart_num >= SOC_UART_NUM) {
-        log_e("Serial number is invalid, please use number from 0 to %u", SOC_UART_NUM - 1);
-        return false;
-    }
-    // get UART information
-    uart_t* uart = &_uart_bus_array[uart_num];
-    bool retCode = true;
-    //log_v("detaching UART%d pins: prev,pin RX(%d,%d) TX(%d,%d) CTS(%d,%d) RTS(%d,%d)", uart_num, 
-    //        uart->_rxPin, rxPin, uart->_txPin, txPin, uart->_ctsPin, ctsPin, uart->_rtsPin, rtsPin); vTaskDelay(10);
+#if SOC_UART_LP_NUM >= 1
+// LP UART enable pins routine
+static bool lp_uart_config_io(uint8_t uart_num, int8_t pin, rtc_gpio_mode_t direction, uint32_t idx) {
+  /* Skip configuration if the LP_IO is -1 */
+  if (pin < 0) {
+    return true;
+  }
 
-    // detaches pins and sets UART information
-    if (rxPin >= 0 && uart->_rxPin == rxPin) {
-        gpio_hal_iomux_func_sel(GPIO_PIN_MUX_REG[rxPin], PIN_FUNC_GPIO);
-        // avoids causing BREAK in the UART line
-        if (uart->_inverted) {
-            esp_rom_gpio_connect_in_signal(GPIO_FUNC_IN_LOW, UART_PERIPH_SIGNAL(uart_num, SOC_UART_RX_PIN_IDX), false);
-        } else {
-            esp_rom_gpio_connect_in_signal(GPIO_FUNC_IN_HIGH, UART_PERIPH_SIGNAL(uart_num, SOC_UART_RX_PIN_IDX), false);
-        }
-        uart->_rxPin = -1;  // -1 means unassigned/detached
+  // Initialize LP_IO
+  if (rtc_gpio_init(pin) != ESP_OK) {
+    log_e("Failed to initialize LP_IO %d", pin);
+    return false;
+  }
+
+  // Set LP_IO direction
+  if (rtc_gpio_set_direction(pin, direction) != ESP_OK) {
+    log_e("Failed to set LP_IO %d direction", pin);
+    return false;
+  }
+
+  // Connect pins
+  const uart_periph_sig_t *upin = &uart_periph_signal[uart_num].pins[idx];
+#if !SOC_LP_GPIO_MATRIX_SUPPORTED  // ESP32-C6/C61/C5
+  // When LP_IO Matrix is not support, LP_IO Mux must be connected to the pins
+  if (rtc_gpio_iomux_func_sel(pin, upin->iomux_func) != ESP_OK) {
+    log_e("Failed to set LP_IO pin %d into Mux function", pin);
+    return false;
+  }
+#else   // So far, only ESP32-P4
+  // If the configured pin is the default LP_IO Mux pin for LP UART, then set the LP_IO MUX function
+  if (upin->default_gpio == pin) {
+    if (rtc_gpio_iomux_func_sel(pin, upin->iomux_func) != ESP_OK) {
+      log_e("Failed to set LP_IO pin %d into Mux function", pin);
+      return false;
     }
-    if (txPin >= 0 && uart->_txPin == txPin) {
-        gpio_hal_iomux_func_sel(GPIO_PIN_MUX_REG[txPin], PIN_FUNC_GPIO);
-        esp_rom_gpio_connect_out_signal(txPin, SIG_GPIO_OUT_IDX, false, false);
-        uart->_txPin = -1;  // -1 means unassigned/detached
+  } else {
+    // Otherwise, set the LP_IO Matrix and select FUNC1
+    if (rtc_gpio_iomux_func_sel(pin, 1) != ESP_OK) {
+      log_e("Failed to set LP_IO pin %d into Mux function GPIO", pin);
+      return false;
     }
-    if (ctsPin >= 0 && uart->_ctsPin == ctsPin) {
-        gpio_hal_iomux_func_sel(GPIO_PIN_MUX_REG[ctsPin], PIN_FUNC_GPIO);
-        esp_rom_gpio_connect_in_signal(GPIO_FUNC_IN_LOW, UART_PERIPH_SIGNAL(uart_num, SOC_UART_CTS_PIN_IDX), false);
-        uart->_ctsPin = -1;  // -1 means unassigned/detached
+    // Connect the LP_IO to the LP UART peripheral signal
+    esp_err_t ret;
+    if (direction == RTC_GPIO_MODE_OUTPUT_ONLY) {
+      ret = lp_gpio_connect_out_signal(pin, UART_PERIPH_SIGNAL(uart_num, idx), 0, 0);
+    } else {
+      ret = lp_gpio_connect_in_signal(pin, UART_PERIPH_SIGNAL(uart_num, idx), 0);
     }
-    if (rtsPin >= 0 && uart->_rtsPin == rtsPin) {
-        gpio_hal_iomux_func_sel(GPIO_PIN_MUX_REG[rtsPin], PIN_FUNC_GPIO);
-        esp_rom_gpio_connect_out_signal(rtsPin, SIG_GPIO_OUT_IDX, false, false);
-        uart->_rtsPin = -1;  // -1 means unassigned/detached
+    if (ret != ESP_OK) {
+      log_e("Failed to connect LP_IO pin %d to UART%u signal", pin, uart_num);
+      return false;
     }
-    return retCode;
+  }
+#endif  // SOC_LP_GPIO_MATRIX_SUPPORTED
+
+  return true;
 }
 
-// Attach function for UART 
-// connects the IO Pad, set internal UART structure data
-static bool _uartAttachPins(uint8_t uart_num, int8_t rxPin, int8_t txPin, int8_t ctsPin, int8_t rtsPin)
-{
-    if(uart_num >= SOC_UART_NUM) {
-        log_e("Serial number is invalid, please use number from 0 to %u", SOC_UART_NUM - 1);
-        return false;
+// When LP UART needs the RTC IO MUX to set the pin, it will always have fixed pins for RX, TX, CTS and RTS
+static bool lpuartCheckPins(int8_t rxPin, int8_t txPin, int8_t ctsPin, int8_t rtsPin, uint8_t uart_nr) {
+// check if LP UART is being used and if the pins are valid
+#if !SOC_LP_GPIO_MATRIX_SUPPORTED  // ESP32-C6/C61/C5
+  int16_t lp_uart_fixed_pin = uart_periph_signal[uart_nr].pins[SOC_UART_RX_PIN_IDX].default_gpio;
+  bool allPinsAreGood = true;
+  if (uart_nr >= SOC_UART_HP_NUM) {  // it is a LP UART NUM
+    if (rxPin >= 0 && rxPin != lp_uart_fixed_pin) {
+      log_e("UART%u LP UART requires RX pin to be set to %d", uart_nr, lp_uart_fixed_pin);
+      allPinsAreGood = false;
     }
-    // get UART information
-    uart_t* uart = &_uart_bus_array[uart_num];
-    //log_v("attaching UART%d pins: prev,new RX(%d,%d) TX(%d,%d) CTS(%d,%d) RTS(%d,%d)", uart_num, 
-    //        uart->_rxPin, rxPin, uart->_txPin, txPin, uart->_ctsPin, ctsPin, uart->_rtsPin, rtsPin); vTaskDelay(10);
+    lp_uart_fixed_pin = uart_periph_signal[uart_nr].pins[SOC_UART_TX_PIN_IDX].default_gpio;
+    if (txPin >= 0 && txPin != lp_uart_fixed_pin) {
+      log_e("UART%u LP UART requires TX pin to be set to %d", uart_nr, lp_uart_fixed_pin);
+      allPinsAreGood = false;
+    }
+    lp_uart_fixed_pin = uart_periph_signal[uart_nr].pins[SOC_UART_CTS_PIN_IDX].default_gpio;
+    if (ctsPin >= 0 && ctsPin != lp_uart_fixed_pin) {
+      log_e("UART%u LP UART requires CTS pin to be set to %d", uart_nr, lp_uart_fixed_pin);
+      allPinsAreGood = false;
+    }
+    lp_uart_fixed_pin = uart_periph_signal[uart_nr].pins[SOC_UART_RTS_PIN_IDX].default_gpio;
+    if (rtsPin >= 0 && rtsPin != lp_uart_fixed_pin) {
+      log_e("UART%u LP UART requires RTS pin to be set to %d", uart_nr, lp_uart_fixed_pin);
+      allPinsAreGood = false;
+    }
+  }
+  return allPinsAreGood;
+#else   // ESP32-P4 can set any pin for LP UART
+  return true;
+#endif  // SOC_LP_GPIO_MATRIX_SUPPORTED
+}
+#endif  // SOC_UART_LP_NUM >= 1
 
+#ifndef GPIO_FUNC_IN_LOW
+#define GPIO_FUNC_IN_LOW GPIO_MATRIX_CONST_ZERO_INPUT
+#endif
 
-    bool retCode = true;
-    if (rxPin >= 0) {
-        // connect RX Pad
-        bool ret = ESP_OK == uart_set_pin(uart->num, UART_PIN_NO_CHANGE, rxPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-        if (ret) {
-            uart->_rxPin = rxPin;
-        } else {
-            log_e("UART%d failed to attach RX pin %d", uart_num, rxPin);
-        }
-        retCode &= ret;
+#ifndef GPIO_FUNC_IN_HIGH
+#define GPIO_FUNC_IN_HIGH GPIO_MATRIX_CONST_ONE_INPUT
+#endif
+
+#define _UART_PERIMAN_TYPE_MIN ESP32_BUS_TYPE_UART_RX
+#define _UART_PERIMAN_TYPE_MAX ESP32_BUS_TYPE_UART_RX_TX
+
+static bool _uartRxPadInverted(const uart_t *u) {
+  return (u->inv_mask & UART_SIGNAL_RXD_INV) != 0;
+}
+
+static bool _uartIsOneWireActive(const uart_t *uart) {
+  return uart->_rxPin >= 0 && uart->_rxPin == uart->_txPin;
+}
+
+static bool _uartApplyRxPull(uart_t *uart, int8_t rxPin);
+static bool _uartApplyOneWireOpenDrain(int8_t pin, bool enable);
+static bool _uartDetachSharedPin(uint8_t uart_num, int8_t pin);
+static bool _uartAttachSharedPin(uint8_t uart_num, int8_t pin);
+static bool _uartDetachBus_RX_TX(void *busptr);
+
+static bool _uartApplyOneWireOpenDrain(int8_t pin, bool enable) {
+  if (pin < 0) {
+    return true;
+  }
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 4, 0)
+  esp_err_t err = enable ? gpio_od_enable((gpio_num_t)pin) : gpio_od_disable((gpio_num_t)pin);
+  if (err != ESP_OK) {
+    log_e("Failed to %s open-drain on UART one-wire pin %d: %s", enable ? "enable" : "disable", pin, esp_err_to_name(err));
+    return false;
+  }
+#else
+  // IDF < 5.4 has no gpio_od_*; match the gpio_ll_* fallback used elsewhere in this file.
+  if (enable) {
+    gpio_ll_od_enable(&GPIO, (uint32_t)pin);
+  } else {
+    gpio_ll_od_disable(&GPIO, (uint32_t)pin);
+  }
+#endif
+  return true;
+}
+
+static bool _uartApplyRxPull(uart_t *uart, int8_t rxPin) {
+  if (rxPin < 0) {
+    return true;
+  }
+
+  if (_uartIsOneWireActive(uart)) {
+#if (SOC_UART_LP_NUM >= 1) && (SOC_RTCIO_PIN_COUNT >= 1)
+    if (uart->num >= SOC_UART_HP_NUM) {
+      rtc_gpio_pullup_dis((gpio_num_t)rxPin);
+      rtc_gpio_pulldown_dis((gpio_num_t)rxPin);
+      return true;
     }
-    if (txPin >= 0) {
-        // connect TX Pad
-        bool ret = ESP_OK == uart_set_pin(uart->num, txPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-        if (ret) {
-            if (ret) uart->_txPin = txPin;
-        } else {
-            log_e("UART%d failed to attach TX pin %d", uart_num, txPin);
-        }
-        retCode &= ret;
+#endif
+    gpio_pullup_dis((gpio_num_t)rxPin);
+    gpio_pulldown_dis((gpio_num_t)rxPin);
+    return true;
+  }
+
+  if (!uart->_rxPullEnabled) {
+#if (SOC_UART_LP_NUM >= 1) && (SOC_RTCIO_PIN_COUNT >= 1)
+    if (uart->num >= SOC_UART_HP_NUM) {
+      rtc_gpio_pullup_dis((gpio_num_t)rxPin);
+      rtc_gpio_pulldown_dis((gpio_num_t)rxPin);
+      return true;
     }
-    if (ctsPin >= 0) {
-        // connect CTS Pad
-        bool ret = ESP_OK == uart_set_pin(uart->num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, ctsPin);
-        if (ret) {
-            if (ret) uart->_ctsPin = ctsPin;
-        } else {
-            log_e("UART%d failed to attach CTS pin %d", uart_num, ctsPin);
-        }
-        retCode &= ret;
+#endif
+    gpio_pullup_dis((gpio_num_t)rxPin);
+    gpio_pulldown_dis((gpio_num_t)rxPin);
+    return true;
+  }
+
+  bool inv = _uartRxPadInverted(uart);
+#if (SOC_UART_LP_NUM >= 1) && (SOC_RTCIO_PIN_COUNT >= 1)
+  if (uart->num >= SOC_UART_HP_NUM) {
+    if (inv) {
+      rtc_gpio_pullup_dis((gpio_num_t)rxPin);
+      rtc_gpio_pulldown_en((gpio_num_t)rxPin);
+    } else {
+      rtc_gpio_pulldown_dis((gpio_num_t)rxPin);
+      rtc_gpio_pullup_en((gpio_num_t)rxPin);
     }
-    if (rtsPin >= 0) {
-        // connect RTS Pad
-        bool ret = ESP_OK == uart_set_pin(uart->num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, rtsPin, UART_PIN_NO_CHANGE);
-        if (ret) {
-            if (ret) uart->_rtsPin = rtsPin;
-        } else {
-            log_e("UART%d failed to attach RTS pin %d", uart_num, rtsPin);
-        }
-        retCode &= ret;
+    return true;
+  }
+#endif
+  if (inv) {
+    gpio_pullup_dis((gpio_num_t)rxPin);
+    gpio_pulldown_en((gpio_num_t)rxPin);
+  } else {
+    gpio_pulldown_dis((gpio_num_t)rxPin);
+    gpio_pullup_en((gpio_num_t)rxPin);
+  }
+  return true;
+}
+
+// Validate all pins together before attempting attachment
+// Issues all error messages for any invalid pins, then returns true or false
+static bool _uartValidatePins(uint8_t uart_num, int8_t rxPin, int8_t txPin, int8_t ctsPin, int8_t rtsPin) {
+  if (uart_num >= SOC_UART_NUM) {
+    log_e("UART number is invalid, please use number from 0 to %u", SOC_UART_NUM - 1);
+    return false;
+  }
+
+#if SOC_UART_LP_NUM >= 1
+  // check if LP UART is being used and if the pins are valid
+  if (!lpuartCheckPins(rxPin, txPin, ctsPin, rtsPin, uart_num)) {
+    return false;
+  }
+#endif
+
+  bool allPinsAreGood = true;
+
+  // Validate RX pin (input, any valid GPIO)
+  if (rxPin >= 0) {
+    if (!GPIO_IS_VALID_GPIO(rxPin)) {
+      log_e("UART%u invalid RX pin %d", uart_num, rxPin);
+      allPinsAreGood = false;
     }
-    return retCode;
+  }
+
+  // Validate TX pin (output capable)
+  if (txPin >= 0) {
+    if (!GPIO_IS_VALID_OUTPUT_GPIO(txPin)) {
+      log_e("UART%u invalid TX pin %d", uart_num, txPin);
+      allPinsAreGood = false;
+    }
+  }
+
+  // Validate CTS pin (input, any valid GPIO)
+  if (ctsPin >= 0) {
+    if (!GPIO_IS_VALID_GPIO(ctsPin)) {
+      log_e("UART%u invalid CTS pin %d", uart_num, ctsPin);
+      allPinsAreGood = false;
+    }
+  }
+
+  // Validate RTS pin (output capable)
+  if (rtsPin >= 0) {
+    if (!GPIO_IS_VALID_OUTPUT_GPIO(rtsPin)) {
+      log_e("UART%u invalid RTS pin %d", uart_num, rtsPin);
+      allPinsAreGood = false;
+    }
+  }
+
+  uart_t *uart = &_uart_bus_array[uart_num];
+
+  // One-wire is automatic when effective RX and TX resolve to the same GPIO.
+  // -1 means "keep the current pin" (e.g. RX=2 TX=3 then setPins(-1, 2) => RX=TX=2).
+  const int8_t effectiveRx = (rxPin >= 0) ? rxPin : uart->_rxPin;
+  const int8_t effectiveTx = (txPin >= 0) ? txPin : uart->_txPin;
+  const int8_t effectiveCts = (ctsPin >= 0) ? ctsPin : uart->_ctsPin;
+  const int8_t effectiveRts = (rtsPin >= 0) ? rtsPin : uart->_rtsPin;
+  if (effectiveRx >= 0 && effectiveTx >= 0 && effectiveRx == effectiveTx) {
+    if (uart->_uart_mode != UART_MODE_UART) {
+      log_e("UART%u one-wire mode is not compatible with the current UART mode", uart_num);
+      allPinsAreGood = false;
+#if (SOC_UART_LP_NUM >= 1) && !SOC_LP_GPIO_MATRIX_SUPPORTED
+    } else if (uart_num >= SOC_UART_HP_NUM) {
+      log_e("UART%u LP UART does not support one-wire mode on this SoC", uart_num);
+      allPinsAreGood = false;
+#endif
+    }
+    if (effectiveCts == effectiveRx) {
+      log_e("UART%u one-wire RX/TX pin %d cannot also be used for CTS", uart_num, effectiveRx);
+      allPinsAreGood = false;
+    }
+    if (effectiveRts == effectiveRx) {
+      log_e("UART%u one-wire RX/TX pin %d cannot also be used for RTS", uart_num, effectiveRx);
+      allPinsAreGood = false;
+    }
+  }
+
+  return allPinsAreGood;
+}
+
+// Negative Pin Number will keep it unmodified, thus this function can detach individual pins
+// This function will also unset the pins in the Peripheral Manager and set the pin to -1 after detaching
+static bool _uartDetachPins(uint8_t uart_num, int8_t rxPin, int8_t txPin, int8_t ctsPin, int8_t rtsPin) {
+  if (uart_num >= SOC_UART_NUM) {
+    log_e("Serial number is invalid, please use number from 0 to %u", SOC_UART_NUM - 1);
+    return false;
+  }
+  // get UART information
+  uart_t *uart = &_uart_bus_array[uart_num];
+  bool retCode = true;
+  //log_v("detaching UART%u pins: prev,pin RX(%d,%d) TX(%d,%d) CTS(%d,%d) RTS(%d,%d)", uart_num,
+  //        uart->_rxPin, rxPin, uart->_txPin, txPin, uart->_ctsPin, ctsPin, uart->_rtsPin, rtsPin); vTaskDelay(10);
+
+  // detaches HP and LP pins and sets Peripheral Manager and UART information
+  if (rxPin >= 0 && uart->_rxPin == rxPin && _uartIsOneWireActive(uart) && perimanGetPinBusType(rxPin) == ESP32_BUS_TYPE_UART_RX_TX) {
+    esp_rom_gpio_pad_select_gpio(rxPin);
+    if (_uartRxPadInverted(uart)) {
+      esp_rom_gpio_connect_in_signal(GPIO_FUNC_IN_LOW, UART_PERIPH_SIGNAL(uart_num, SOC_UART_RX_PIN_IDX), false);
+    } else {
+      esp_rom_gpio_connect_in_signal(GPIO_FUNC_IN_HIGH, UART_PERIPH_SIGNAL(uart_num, SOC_UART_RX_PIN_IDX), false);
+    }
+    esp_rom_gpio_connect_out_signal(rxPin, SIG_GPIO_OUT_IDX, false, false);
+    uart->_rxPin = -1;
+    uart->_txPin = -1;
+    if (!perimanClearPinBus(rxPin)) {
+      retCode = false;
+      log_e("UART%u failed to detach shared RX/TX pin %d", uart_num, rxPin);
+    }
+  } else if (rxPin >= 0 && uart->_rxPin == rxPin && perimanGetPinBusType(rxPin) == ESP32_BUS_TYPE_UART_RX) {
+    //gpio_hal_iomux_func_sel(GPIO_PIN_MUX_REG[rxPin], PIN_FUNC_GPIO);
+    esp_rom_gpio_pad_select_gpio(rxPin);
+    // avoids causing BREAK in the UART line
+    if (_uartRxPadInverted(uart)) {
+      esp_rom_gpio_connect_in_signal(GPIO_FUNC_IN_LOW, UART_PERIPH_SIGNAL(uart_num, SOC_UART_RX_PIN_IDX), false);
+    } else {
+      esp_rom_gpio_connect_in_signal(GPIO_FUNC_IN_HIGH, UART_PERIPH_SIGNAL(uart_num, SOC_UART_RX_PIN_IDX), false);
+    }
+    // Mirror _uartApplyRxPull(): LP UART RX pulls use RTC GPIO APIs; clear those on detach.
+#if (SOC_UART_LP_NUM >= 1) && (SOC_RTCIO_PIN_COUNT >= 1)
+    if (uart_num >= SOC_UART_HP_NUM) {
+      rtc_gpio_pullup_dis((gpio_num_t)rxPin);
+      rtc_gpio_pulldown_dis((gpio_num_t)rxPin);
+    } else
+#endif
+    {
+      gpio_pullup_dis((gpio_num_t)rxPin);
+      gpio_pulldown_dis((gpio_num_t)rxPin);
+    }
+    uart->_rxPin = -1;  // -1 means unassigned/detached
+    if (!perimanClearPinBus(rxPin)) {
+      retCode = false;
+      log_e("UART%u failed to detach RX pin %d", uart_num, rxPin);
+    }
+  }
+  if (txPin >= 0 && uart->_txPin == txPin && !_uartIsOneWireActive(uart) && perimanGetPinBusType(txPin) == ESP32_BUS_TYPE_UART_TX) {
+    //gpio_hal_iomux_func_sel(GPIO_PIN_MUX_REG[txPin], PIN_FUNC_GPIO);
+    esp_rom_gpio_pad_select_gpio(txPin);
+    esp_rom_gpio_connect_out_signal(txPin, SIG_GPIO_OUT_IDX, false, false);
+    uart->_txPin = -1;  // -1 means unassigned/detached
+    if (!perimanClearPinBus(txPin)) {
+      retCode = false;
+      log_e("UART%u failed to detach TX pin %d", uart_num, txPin);
+    }
+  }
+  if (ctsPin >= 0 && uart->_ctsPin == ctsPin && perimanGetPinBusType(ctsPin) == ESP32_BUS_TYPE_UART_CTS) {
+    //gpio_hal_iomux_func_sel(GPIO_PIN_MUX_REG[ctsPin], PIN_FUNC_GPIO);
+    esp_rom_gpio_pad_select_gpio(ctsPin);
+    esp_rom_gpio_connect_in_signal(GPIO_FUNC_IN_LOW, UART_PERIPH_SIGNAL(uart_num, SOC_UART_CTS_PIN_IDX), false);
+    uart->_ctsPin = -1;  // -1 means unassigned/detached
+    if (!perimanClearPinBus(ctsPin)) {
+      retCode = false;
+      log_e("UART%u failed to detach CTS pin %d", uart_num, ctsPin);
+    }
+  }
+  if (rtsPin >= 0 && uart->_rtsPin == rtsPin && perimanGetPinBusType(rtsPin) == ESP32_BUS_TYPE_UART_RTS) {
+    //gpio_hal_iomux_func_sel(GPIO_PIN_MUX_REG[rtsPin], PIN_FUNC_GPIO);
+    esp_rom_gpio_pad_select_gpio(rtsPin);
+    esp_rom_gpio_connect_out_signal(rtsPin, SIG_GPIO_OUT_IDX, false, false);
+    uart->_rtsPin = -1;  // -1 means unassigned/detached
+    if (!perimanClearPinBus(rtsPin)) {
+      retCode = false;
+      log_e("UART%u failed to detach RTS pin %d", uart_num, rtsPin);
+    }
+  }
+  return retCode;
+}
+
+// Peripheral Manager detach callback for each specific UART PIN
+static bool _uartDetachBus_RX_TX(void *busptr) {
+  if (busptr == NULL) {
+    log_e("_uartDetachBus_RX_TX: busptr is NULL");
+    return false;
+  }
+  uart_t *bus = (uart_t *)busptr;
+  if (bus->_rxPin < 0 || bus->_rxPin != bus->_txPin) {
+    log_d("_uartDetachBus_RX_TX: shared pin already detached for UART%u", bus->num);
+    return true;
+  }
+  int8_t pin = bus->_rxPin;
+  log_d("_uartDetachBus_RX_TX: detaching shared pin %d from UART%u, terminating driver", pin, bus->num);
+  bool retCode = _uartApplyOneWireOpenDrain(pin, false);
+  esp_rom_gpio_pad_select_gpio(pin);
+  if (_uartRxPadInverted(bus)) {
+    esp_rom_gpio_connect_in_signal(GPIO_FUNC_IN_LOW, UART_PERIPH_SIGNAL(bus->num, SOC_UART_RX_PIN_IDX), false);
+  } else {
+    esp_rom_gpio_connect_in_signal(GPIO_FUNC_IN_HIGH, UART_PERIPH_SIGNAL(bus->num, SOC_UART_RX_PIN_IDX), false);
+  }
+  esp_rom_gpio_connect_out_signal(pin, SIG_GPIO_OUT_IDX, false, false);
+  bus->_rxPin = -1;
+  bus->_txPin = -1;
+  hardware_serial_end(bus->num);
+  return retCode;
+}
+
+static bool _uartDetachSharedPin(uint8_t uart_num, int8_t pin) {
+  if (pin < 0) {
+    return true;
+  }
+  uart_t *uart = &_uart_bus_array[uart_num];
+  if (!_uartIsOneWireActive(uart) || uart->_rxPin != pin) {
+    return true;
+  }
+  bool retCode = _uartApplyOneWireOpenDrain(pin, false);
+  esp_rom_gpio_pad_select_gpio(pin);
+  if (_uartRxPadInverted(uart)) {
+    esp_rom_gpio_connect_in_signal(GPIO_FUNC_IN_LOW, UART_PERIPH_SIGNAL(uart_num, SOC_UART_RX_PIN_IDX), false);
+  } else {
+    esp_rom_gpio_connect_in_signal(GPIO_FUNC_IN_HIGH, UART_PERIPH_SIGNAL(uart_num, SOC_UART_RX_PIN_IDX), false);
+  }
+  esp_rom_gpio_connect_out_signal(pin, SIG_GPIO_OUT_IDX, false, false);
+  uart->_rxPin = -1;
+  uart->_txPin = -1;
+  return perimanClearPinBus(pin) && retCode;
+}
+
+static bool _uartDetachBus_RX(void *busptr) {
+  // sanity check - it should never happen
+  if (busptr == NULL) {
+    log_e("_uartDetachBus_RX: busptr is NULL");
+    return false;
+  }
+  uart_t *bus = (uart_t *)busptr;
+  if (_uartIsOneWireActive(bus)) {
+    return _uartDetachBus_RX_TX(busptr);
+  }
+  if (bus->_rxPin < 0) {
+    log_d("_uartDetachBus_RX: RX pin already detached for UART%u", bus->num);
+    return true;
+  }
+  if (bus->_txPin < 0) {  // both rx and tx pins are detached, terminate the uart driver
+    log_d("_uartDetachBus_RX: both RX and TX pins detached for UART%u, terminating driver", bus->num);
+    hardware_serial_end(bus->num);
+    return true;
+  }
+  return _uartDetachPins(bus->num, bus->_rxPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+}
+
+static bool _uartDetachBus_TX(void *busptr) {
+  // sanity check - it should never happen
+  if (busptr == NULL) {
+    log_e("_uartDetachBus_TX: busptr is NULL");
+    return false;
+  }
+  uart_t *bus = (uart_t *)busptr;
+  if (_uartIsOneWireActive(bus)) {
+    return _uartDetachBus_RX_TX(busptr);
+  }
+  if (bus->_txPin < 0) {
+    log_d("_uartDetachBus_TX: TX pin already detached for UART%u", bus->num);
+    return true;
+  }
+  if (bus->_rxPin < 0) {  // both rx and tx pins are detached, terminate the uart driver
+    log_d("_uartDetachBus_TX: both RX and TX pins detached for UART%u, terminating driver", bus->num);
+    hardware_serial_end(bus->num);
+    return true;
+  }
+  return _uartDetachPins(bus->num, UART_PIN_NO_CHANGE, bus->_txPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+}
+
+static bool _uartDetachBus_CTS(void *busptr) {
+  // sanity check - it should never happen
+  if (busptr == NULL) {
+    log_e("_uartDetachBus_CTS: busptr is NULL");
+    return false;
+  }
+  uart_t *bus = (uart_t *)busptr;
+  if (bus->_ctsPin < 0) {
+    log_d("_uartDetachBus_CTS: CTS pin already detached for UART%u", bus->num);
+    return true;
+  }
+  return _uartDetachPins(bus->num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, bus->_ctsPin, UART_PIN_NO_CHANGE);
+}
+
+static bool _uartDetachBus_RTS(void *busptr) {
+  // sanity check - it should never happen
+  if (busptr == NULL) {
+    log_e("_uartDetachBus_RTS: busptr is NULL");
+    return false;
+  }
+  uart_t *bus = (uart_t *)busptr;
+  if (bus->_rtsPin < 0) {
+    log_d("_uartDetachBus_RTS: RTS pin already detached for UART%u", bus->num);
+    return true;
+  }
+  return _uartDetachPins(bus->num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, bus->_rtsPin);
+}
+
+// Returns true when io_num is the native IOMUX pin for the given UART signal.
+static bool _uartIsNativeIomuxPin(uart_port_t uart_num, int io_num, uint32_t idx) {
+  if (uart_num >= SOC_UART_HP_NUM || io_num < 0) {
+    return false;
+  }
+  const uart_periph_sig_t *upin = &uart_periph_signal[uart_num].pins[idx];
+  return (upin->default_gpio != -1 && upin->default_gpio == io_num && upin->iomux_func != -1);
+}
+
+// This function will try setting HP UART IOMUX attaching for the requested pin.
+// For LP UART attaching, it tries both, IOMUX and GPIO Matrix (ESP32-P4 only), whenever available.
+// It must be called only after UART NUMBER and io_num have been validated
+static bool _uartTrySetIomuxPin(uart_port_t uart_num, int io_num, uint32_t idx) {
+  // Store a pointer to the default pin, to optimize access to its fields.
+  const uart_periph_sig_t *upin = &uart_periph_signal[uart_num].pins[idx];
+
+  if (uart_num < SOC_UART_HP_NUM) {
+    // HP UART peripheral just tries to attach IOMUX and return success or failure
+    // In theory, if default_gpio is -1, iomux_func should also be -1, but let's be safe and test both.
+    if (upin->default_gpio == -1 || upin->default_gpio != io_num) {
+      return false;
+    }
+
+    // Assign the correct function to the GPIO.
+    if (upin->iomux_func == -1) {
+      log_e("IO#%d has bad IOMUX internal information. Switching to GPIO Matrix UART function.", io_num);
+      return false;
+    }
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 5, 0)
+    if (upin->input) {
+      return ESP_OK == gpio_iomux_input(io_num, upin->iomux_func, upin->signal);
+    } else {
+      return ESP_OK == gpio_iomux_output(io_num, upin->iomux_func);
+    }
+#else
+    gpio_iomux_out(io_num, upin->iomux_func, false);
+    // If the pin is input, we also have to redirect the signal, in order to bypass the GPIO matrix.
+    if (upin->input) {
+      gpio_iomux_in(io_num, upin->signal);
+    }
+#endif
+  }
+#if (SOC_UART_LP_NUM >= 1) && (SOC_RTCIO_PIN_COUNT >= 1)
+  else {
+    // if it is an LP UART peripheral, lp_uart_config_io() will try IOMUX (esp32-c5/c6/c61/p4) or GPIO Matrix (only for esp32-p4) pin attaching
+    // Use lp_uart_config_io() for LP UART pin configuration with proper error checking
+    rtc_gpio_mode_t direction = upin->input ? RTC_GPIO_MODE_INPUT_ONLY : RTC_GPIO_MODE_OUTPUT_ONLY;
+    return lp_uart_config_io(uart_num, io_num, direction, idx);
+  }
+#endif
+  return true;
+}
+
+static bool _uartInternalSetPin(uart_port_t uart_num, int tx_io_num, int rx_io_num, int rts_io_num, int cts_io_num) {
+  bool retCode = true;
+  bool tx_rx_same_io = (tx_io_num >= 0 && rx_io_num >= 0 && tx_io_num == rx_io_num);
+  // In the following statements, if the io_num is negative, no need to configure anything.
+  // _uartTrySetIomuxPin() will solve LP UART pin configuration using IOMUX and GPIO Matrix.
+  // Only HP UART pins are configured in case _uartTrySetIomuxPin() returns false
+  if (tx_io_num >= 0) {
+#if CONFIG_ESP_SLEEP_GPIO_RESET_WORKAROUND || CONFIG_PM_SLP_DISABLE_GPIO
+    // In such case, IOs are going to switch to sleep configuration (isolate) when entering sleep for power saving reason
+    // But TX IO in isolate state could write garbled data to the other end
+    // Therefore, we should disable the switch of the TX pin to sleep configuration
+    retCode &= ESP_OK == gpio_sleep_sel_dis(tx_io_num);
+#endif
+    if (tx_rx_same_io || !_uartTrySetIomuxPin(uart_num, tx_io_num, SOC_UART_TX_PIN_IDX)) {
+      if (uart_num < SOC_UART_HP_NUM) {
+        retCode &= ESP_OK == gpio_func_sel(tx_io_num, PIN_FUNC_GPIO);
+        esp_rom_gpio_connect_out_signal(tx_io_num, UART_PERIPH_SIGNAL(uart_num, SOC_UART_TX_PIN_IDX), 0, 0);
+      }
+#if (SOC_UART_LP_NUM >= 1) && SOC_LP_GPIO_MATRIX_SUPPORTED
+      else if (tx_rx_same_io) {
+        retCode &= ESP_OK == rtc_gpio_init((gpio_num_t)tx_io_num);
+        lp_gpio_connect_out_signal(tx_io_num, UART_PERIPH_SIGNAL(uart_num, SOC_UART_TX_PIN_IDX), 0, 0);
+      }
+#endif
+      else if (!tx_rx_same_io) {
+        // LP UART couldn't attach pin, therefore it has failed
+        retCode = false;
+      }
+    }
+  }
+
+  if (rx_io_num >= 0) {
+#if CONFIG_ESP_SLEEP_GPIO_RESET_WORKAROUND || CONFIG_PM_SLP_DISABLE_GPIO
+    // In such case, IOs are going to switch to sleep configuration (isolate) when entering sleep for power saving reason
+    // But RX IO in isolate state could receive garbled data into FIFO, which is not desired
+    // Therefore, we should disable the switch of the RX pin to sleep configuration
+    retCode &= ESP_OK == gpio_sleep_sel_dis(rx_io_num);
+#endif
+    if (tx_rx_same_io || !_uartTrySetIomuxPin(uart_num, rx_io_num, SOC_UART_RX_PIN_IDX)) {
+      if (uart_num < SOC_UART_HP_NUM) {
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 4, 0)
+        retCode &= ESP_OK == gpio_input_enable(rx_io_num);
+#else
+        retCode &= ESP_OK == gpio_func_sel(rx_io_num, PIN_FUNC_GPIO);
+        gpio_ll_input_enable(&GPIO, rx_io_num);
+#endif
+        esp_rom_gpio_connect_in_signal(rx_io_num, UART_PERIPH_SIGNAL(uart_num, SOC_UART_RX_PIN_IDX), 0);
+      }
+#if (SOC_UART_LP_NUM >= 1) && SOC_LP_GPIO_MATRIX_SUPPORTED
+      else if (tx_rx_same_io) {
+        rtc_gpio_mode_t mode = RTC_GPIO_MODE_INPUT_OUTPUT;
+        retCode &= ESP_OK == rtc_gpio_set_direction((gpio_num_t)rx_io_num, mode);
+        lp_gpio_connect_in_signal(rx_io_num, UART_PERIPH_SIGNAL(uart_num, SOC_UART_RX_PIN_IDX), 0);
+      }
+#endif
+      else if (!tx_rx_same_io) {
+        // LP UART couldn't attach pin, therefore it has failed
+        retCode = false;
+      }
+    }
+  }
+
+  if (rts_io_num >= 0 && !_uartTrySetIomuxPin(uart_num, rts_io_num, SOC_UART_RTS_PIN_IDX)) {
+    if (uart_num < SOC_UART_HP_NUM) {
+      retCode &= ESP_OK == gpio_func_sel(rts_io_num, PIN_FUNC_GPIO);
+      esp_rom_gpio_connect_out_signal(rts_io_num, UART_PERIPH_SIGNAL(uart_num, SOC_UART_RTS_PIN_IDX), 0, 0);
+    } else {
+      // LP UART couldn't attach pin, therefore it has failed
+      retCode = false;
+    }
+  }
+
+  if (cts_io_num >= 0 && !_uartTrySetIomuxPin(uart_num, cts_io_num, SOC_UART_CTS_PIN_IDX)) {
+    if (uart_num < SOC_UART_HP_NUM) {
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 4, 0)
+      retCode &= ESP_OK == gpio_pullup_en(cts_io_num);
+      retCode &= ESP_OK == gpio_input_enable(cts_io_num);
+#else
+      retCode &= ESP_OK == gpio_func_sel(cts_io_num, PIN_FUNC_GPIO);
+      retCode &= ESP_OK == gpio_set_pull_mode(cts_io_num, GPIO_PULLUP_ONLY);
+      retCode &= ESP_OK == gpio_set_direction(cts_io_num, GPIO_MODE_INPUT);
+#endif
+      esp_rom_gpio_connect_in_signal(cts_io_num, UART_PERIPH_SIGNAL(uart_num, SOC_UART_CTS_PIN_IDX), 0);
+    } else {
+      // LP UART couldn't attach pin, therefore it has failed
+      retCode = false;
+    }
+  }
+  return retCode;
+}
+
+static bool _uartAttachSharedPin(uint8_t uart_num, int8_t pin) {
+  uart_t *uart = &_uart_bus_array[uart_num];
+  bool attachSuccess = true;
+
+  if (perimanGetPinBusType(pin) != ESP32_BUS_TYPE_INIT) {
+    if (!perimanClearPinBus(pin)) {
+      attachSuccess = false;
+    }
+  }
+  if (attachSuccess && _uartInternalSetPin(uart->num, pin, pin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE) && _uartApplyOneWireOpenDrain(pin, true)) {
+    if (perimanSetPinBus(pin, ESP32_BUS_TYPE_UART_RX_TX, (void *)uart, uart_num, -1)) {
+      if (perimanGetBusDeinit(ESP32_BUS_TYPE_UART_RX_TX) == NULL) {
+        perimanSetBusDeinit(ESP32_BUS_TYPE_UART_RX_TX, _uartDetachBus_RX_TX);
+      }
+      uart->_rxPin = pin;
+      uart->_txPin = pin;
+      _uartApplyRxPull(uart, pin);
+    } else {
+      log_e("UART%u failed to register shared RX/TX pin %d", uart_num, pin);
+      _uartApplyOneWireOpenDrain(pin, false);
+      attachSuccess = false;
+    }
+  } else {
+    attachSuccess = false;
+  }
+  if (!attachSuccess) {
+    log_e("UART%u failed to attach shared RX/TX pin %d", uart_num, pin);
+  }
+  return attachSuccess;
+}
+
+// Attach function for UART
+// connects the IO Pad, set Paripheral Manager and internal UART structure data
+static bool _uartAttachPins(uint8_t uart_num, int8_t rxPin, int8_t txPin, int8_t ctsPin, int8_t rtsPin) {
+  // get UART information
+  uart_t *uart = &_uart_bus_array[uart_num];
+  //log_v("attaching UART%u pins: prev,new RX(%d,%d) TX(%d,%d) CTS(%d,%d) RTS(%d,%d)", uart_num,
+  //        uart->_rxPin, rxPin, uart->_txPin, txPin, uart->_ctsPin, ctsPin, uart->_rtsPin, rtsPin); vTaskDelay(10);
+
+  bool retCode = true;
+  bool attachSuccess;
+  if (rxPin >= 0) {
+    attachSuccess = true;
+    // forces a clean detaching from a previous peripheral
+    if (perimanGetPinBusType(rxPin) != ESP32_BUS_TYPE_INIT) {
+      if (!perimanClearPinBus(rxPin)) {
+        attachSuccess = false;
+      }
+    }
+    if (attachSuccess && _uartInternalSetPin(uart->num, UART_PIN_NO_CHANGE, rxPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE)) {
+      // connect RX Pad
+      if (perimanSetPinBus(rxPin, ESP32_BUS_TYPE_UART_RX, (void *)uart, uart_num, -1)) {
+        // set Peripheral Manager deInit Callback for this UART pin
+        if (perimanGetBusDeinit(ESP32_BUS_TYPE_UART_RX) == NULL) {
+          perimanSetBusDeinit(ESP32_BUS_TYPE_UART_RX, _uartDetachBus_RX);
+        }
+        uart->_rxPin = rxPin;
+        _uartApplyRxPull(uart, rxPin);
+      } else {
+        log_e("UART%u failed to clear previous bus assignment on RX pin %d", uart_num, rxPin);
+        attachSuccess = false;
+      }
+    } else {
+      attachSuccess = false;
+    }
+    if (!attachSuccess) {
+      log_e("UART%u failed to attach RX pin %d", uart_num, rxPin);
+      retCode = false;
+    }
+  }
+  if (txPin >= 0) {
+    attachSuccess = true;
+    // forces a clean detaching from a previous peripheral
+    if (perimanGetPinBusType(txPin) != ESP32_BUS_TYPE_INIT) {
+      if (!perimanClearPinBus(txPin)) {
+        attachSuccess = false;
+      }
+    }
+    if (attachSuccess && _uartInternalSetPin(uart->num, txPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE)) {
+      // connect TX Pad
+      if (perimanSetPinBus(txPin, ESP32_BUS_TYPE_UART_TX, (void *)uart, uart_num, -1)) {
+        // set Peripheral Manager deInit Callback for this UART pin
+        if (perimanGetBusDeinit(ESP32_BUS_TYPE_UART_TX) == NULL) {
+          perimanSetBusDeinit(ESP32_BUS_TYPE_UART_TX, _uartDetachBus_TX);
+        }
+        uart->_txPin = txPin;
+      } else {
+        attachSuccess = false;
+      }
+    } else {
+      attachSuccess = false;
+    }
+    if (!attachSuccess) {
+      log_e("UART%u failed to attach TX pin %d", uart_num, txPin);
+      retCode = false;
+    }
+  }
+  if (ctsPin >= 0) {
+    attachSuccess = true;
+    // forces a clean detaching from a previous peripheral
+    if (perimanGetPinBusType(ctsPin) != ESP32_BUS_TYPE_INIT) {
+      if (!perimanClearPinBus(ctsPin)) {
+        attachSuccess = false;
+      }
+    }
+    if (attachSuccess && _uartInternalSetPin(uart->num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, ctsPin)) {
+      // connect CTS Pad
+      if (perimanSetPinBus(ctsPin, ESP32_BUS_TYPE_UART_CTS, (void *)uart, uart_num, -1)) {
+        // set Peripheral Manager deInit Callback for this UART pin
+        if (perimanGetBusDeinit(ESP32_BUS_TYPE_UART_CTS) == NULL) {
+          perimanSetBusDeinit(ESP32_BUS_TYPE_UART_CTS, _uartDetachBus_CTS);
+        }
+        uart->_ctsPin = ctsPin;
+      } else {
+        attachSuccess = false;
+      }
+    } else {
+      attachSuccess = false;
+    }
+    if (!attachSuccess) {
+      log_e("UART%u failed to attach CTS pin %d", uart_num, ctsPin);
+      retCode = false;
+    }
+  }
+  if (rtsPin >= 0) {
+    attachSuccess = true;
+    // forces a clean detaching from a previous peripheral
+    if (perimanGetPinBusType(rtsPin) != ESP32_BUS_TYPE_INIT) {
+      if (!perimanClearPinBus(rtsPin)) {
+        attachSuccess = false;
+      }
+    }
+    if (attachSuccess && _uartInternalSetPin(uart->num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, rtsPin, UART_PIN_NO_CHANGE)) {
+      // connect RTS Pad
+      if (perimanSetPinBus(rtsPin, ESP32_BUS_TYPE_UART_RTS, (void *)uart, uart_num, -1)) {
+        // set Peripheral Manager deInit Callback for this UART pin
+        if (perimanGetBusDeinit(ESP32_BUS_TYPE_UART_RTS) == NULL) {
+          perimanSetBusDeinit(ESP32_BUS_TYPE_UART_RTS, _uartDetachBus_RTS);
+        }
+        uart->_rtsPin = rtsPin;
+      } else {
+        attachSuccess = false;
+      }
+    } else {
+      attachSuccess = false;
+    }
+    if (!attachSuccess) {
+      log_e("UART%u failed to attach RTS pin %d", uart_num, rtsPin);
+      retCode = false;
+    }
+  }
+  return retCode;
 }
 
 // just helper functions
-int8_t uart_get_RxPin(uint8_t uart_num)
-{
-    return _uart_bus_array[uart_num]._rxPin;
+int8_t uart_get_RxPin(uint8_t uart_num) {
+  return _uart_bus_array[uart_num]._rxPin;
 }
 
-int8_t uart_get_TxPin(uint8_t uart_num)
-{
-    return _uart_bus_array[uart_num]._txPin;
+int8_t uart_get_TxPin(uint8_t uart_num) {
+  return _uart_bus_array[uart_num]._txPin;
 }
 
-// solves issue https://github.com/espressif/arduino-esp32/issues/6032
-// baudrate must be multiplied when CPU Frequency is lower than APB 80MHz
-uint32_t _get_effective_baudrate(uint32_t baudrate) 
-{
-    uint32_t Freq = getApbFrequency()/1000000;
-    if (Freq < 80) {
-        return 80 / Freq * baudrate;
-     }
-    else {
-        return baudrate;
-    }
+int8_t uart_get_CtsPin(uint8_t uart_num) {
+  return _uart_bus_array[uart_num]._ctsPin;
+}
+
+int8_t uart_get_RtsPin(uint8_t uart_num) {
+  return _uart_bus_array[uart_num]._rtsPin;
 }
 
 // Routines that take care of UART events will be in the HardwareSerial Class code
-void uartGetEventQueue(uart_t* uart, QueueHandle_t *q)
-{
-    // passing back NULL for the Queue pointer when UART is not initialized yet
-    *q = NULL;
-    if(uart == NULL) {
-        return;
-    }
-    *q = uart->uart_event_queue;
+void uartGetEventQueue(uart_t *uart, QueueHandle_t *q) {
+  // passing back NULL for the Queue pointer when UART is not initialized yet
+  *q = NULL;
+  if (uart == NULL) {
     return;
+  }
+  *q = uart->uart_event_queue;
+  return;
 }
 
-bool uartIsDriverInstalled(uart_t* uart) 
-{
-    if(uart == NULL) {
-        return false;
-    }
-
-    if (uart_is_driver_installed(uart->num)) {
-        return true;
-    }
+bool uartIsDriverInstalled(uart_t *uart) {
+  if (uart == NULL) {
     return false;
+  }
+
+  if (uart_is_driver_installed(uart->num)) {
+    return true;
+  }
+  return false;
 }
 
 // Negative Pin Number will keep it unmodified, thus this function can set individual pins
 // When pins are changed, it will detach the previous one
-bool uartSetPins(uint8_t uart_num, int8_t rxPin, int8_t txPin, int8_t ctsPin, int8_t rtsPin)
-{
-    if(uart_num >= SOC_UART_NUM) {
-        log_e("Serial number is invalid, please use number from 0 to %u", SOC_UART_NUM - 1);
-        return false;
-    }
-    // get UART information
-    uart_t* uart = &_uart_bus_array[uart_num];
 
-    bool retCode = true;
-    UART_MUTEX_LOCK();
+// Helper function to detect if a pin needs to be attached and log the detection
+// Eliminates duplication in detection phase for RX/TX/CTS/RTS
+// Parameters:
+//   pin          - The GPIO pin number to check (-1 means no change)
+//   funcName     - String name of the function: "RX", "TX", "CTS", or "RTS"
+//   expectedType - The ESP32_BUS_TYPE_UART_* constant for this function type
+//   target_uart  - The target UART number where we want to assign this pin
+//   needsAttach  - Output: true if pin needs to be attached to target UART
+//   prevUARTOut  - Output: UART number that currently owns this pin (-1 if none or not UART)
+static void _uartDetectPin(int8_t pin, const char *funcName, peripheral_bus_type_t expectedType, uint8_t target_uart, bool *needsAttach, int8_t *prevUARTOut) {
+  *needsAttach = false;
+  if (prevUARTOut != NULL) {
+    *prevUARTOut = -1;
+  }
 
-    //log_v("setting UART%d pins: prev->new RX(%d->%d) TX(%d->%d) CTS(%d->%d) RTS(%d->%d)", uart_num, 
-    //        uart->_rxPin, rxPin, uart->_txPin, txPin, uart->_ctsPin, ctsPin, uart->_rtsPin, rtsPin); vTaskDelay(10);
+  if (pin < 0) {
+    return;  // Pin not being changed
+  }
 
-    // First step: detachs all previous UART pins
-    bool rxPinChanged = rxPin >= 0 && rxPin != uart->_rxPin;
-    if (rxPinChanged) {
-        retCode &= _uartDetachPins(uart_num, uart->_rxPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-    }
-    bool txPinChanged = txPin >= 0 && txPin != uart->_txPin;
-    if (txPinChanged) {
-        retCode &= _uartDetachPins(uart_num, UART_PIN_NO_CHANGE, uart->_txPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-    }
-    bool ctsPinChanged = ctsPin >= 0 && ctsPin != uart->_ctsPin;
-    if (ctsPinChanged) {
-        retCode &= _uartDetachPins(uart_num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, uart->_ctsPin, UART_PIN_NO_CHANGE);
-    }
-    bool rtsPinChanged = rtsPin >= 0 && rtsPin != uart->_rtsPin;
-    if (rtsPinChanged) {
-        retCode &= _uartDetachPins(uart_num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, uart->_rtsPin);
-    }
+  peripheral_bus_type_t t = perimanGetPinBusType(pin);
+  bool isUART = (t >= _UART_PERIMAN_TYPE_MIN && t <= _UART_PERIMAN_TYPE_MAX);
+  int8_t prevU = isUART ? perimanGetPinBusNum(pin) : -1;
 
-    // Second step: attach all UART new pins
-    if (rxPinChanged) {
-        retCode &= _uartAttachPins(uart_num, rxPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-    }
-    if (txPinChanged) {
-        retCode &= _uartAttachPins(uart_num, UART_PIN_NO_CHANGE, txPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-    }
-    if (ctsPinChanged) {
-        retCode &= _uartAttachPins(uart->num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, ctsPin, UART_PIN_NO_CHANGE);
-    }
-    if (rtsPinChanged) {
-        retCode &= _uartAttachPins(uart->num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, rtsPin);
-    }
-    UART_MUTEX_UNLOCK();  
+  *needsAttach = (t != expectedType || target_uart != prevU);
+  if (prevUARTOut != NULL) {
+    *prevUARTOut = prevU;  // Set to actual UART if owned, -1 otherwise
+  }
 
-    if (!retCode) {
-        log_e("UART%d set pins failed.", uart_num);
-    }
-    return retCode;
+  if (isUART) {
+    log_v("%s: pin %d -> UART%d: currently [UART%d], attach=%s", funcName, pin, target_uart, prevU, *needsAttach ? "YES" : "NO");
+  } else {
+    log_v("%s: pin %d -> UART%d: currently [GPIO], attach=%s", funcName, pin, target_uart, *needsAttach ? "YES" : "NO");
+  }
 }
 
-// 
-bool uartSetHwFlowCtrlMode(uart_t *uart, uart_hw_flowcontrol_t mode, uint8_t threshold) {
-    if(uart == NULL) {
-        return false;
+// Detaches 'pin' from its current UART assignment (if any) before reusing it for a new function.
+// Only acts when 'needsAttach' is true (pin is being reassigned).
+// If the pin was taken from a *different* UART than 'target_uart_num', stores that UART in
+// '*prevOtherUARTOut' (for later termination check); sets it to -1 otherwise.
+// Returns false if a detach operation failed.
+static bool _uartDetachConflictingPin(int8_t pin, uint8_t target_uart_num, const char *target_func_name, bool needsAttach, int8_t *prevOtherUARTOut) {
+  if (prevOtherUARTOut != NULL) {
+    *prevOtherUARTOut = -1;
+  }
+  if (pin < 0 || !needsAttach) {
+    return true;
+  }
+
+  peripheral_bus_type_t currentType = perimanGetPinBusType(pin);
+  bool isPeriTypeUART = (currentType >= _UART_PERIMAN_TYPE_MIN && currentType <= _UART_PERIMAN_TYPE_MAX);
+  if (!isPeriTypeUART) {
+    return true;  // Pin not assigned to any UART; nothing to detach
+  }
+
+  int8_t prevUART = perimanGetPinBusNum(pin);
+
+  // Build _uartDetachPins arguments from the pin's current function
+  int8_t d_rx = UART_PIN_NO_CHANGE, d_tx = UART_PIN_NO_CHANGE;
+  int8_t d_cts = UART_PIN_NO_CHANGE, d_rts = UART_PIN_NO_CHANGE;
+  const char *currentFuncName;
+
+  if (currentType == ESP32_BUS_TYPE_UART_RX) {
+    d_rx = pin;
+    currentFuncName = "RX";
+  } else if (currentType == ESP32_BUS_TYPE_UART_TX) {
+    d_tx = pin;
+    currentFuncName = "TX";
+  } else if (currentType == ESP32_BUS_TYPE_UART_RX_TX) {
+    d_rx = pin;
+    currentFuncName = "RX_TX";
+  } else if (currentType == ESP32_BUS_TYPE_UART_CTS) {
+    d_cts = pin;
+    currentFuncName = "CTS";
+  } else {  // ESP32_BUS_TYPE_UART_RTS
+    d_rts = pin;
+    currentFuncName = "RTS";
+  }
+
+  if (prevUART != target_uart_num) {
+    log_d("Detaching pin %d (%s function) from UART%d", pin, currentFuncName, prevUART);
+    if (prevOtherUARTOut != NULL) {
+      *prevOtherUARTOut = prevUART;
     }
-    // IDF will issue corresponding error message when mode or threshold are wrong and prevent crashing
-    // IDF will check (mode > HW_FLOWCTRL_CTS_RTS || threshold >= SOC_UART_FIFO_LEN)
-    UART_MUTEX_LOCK();
-    bool retCode = (ESP_OK == uart_set_hw_flow_ctrl(uart->num, mode, threshold));
-    UART_MUTEX_UNLOCK();  
-    return retCode;
+  } else {
+    log_d("Detaching pin %d (%s function) from UART%d before using as %s", pin, currentFuncName, prevUART, target_func_name);
+  }
+
+  (void)currentFuncName;  // Suppress unused variable warning when log_d is compiled out
+  return _uartDetachPins(prevUART, d_rx, d_tx, d_cts, d_rts);
+}
+
+bool uartSetPins(uint8_t uart_num, int8_t rxPin, int8_t txPin, int8_t ctsPin, int8_t rtsPin) {
+  // check uart_num and pins
+  if (!_uartValidatePins(uart_num, rxPin, txPin, ctsPin, rtsPin)) {
+    return false;  // failed to set pins
+  }
+
+  // get UART information
+  uart_t *uart = &_uart_bus_array[uart_num];
+
+  //log_v("setting UART%u pins: prev->new RX(%d->%d) TX(%d->%d) CTS(%d->%d) RTS(%d->%d)", uart_num,
+  //        uart->_rxPin, rxPin, uart->_txPin, txPin, uart->_ctsPin, ctsPin, uart->_rtsPin, rtsPin); vTaskDelay(10);
+
+  bool retCode = true;
+  UART_MUTEX_LOCK();
+
+  // Resolve -1 (keep current). Same-pin effective RX/TX becomes an explicit (p, p) one-wire request.
+  int8_t setRx = (rxPin >= 0) ? rxPin : uart->_rxPin;
+  int8_t setTx = (txPin >= 0) ? txPin : uart->_txPin;
+  bool oneWireRequest = (setRx >= 0 && setTx >= 0 && setRx == setTx);
+  if (oneWireRequest) {
+    rxPin = setRx;
+    txPin = setTx;
+  }
+
+  // If driver is not yet installed, just store the pin configuration
+  // The pins will be properly attached when the driver is installed in uartBegin()
+  if (!uartIsDriverInstalled(uart)) {
+    log_v("UART%u: Driver not yet installed, storing pins for later attachment (RX:%d, TX:%d)", uart_num, rxPin, txPin);
+    if (rxPin >= 0) {
+      uart->_rxPin = rxPin;
+    }
+    if (txPin >= 0) {
+      uart->_txPin = txPin;
+    }
+    if (ctsPin >= 0) {
+      uart->_ctsPin = ctsPin;
+    }
+    if (rtsPin >= 0) {
+      uart->_rtsPin = rtsPin;
+    }
+    UART_MUTEX_UNLOCK();
+    return true;
+  }
+
+  // mute bus detaching callbacks to avoid terminating the UART driver when both RX and TX pins are detached
+  peripheral_bus_deinit_cb_t rxDeinit = perimanGetBusDeinit(ESP32_BUS_TYPE_UART_RX);
+  peripheral_bus_deinit_cb_t txDeinit = perimanGetBusDeinit(ESP32_BUS_TYPE_UART_TX);
+  peripheral_bus_deinit_cb_t rxTxDeinit = perimanGetBusDeinit(ESP32_BUS_TYPE_UART_RX_TX);
+  peripheral_bus_deinit_cb_t ctsDeinit = perimanGetBusDeinit(ESP32_BUS_TYPE_UART_CTS);
+  peripheral_bus_deinit_cb_t rtsDeinit = perimanGetBusDeinit(ESP32_BUS_TYPE_UART_RTS);
+  perimanClearBusDeinit(ESP32_BUS_TYPE_UART_RX);
+  perimanClearBusDeinit(ESP32_BUS_TYPE_UART_TX);
+  perimanClearBusDeinit(ESP32_BUS_TYPE_UART_RX_TX);
+  perimanClearBusDeinit(ESP32_BUS_TYPE_UART_CTS);
+  perimanClearBusDeinit(ESP32_BUS_TYPE_UART_RTS);
+
+  // Track original pins to detect if current UART lost RX/TX capability
+  int8_t originalRxPin = uart->_rxPin;
+  int8_t originalTxPin = uart->_txPin;
+
+  // Determine whether each pin needs to be (re)attached and log verbose info
+  bool rxAttach = false, txAttach = false, ctsAttach = false, rtsAttach = false;
+
+  _uartDetectPin(rxPin, "RX", ESP32_BUS_TYPE_UART_RX, uart_num, &rxAttach, NULL);
+  _uartDetectPin(txPin, "TX", ESP32_BUS_TYPE_UART_TX, uart_num, &txAttach, NULL);
+  _uartDetectPin(ctsPin, "CTS", ESP32_BUS_TYPE_UART_CTS, uart_num, &ctsAttach, NULL);
+  _uartDetectPin(rtsPin, "RTS", ESP32_BUS_TYPE_UART_RTS, uart_num, &rtsAttach, NULL);
+
+  // Track which other UARTs had their pins taken (for termination check after attach)
+  int8_t rxPinPrevUART = -1, txPinPrevUART = -1, ctsPinPrevUART = -1, rtsPinPrevUART = -1;
+
+  // oneWireRequest was resolved above from effective RX/TX (including -1 keep-current).
+  bool sharedAttach = false;
+  if (oneWireRequest) {
+    peripheral_bus_type_t pinType = perimanGetPinBusType(rxPin);
+    sharedAttach = (pinType != ESP32_BUS_TYPE_UART_RX_TX || perimanGetPinBusNum(rxPin) != (int8_t)uart_num);
+  }
+
+  // First step: detach old one-wire pin when switching away from shared RX/TX
+  if (_uartIsOneWireActive(uart)) {
+    int8_t sharedPin = uart->_rxPin;
+    bool keepShared = setRx == sharedPin && setTx == sharedPin;
+    if (!keepShared) {
+      log_d("Detaching old shared RX/TX pin %d from UART%d", sharedPin, uart_num);
+      retCode &= _uartDetachSharedPin(uart_num, sharedPin);
+      // Detaching shared ownership clears both stored pins. Reattach both effective
+      // targets, including a side supplied as -1 ("keep current").
+      rxPin = setRx;
+      txPin = setTx;
+      rxAttach = rxPin >= 0;
+      txAttach = txPin >= 0;
+    }
+  }
+
+  // First step: for each pin, detach any conflict (pin already assigned elsewhere),
+  // then detach the old pin of this UART that is being replaced.
+  if (!_uartIsOneWireActive(uart) && rxPin >= 0) {
+    retCode &= _uartDetachConflictingPin(rxPin, uart_num, "RX", rxAttach, &rxPinPrevUART);
+    if (rxPin != uart->_rxPin && uart->_rxPin >= 0) {
+      log_d("Detaching old RX pin %d from UART%d", uart->_rxPin, uart_num);
+      retCode &= _uartDetachPins(uart_num, uart->_rxPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    }
+  }
+  if (!_uartIsOneWireActive(uart) && txPin >= 0) {
+    retCode &= _uartDetachConflictingPin(txPin, uart_num, "TX", txAttach, &txPinPrevUART);
+    if (txPin != uart->_txPin && uart->_txPin >= 0) {
+      log_d("Detaching old TX pin %d from UART%d", uart->_txPin, uart_num);
+      retCode &= _uartDetachPins(uart_num, UART_PIN_NO_CHANGE, uart->_txPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    }
+  }
+  if (ctsPin >= 0) {
+    retCode &= _uartDetachConflictingPin(ctsPin, uart_num, "CTS", ctsAttach, &ctsPinPrevUART);
+    if (ctsPin != uart->_ctsPin && uart->_ctsPin >= 0) {
+      log_d("Detaching old CTS pin %d from UART%d", uart->_ctsPin, uart_num);
+      retCode &= _uartDetachPins(uart_num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, uart->_ctsPin, UART_PIN_NO_CHANGE);
+    }
+  }
+  if (rtsPin >= 0) {
+    retCode &= _uartDetachConflictingPin(rtsPin, uart_num, "RTS", rtsAttach, &rtsPinPrevUART);
+    if (rtsPin != uart->_rtsPin && uart->_rtsPin >= 0) {
+      log_d("Detaching old RTS pin %d from UART%d", uart->_rtsPin, uart_num);
+      retCode &= _uartDetachPins(uart_num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, uart->_rtsPin);
+    }
+  }
+
+  // Second step: attach all UART new pins
+  if (oneWireRequest) {
+    if (sharedAttach) {
+      retCode &= _uartDetachConflictingPin(rxPin, uart_num, "RX_TX", true, &rxPinPrevUART);
+      log_d("Attaching pin %d to UART%d as shared RX/TX (one-wire)", rxPin, uart_num);
+      retCode &= _uartAttachSharedPin(uart_num, rxPin);
+    }
+  } else {
+    if (rxAttach) {
+      log_d("Attaching pin %d to UART%d as RX", rxPin, uart_num);
+      retCode &= _uartAttachPins(uart_num, rxPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    }
+    if (txAttach) {
+      log_d("Attaching pin %d to UART%d as TX", txPin, uart_num);
+      retCode &= _uartAttachPins(uart_num, UART_PIN_NO_CHANGE, txPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    }
+  }
+  if (ctsAttach) {
+    log_d("Attaching pin %d to UART%d as CTS", ctsPin, uart_num);
+    retCode &= _uartAttachPins(uart_num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, ctsPin, UART_PIN_NO_CHANGE);
+  }
+  if (rtsAttach) {
+    log_d("Attaching pin %d to UART%d as RTS", rtsPin, uart_num);
+    retCode &= _uartAttachPins(uart_num, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, rtsPin);
+  }
+
+  // Keep-current setPins calls do not reattach the shared pin, so reassert the
+  // electrical one-wire policy in case another low-level operation changed it.
+  if (oneWireRequest && _uartIsOneWireActive(uart)) {
+    retCode &= _uartApplyOneWireOpenDrain(uart->_rxPin, true);
+  }
+
+  // Collect unique UARTs that lost both RX and TX (need termination after mutex release)
+  int8_t uartsToTerminate[SOC_UART_NUM];
+  for (int i = 0; i < SOC_UART_NUM; i++) {
+    uartsToTerminate[i] = -1;
+  }
+  int terminateCount = 0;
+
+  int8_t prevUARTCandidates[4] = {rxPinPrevUART, txPinPrevUART, ctsPinPrevUART, rtsPinPrevUART};
+  for (int i = 0; i < 4; i++) {
+    int8_t prevU = prevUARTCandidates[i];
+    if (prevU < 0) {
+      continue;
+    }
+    bool alreadyTracked = false;
+    for (int j = 0; j < terminateCount; j++) {
+      if (uartsToTerminate[j] == prevU) {
+        alreadyTracked = true;
+        break;
+      }
+    }
+    if (!alreadyTracked) {
+      uart_t *prevUart = &_uart_bus_array[prevU];
+      if (prevUart->_rxPin < 0 && prevUart->_txPin < 0) {
+        log_d("UART%d marked for termination (lost both RX and TX pins)", prevU);
+        uartsToTerminate[terminateCount++] = prevU;
+      }
+    }
+  }
+
+  // Check if current UART lost both RX and TX pins (was functional, now has none)
+  bool terminateCurrentUart = false;
+  if ((originalRxPin >= 0 || originalTxPin >= 0) && rxPin < 0 && txPin < 0 && uart->_rxPin < 0 && uart->_txPin < 0) {
+    log_d("UART%d marked for termination (RX/TX pins removed)", uart_num);
+    terminateCurrentUart = true;
+  }
+
+  // Restore peripheral manager callbacks after all pin operations
+  if (rxDeinit != NULL) {
+    perimanSetBusDeinit(ESP32_BUS_TYPE_UART_RX, rxDeinit);
+  }
+  if (txDeinit != NULL) {
+    perimanSetBusDeinit(ESP32_BUS_TYPE_UART_TX, txDeinit);
+  }
+  if (rxTxDeinit != NULL) {
+    perimanSetBusDeinit(ESP32_BUS_TYPE_UART_RX_TX, rxTxDeinit);
+  }
+  if (ctsDeinit != NULL) {
+    perimanSetBusDeinit(ESP32_BUS_TYPE_UART_CTS, ctsDeinit);
+  }
+  if (rtsDeinit != NULL) {
+    perimanSetBusDeinit(ESP32_BUS_TYPE_UART_RTS, rtsDeinit);
+  }
+
+  UART_MUTEX_UNLOCK();
+
+  if (!retCode) {
+    log_e("UART%u set pins failed.", uart_num);
+  }
+
+  // Execute terminations AFTER releasing the mutex to avoid deadlock
+  for (int i = 0; i < terminateCount; i++) {
+    if (uartsToTerminate[i] >= 0) {
+      log_d("Terminating UART%d driver since both RX and TX pins were detached", uartsToTerminate[i]);
+      hardware_serial_end(uartsToTerminate[i]);
+    }
+  }
+
+  if (terminateCurrentUart) {
+    log_d("Terminating UART%d driver since all RX/TX pins were removed and no new pins were set", uart_num);
+    hardware_serial_end(uart_num);
+  }
+
+  return retCode;
+}
+
+//
+bool uartSetHwFlowCtrlMode(uart_t *uart, uart_hw_flowcontrol_t mode, uint8_t threshold) {
+  if (uart == NULL) {
+    return false;
+  }
+  // IDF will issue corresponding error message when mode or threshold are wrong and prevent crashing
+  // IDF will check (mode > HW_FLOWCTRL_CTS_RTS || threshold >= SOC_UART_FIFO_LEN)
+  UART_MUTEX_LOCK();
+  bool retCode = (ESP_OK == uart_set_hw_flow_ctrl(uart->num, mode, threshold));
+  UART_MUTEX_UNLOCK();
+  return retCode;
 }
 
 // This helper function will return true if a new IDF UART driver needs to be restarted and false if the current one can continue its execution
-bool _testUartBegin(uint8_t uart_nr, uint32_t baudrate, uint32_t config, int8_t rxPin, int8_t txPin, uint32_t rx_buffer_size, uint32_t tx_buffer_size, bool inverted, uint8_t rxfifo_full_thrhd)
-{
-    if(uart_nr >= SOC_UART_NUM) {
-        return false;  // no new driver has to be installed
-    }
-    uart_t* uart = &_uart_bus_array[uart_nr];
-    // verify if it is necessary to restart the UART driver
-    if (uart_is_driver_installed(uart_nr)) {
-        // some parameters can't be changed unless we end the UART driver
-        if ( uart->_rx_buffer_size != rx_buffer_size || uart->_tx_buffer_size != tx_buffer_size || uart->_inverted != inverted || uart->_rxfifo_full_thrhd != rxfifo_full_thrhd) {
-            return true;   // the current IDF UART driver must be terminated and a new driver shall be installed
-        } else {
-            return false;  // The current IDF UART driver can continue its execution
-        }
+bool _testUartBegin(
+  uint8_t uart_nr, uint32_t baudrate, uint32_t config, int8_t rxPin, int8_t txPin, uint32_t rx_buffer_size, uint32_t tx_buffer_size, bool inverted,
+  uint8_t rxfifo_full_thrhd
+) {
+  if (uart_nr >= SOC_UART_NUM) {
+    return false;  // no new driver has to be installed
+  }
+  uart_t *uart = &_uart_bus_array[uart_nr];
+  // verify if is necessary to restart the UART driver
+  if (uart_is_driver_installed(uart_nr)) {
+    // some parameters can't be changed unless we end the UART driver
+    if (uart->_rx_buffer_size != rx_buffer_size || uart->_tx_buffer_size != tx_buffer_size || uart->_inverted != inverted
+        || uart->_rxfifo_full_thrhd != rxfifo_full_thrhd) {
+      return true;  // the current IDF UART driver must be terminated and a new driver shall be installed
     } else {
-        return true;       // no IDF UART driver is running and a new driver shall be installed
+      return false;  // The current IDF UART driver can continue its execution
     }
+  } else {
+    return true;  // no IDF UART driver is running and a new driver shall be installed
+  }
 }
 
-uart_t* uartBegin(uint8_t uart_nr, uint32_t baudrate, uint32_t config, int8_t rxPin, int8_t txPin, uint32_t rx_buffer_size, uint32_t tx_buffer_size, bool inverted, uint8_t rxfifo_full_thrhd)
-{
-    if(uart_nr >= SOC_UART_NUM) {
-        log_e("UART number is invalid, please use number from 0 to %u", SOC_UART_NUM - 1);
-        return NULL;  // no new driver was installed
+uart_t *uartBegin(
+  uint8_t uart_nr, uint32_t baudrate, uint32_t config, int8_t rxPin, int8_t txPin, uint32_t rx_buffer_size, uint32_t tx_buffer_size, bool inverted,
+  uint8_t rxfifo_full_thrhd
+) {
+  log_v("UART%u baud(%" PRIu32 ") Mode(0x%" PRIx32 ") rxPin(%d) txPin(%d)", uart_nr, baudrate, config, rxPin, txPin);
+
+  // check uart_nr, rx and tx pins, if necessary log error message and return a valid value
+  if (!_uartValidatePins(uart_nr, rxPin, txPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE)) {
+    if (uart_nr < SOC_UART_NUM && uart_is_driver_installed(uart_nr)) {
+      return &_uart_bus_array[uart_nr];  // keep the same installed driver
+    } else {
+      return NULL;  // no new driver was installed
     }
-    uart_t* uart = &_uart_bus_array[uart_nr];
-    log_v("UART%d baud(%ld) Mode(%x) rxPin(%d) txPin(%d)", uart_nr, baudrate, config, rxPin, txPin);
+  }
+
+  // get the uart internal information
+  uart_t *uart = &_uart_bus_array[uart_nr];
 
 #if !CONFIG_DISABLE_HAL_LOCKS
-    if(uart->lock == NULL) {
-        uart->lock = xSemaphoreCreateMutex();
-        if(uart->lock == NULL) {
-            log_e("Lock (Mutex) creation error.");
-            return NULL; // no new driver was installed
-        }
+  if (uart->lock == NULL) {
+    uart->lock = xSemaphoreCreateMutex();
+    if (uart->lock == NULL) {
+      log_e("HAL LOCK error.");
+      return NULL;  // no new driver was installed
     }
+  }
 #endif
 
-    if (uart_is_driver_installed(uart_nr)) {
-        log_v("UART%d Driver already installed.", uart_nr);
-        // some parameters can't be changed unless we end the UART driver
-        if ( uart->_rx_buffer_size != rx_buffer_size || uart->_tx_buffer_size != tx_buffer_size || uart->_inverted != inverted || uart->_rxfifo_full_thrhd != rxfifo_full_thrhd) {
-            log_v("UART%d changing buffer sizes or inverted signal or rxfifo_full_thrhd. IDF driver will be restarted", uart_nr);
-            uartEnd(uart_nr);
+  if (uart_is_driver_installed(uart_nr)) {
+    log_v("UART%u Driver already installed.", uart_nr);
+    // some parameters can't be changed unless we end the UART driver
+    if (uart->_rx_buffer_size != rx_buffer_size || uart->_tx_buffer_size != tx_buffer_size || uart->_inverted != inverted
+        || uart->_rxfifo_full_thrhd != rxfifo_full_thrhd) {
+      log_v("UART%u changing buffer sizes or inverted signal or rxfifo_full_thrhd. IDF driver will be restarted", uart_nr);
+      log_v("RX buffer size: %u -> %" PRIu32, uart->_rx_buffer_size, rx_buffer_size);
+      log_v("TX buffer size: %u -> %" PRIu32, uart->_tx_buffer_size, tx_buffer_size);
+      log_v("Inverted signal: %s -> %s", uart->_inverted ? "true" : "false", inverted ? "true" : "false");
+      log_v("RX FIFO full threshold: %u -> %u", uart->_rxfifo_full_thrhd, rxfifo_full_thrhd);
+      uartEnd(uart_nr);
+    } else {
+      bool retCode = true;
+      //User may just want to change some parameters, such as baudrate, data length, parity, stop bits or pins
+      if (uart->_baudrate != baudrate) {
+        retCode = uartSetBaudRate(uart, baudrate);
+      }
+      UART_MUTEX_LOCK();
+      uart_word_length_t data_bits = (config & 0xc) >> 2;
+      uart_parity_t parity = config & 0x3;
+      uart_stop_bits_t stop_bits = (config & 0x30) >> 4;
+      if (retCode && (uart->_config & 0xc) >> 2 != data_bits) {
+        if (ESP_OK != uart_set_word_length(uart_nr, data_bits)) {
+          log_e("UART%u changing data length failed.", uart_nr);
+          retCode = false;
         } else {
-            bool retCode = true;
-            UART_MUTEX_LOCK();
-            //User may just want to change some parameters, such as baudrate, data length, parity, stop bits or pins
-            if (uart->_baudrate != baudrate) {
-                if (ESP_OK != uart_set_baudrate(uart_nr, baudrate)) {
-                    log_e("UART%d changing baudrate failed.", uart_nr);
-                    retCode = false;
-                } else {
-                    log_v("UART%d changed baudrate to %d", uart_nr, baudrate);
-                    uart->_baudrate = baudrate;
-                }   
-            }
-            uart_word_length_t data_bits = (config & 0xc) >> 2;
-            uart_parity_t parity = config & 0x3;
-            uart_stop_bits_t stop_bits = (config & 0x30) >> 4;
-            if (retCode && (uart->_config & 0xc) >> 2 != data_bits) {
-                if (ESP_OK != uart_set_word_length(uart_nr, data_bits)) {
-                    log_e("UART%d changing data length failed.", uart_nr);
-                    retCode = false;
-                } else {
-                    log_v("UART%d changed data length to %d", uart_nr, data_bits + 5);
-                }
-            }
-            if (retCode && (uart->_config & 0x3) != parity) {
-                if (ESP_OK != uart_set_parity(uart_nr, parity)) {
-                    log_e("UART%d changing parity failed.", uart_nr);
-                    retCode = false;
-                } else {
-                    log_v("UART%d changed parity to %s", uart_nr, parity == 0 ? "NONE" : parity == 2 ? "EVEN" : "ODD");
-                }                
-            }
-            if (retCode && (uart->_config & 0xc30) >> 4 != stop_bits) {
-                if (ESP_OK != uart_set_stop_bits(uart_nr, stop_bits)) {
-                    log_e("UART%d changing stop bits failed.", uart_nr);
-                    retCode = false;
-                } else {
-                    log_v("UART%d changed stop bits to %d", uart_nr, stop_bits == 3 ? 2 : 1);
-                }                
-            }
-            if (retCode) uart->_config = config;
-            if (retCode && rxPin > 0 && uart->_rxPin != rxPin) {
-                retCode &= _uartDetachPins(uart_nr, uart->_rxPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-                retCode &= _uartAttachPins(uart_nr, rxPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-                if (!retCode) {
-                    log_e("UART%d changing RX pin failed.", uart_nr);
-                } else {
-                    log_v("UART%d changed RX pin to %d", uart_nr, rxPin);
-                }
-            }
-            if (retCode && txPin > 0 && uart->_txPin != txPin) {
-                retCode &= _uartDetachPins(uart_nr, UART_PIN_NO_CHANGE, uart->_txPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-                retCode &= _uartAttachPins(uart_nr, UART_PIN_NO_CHANGE, txPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-                if (!retCode) {
-                    log_e("UART%d changing TX pin failed.", uart_nr);
-                } else {
-                    log_v("UART%d changed TX pin to %d", uart_nr, txPin);
-                }   
-            }
-            UART_MUTEX_UNLOCK();
-            if (retCode) {
-                // UART driver was already working, just return the uart_t structure, saying that no new driver was installed
-                return uart;
-            }
-            // if we reach this point, it means that we need to restart the UART driver
-            uartEnd(uart_nr);
+          log_v("UART%u changed data length to %u", uart_nr, data_bits + 5);
         }
-    } else {
-        log_v("UART%d not installed. Starting installation", uart_nr);
-    }
-    uart_config_t uart_config;
-    uart_config.data_bits = (config & 0xc) >> 2;
-    uart_config.parity = (config & 0x3);
-    uart_config.stop_bits = (config & 0x30) >> 4;
-    uart_config.flow_ctrl = UART_HW_FLOWCTRL_DISABLE;
-    uart_config.rx_flow_ctrl_thresh = rxfifo_full_thrhd;
-#if SOC_UART_SUPPORT_XTAL_CLK
-    // works independently of APB frequency
-    uart_config.source_clk = UART_SCLK_XTAL; // ESP32C3, ESP32S3
-    uart_config.baud_rate = baudrate;
-#else
-    uart_config.source_clk = UART_SCLK_APB;  // ESP32, ESP32S2
-    uart_config.baud_rate = _get_effective_baudrate(baudrate);
-#endif
-    UART_MUTEX_LOCK();
-    bool retCode = ESP_OK == uart_driver_install(uart_nr, rx_buffer_size, tx_buffer_size, 20, &(uart->uart_event_queue), 0);
-
-    if (retCode) retCode &= ESP_OK == uart_param_config(uart_nr, &uart_config);
-
-    // Is it right or the idea is to swap rx and tx pins? 
-    if (retCode && inverted) {
-        // invert signal for both Rx and Tx
-        retCode &= ESP_OK == uart_set_line_inverse(uart_nr, UART_SIGNAL_TXD_INV | UART_SIGNAL_RXD_INV);    
-    }
-    
-    if (retCode) {
-        uart->_baudrate = baudrate;
+      }
+      if (retCode && (uart->_config & 0x3) != parity) {
+        if (ESP_OK != uart_set_parity(uart_nr, parity)) {
+          log_e("UART%u changing parity failed.", uart_nr);
+          retCode = false;
+        } else {
+          log_v("UART%u changed parity to %s", uart_nr, parity == 0 ? "NONE" : parity == 2 ? "EVEN" : "ODD");
+        }
+      }
+      if (retCode && (uart->_config & 0xc30) >> 4 != stop_bits) {
+        if (ESP_OK != uart_set_stop_bits(uart_nr, stop_bits)) {
+          log_e("UART%u changing stop bits failed.", uart_nr);
+          retCode = false;
+        } else {
+          log_v("UART%u changed stop bits to %u", uart_nr, stop_bits == 3 ? 2 : 1);
+        }
+      }
+      if (retCode) {
         uart->_config = config;
-        uart->_inverted = inverted;
-        uart->_rxfifo_full_thrhd = rxfifo_full_thrhd;
-        uart->_rx_buffer_size = rx_buffer_size;
-        uart->_tx_buffer_size = tx_buffer_size;
-        uart->has_peek = false;
-        uart->peek_byte = 0;
+      }
+      UART_MUTEX_UNLOCK();
+      if (retCode && (rxPin >= 0 || txPin >= 0)) {
+        retCode &= uartSetPins(uart_nr, rxPin, txPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+        if (!retCode) {
+          log_e("UART%u changing pins failed.", uart_nr);
+        }
+      }
+      if (retCode) {
+        // UART driver was already working, just return the uart_t structure, saying that no new driver was installed
+        return uart;
+      }
+      // if we reach this point, it means that we need to restart the UART driver
+      uartEnd(uart_nr);
     }
-    UART_MUTEX_UNLOCK();
-
-    // uartSetPins detaches previous pins if new ones are used over a previous begin()
-    if (retCode) retCode &= uartSetPins(uart_nr, rxPin, txPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-    if (!retCode) {
-        uartEnd(uart_nr);
-        uart = NULL;
-        log_e("UART%d initialization error.", uart->num);
+  } else {
+    log_v("UART%u not installed. Starting installation", uart_nr);
+  }
+  uart_config_t uart_config;
+  memset(&uart_config, 0, sizeof(uart_config_t));
+  uart_config.flags.backup_before_sleep = false;  // new flag from IDF v5.3
+  uart_config.data_bits = (config & 0xc) >> 2;
+  uart_config.parity = (config & 0x3);
+  uart_config.stop_bits = (config & 0x30) >> 4;
+  uart_config.flow_ctrl = UART_HW_FLOWCTRL_DISABLE;
+  uart_config.rx_flow_ctrl_thresh = rxfifo_full_thrhd >= UART_HW_FIFO_LEN(uart_nr) ? UART_HW_FIFO_LEN(uart_nr) - 6 : rxfifo_full_thrhd;
+  log_v(
+    "UART%u RX FIFO full threshold set to %u (value requested: %u || FIFO Max = %u)", uart_nr, uart_config.rx_flow_ctrl_thresh, rxfifo_full_thrhd,
+    UART_HW_FIFO_LEN(uart_nr)
+  );
+  rxfifo_full_thrhd = uart_config.rx_flow_ctrl_thresh;  // makes sure that it will be set correctly in the struct
+  uart_config.baud_rate = baudrate;
+#if SOC_UART_LP_NUM >= 1
+  if (uart_nr >= SOC_UART_HP_NUM) {  // it is a LP UART NUM
+    if (uart->_uart_clock_source >= 0) {
+      uart_config.lp_source_clk = (soc_periph_lp_uart_clk_src_t)uart->_uart_clock_source;  // use user defined LP UART clock
+      log_v("Setting UART%u to user defined LP clock source (%d) ", uart_nr, uart->_uart_clock_source);
     } else {
-        uartFlush(uart);
-        log_v("UART%d initialization done.", uart->num);
+      uart_config.lp_source_clk = LP_UART_SCLK_DEFAULT;  // use default LP clock
+      log_v("Setting UART%u to Default LP clock source", uart_nr);
     }
-    return uart;  // a new driver was installed
+  } else
+#endif  // SOC_UART_LP_NUM >= 1
+  {
+    if (uart->_uart_clock_source >= 0) {
+      uart_config.source_clk = (soc_module_clk_t)uart->_uart_clock_source;  // use user defined HP UART clock
+      log_v("Setting UART%u to user defined HP clock source (%d) ", uart_nr, uart->_uart_clock_source);
+    } else {
+      // there is an issue when returning from light sleep with the C6 and H2: the uart baud rate is not restored
+      // therefore, uart clock source will set to XTAL for all SoC that support it. This fix solves the C6|H2 issue.
+#if SOC_UART_SUPPORT_XTAL_CLK
+      uart_config.source_clk = UART_SCLK_XTAL;  // valid for C2, S3, C3, C6, H2 and P4
+      log_v("Setting UART%u to use XTAL clock", uart_nr);
+#elif SOC_UART_SUPPORT_REF_TICK
+      if (baudrate <= REF_TICK_BAUDRATE_LIMIT) {
+        uart_config.source_clk = UART_SCLK_REF_TICK;  // valid for ESP32, S2 - MAX supported baud rate is 250 Kbps
+        log_v("Setting UART%u to use REF_TICK clock", uart_nr);
+      } else {
+        uart_config.source_clk = UART_SCLK_APB;  // baudrate may change with the APB Frequency!
+        log_v("Setting UART%u to use APB clock", uart_nr);
+      }
+#else
+      // Default CLK Source: CLK_APB for ESP32|S2|S3|C3 -- CLK_PLL_F40M for C2 -- CLK_PLL_F48M for H2 -- CLK_PLL_F80M for C6|P4
+      uart_config.source_clk = UART_SCLK_DEFAULT;  // baudrate may change with the APB Frequency!
+      log_v("Setting UART%u to use DEFAULT clock", uart_nr);
+#endif  // SOC_UART_SUPPORT_XTAL_CLK
+    }
+  }
+
+  UART_MUTEX_LOCK();
+  bool retCode = ESP_OK == uart_driver_install(uart_nr, rx_buffer_size, tx_buffer_size, 20, &(uart->uart_event_queue), 0);
+
+  if (retCode) {
+    retCode &= ESP_OK == uart_param_config(uart_nr, &uart_config);
+  }
+
+  if (retCode) {
+    if (inverted) {
+      // invert signal for both Rx and Tx
+      uint32_t _inv_mask = uart->inv_mask;
+      _inv_mask |= UART_SIGNAL_TXD_INV | UART_SIGNAL_RXD_INV;
+      retCode &= ESP_OK == uart_set_line_inverse(uart_nr, _inv_mask);
+      if (retCode) {
+        uart->inv_mask = _inv_mask;
+        log_v("UART%u: RX and TX signals are set to be inverted.", uart_nr);
+      }
+    } else {
+      // disable invert signal for both Rx and Tx
+      retCode &= ESP_OK == uart_set_line_inverse(uart_nr, UART_SIGNAL_INV_DISABLE);
+      if (retCode) {
+        uart->inv_mask = UART_SIGNAL_INV_DISABLE;
+        log_v("UART%u: RX and TX signals are set not inverted.", uart_nr);
+      }
+    }
+  }
+  // if all fine, set internal parameters
+  if (retCode) {
+    uart->_baudrate = baudrate;
+    uart->_config = config;
+    uart->_inverted = inverted;
+    uart->_rxfifo_full_thrhd = rxfifo_full_thrhd;
+    uart->_rx_buffer_size = rx_buffer_size;
+    uart->_tx_buffer_size = tx_buffer_size;
+    uart->has_peek = false;
+    uart->peek_byte = 0;
+    // uart->_uart_clock_source can only change by explicit user API request/call
+  }
+  UART_MUTEX_UNLOCK();
+
+  // uartSetPins detaches previous pins if new ones are used over a previous begin()
+  // If any pins were pre-configured via setPins() before begin(), use those instead of UART_PIN_NO_CHANGE
+  if (retCode) {
+    log_v("UART%u calling uartSetPins: RX=%d, TX=%d, CTS=%d, RTS=%d", uart_nr, rxPin, txPin, uart->_ctsPin, uart->_rtsPin);
+    retCode &= uartSetPins(uart_nr, rxPin, txPin, uart->_ctsPin, uart->_rtsPin);
+  }
+  if (!retCode) {
+    log_e("UART%u initialization error.", uart->num);
+    uartEnd(uart_nr);
+    uart = NULL;
+  } else {
+    uartFlush(uart);
+    log_v("UART%u initialization done.", uart->num);
+  }
+  return uart;  // a new driver was installed
 }
 
 // This function code is under testing - for now just keep it here
-void uartSetFastReading(uart_t* uart)
-{
-    if(uart == NULL) {
-        return;
-    }
+void uartSetFastReading(uart_t *uart) {
+  if (uart == NULL) {
+    return;
+  }
 
-    UART_MUTEX_LOCK();
-    // override default RX IDF Driver Interrupt - no BREAK, PARITY or OVERFLOW
-    uart_intr_config_t uart_intr = {
-        .intr_enable_mask = UART_INTR_RXFIFO_FULL | UART_INTR_RXFIFO_TOUT,   // only these IRQs - no BREAK, PARITY or OVERFLOW
-        .rx_timeout_thresh = 1,
-        .txfifo_empty_intr_thresh = 10,
-        .rxfifo_full_thresh = 2,
-    };
+  UART_MUTEX_LOCK();
+  // override default RX IDF Driver Interrupt - no BREAK, PARITY or OVERFLOW
+  uart_intr_config_t uart_intr = {
+    .intr_enable_mask = UART_INTR_RXFIFO_FULL | UART_INTR_RXFIFO_TOUT,  // only these IRQs - no BREAK, PARITY or OVERFLOW
+    .rx_timeout_thresh = 1,
+    .txfifo_empty_intr_thresh = 10,
+    .rxfifo_full_thresh = 2,
+  };
 
-    ESP_ERROR_CHECK(uart_intr_config(uart->num, &uart_intr));
-    UART_MUTEX_UNLOCK();
+  ESP_ERROR_CHECK(uart_intr_config(uart->num, &uart_intr));
+  UART_MUTEX_UNLOCK();
 }
 
-
-bool uartSetRxTimeout(uart_t* uart, uint8_t numSymbTimeout)
-{
-    if(uart == NULL) {
-        return false;
-    }
-
-    UART_MUTEX_LOCK();
-    bool retCode = (ESP_OK == uart_set_rx_timeout(uart->num, numSymbTimeout));
-    UART_MUTEX_UNLOCK();
-    return retCode;
+bool uartSetRxTimeout(uart_t *uart, uint8_t numSymbTimeout) {
+  if (uart == NULL) {
+    return false;
+  }
+  uint16_t maxRXTimeout = uart_get_max_rx_timeout(uart->num);
+  if (numSymbTimeout > maxRXTimeout) {
+    log_e("Invalid RX Timeout value, its limit is %u", maxRXTimeout);
+    return false;
+  }
+  UART_MUTEX_LOCK();
+  bool retCode = (ESP_OK == uart_set_rx_timeout(uart->num, numSymbTimeout));
+  UART_MUTEX_UNLOCK();
+  return retCode;
 }
 
-bool uartSetRxFIFOFull(uart_t* uart, uint8_t numBytesFIFOFull)
-{
-    if(uart == NULL) {
-        return false;
+bool uartSetRxFIFOFull(uart_t *uart, uint8_t numBytesFIFOFull) {
+  if (uart == NULL) {
+    return false;
+  }
+  uint8_t rxfifo_full_thrhd = numBytesFIFOFull >= UART_HW_FIFO_LEN(uart->num) ? UART_HW_FIFO_LEN(uart->num) - 6 : numBytesFIFOFull;
+  UART_MUTEX_LOCK();
+  bool retCode = (ESP_OK == uart_set_rx_full_threshold(uart->num, rxfifo_full_thrhd));
+  if (retCode) {
+    uart->_rxfifo_full_thrhd = rxfifo_full_thrhd;
+    if (rxfifo_full_thrhd != numBytesFIFOFull) {
+      log_w("The RX FIFO Full value for UART%u was set to %u instead of %u", uart->num, rxfifo_full_thrhd, numBytesFIFOFull);
     }
-
-    UART_MUTEX_LOCK();
-    bool retCode = (ESP_OK == uart_set_rx_full_threshold(uart->num, numBytesFIFOFull));
-    UART_MUTEX_UNLOCK();
-    return retCode;
+    log_v("UART%u RX FIFO Full value set to %u from a requested value of %u", uart->num, rxfifo_full_thrhd, numBytesFIFOFull);
+  } else {
+    log_e("UART%u failed to set RX FIFO Full value to %u", uart->num, numBytesFIFOFull);
+  }
+  UART_MUTEX_UNLOCK();
+  return retCode;
 }
 
+void uartEnd(uint8_t uart_num) {
+  if (uart_num >= SOC_UART_NUM) {
+    log_e("Serial number is invalid, please use number from 0 to %u", SOC_UART_NUM - 1);
+    return;
+  }
+  // get UART information
+  uart_t *uart = &_uart_bus_array[uart_num];
 
-void uartEnd(uint8_t uart_num)
-{
-    if(uart_num >= SOC_UART_NUM) {
-        log_e("Serial number is invalid, please use number from 0 to %u", SOC_UART_NUM - 1);
-        return;
-    }
-    // get UART information
-    uart_t* uart = &_uart_bus_array[uart_num];
-   
-    UART_MUTEX_LOCK();
-    _uartDetachPins(uart_num, uart->_rxPin, uart->_txPin, uart->_ctsPin, uart->_rtsPin);
-    if(uart_is_driver_installed(uart_num)) {
-        uart_driver_delete(uart_num);
-    }
-    UART_MUTEX_UNLOCK();
+  UART_MUTEX_LOCK();
+  _uartDetachPins(uart_num, uart->_rxPin, uart->_txPin, uart->_ctsPin, uart->_rtsPin);
+  if (uart_is_driver_installed(uart_num)) {
+    uart_driver_delete(uart_num);
+  }
+  if (uartGetDebug() == uart_num) {
+    uartSetDebug(0);
+  }
+  UART_MUTEX_UNLOCK();
 }
 
-
-void uartSetRxInvert(uart_t* uart, bool invert)
-{
-    if (uart == NULL)
-        return;
-#if 0
-    // POTENTIAL ISSUE :: original code only set/reset rxd_inv bit 
-    // IDF or LL set/reset the whole inv_mask!
-    if (invert)
-        ESP_ERROR_CHECK(uart_set_line_inverse(uart->num, UART_SIGNAL_RXD_INV));
-    else
-        ESP_ERROR_CHECK(uart_set_line_inverse(uart->num, UART_SIGNAL_INV_DISABLE));
-    
-#else
-    // this implementation is better over IDF API because it only affects RXD
-    // this is supported in ESP32, ESP32-S2 and ESP32-C3
-    uart_dev_t *hw = UART_LL_GET_HW(uart->num);
-    if (invert)
-        hw->conf0.rxd_inv = 1;
-    else
-        hw->conf0.rxd_inv = 0;
-#endif
+// Helper generic function that takes a uart_signal_inv_t mask to be properly applied to the designated uart pin
+// invMask can be UART_SIGNAL_RXD_INV, UART_SIGNAL_TXD_INV, UART_SIGNAL_RTS_INV, UART_SIGNAL_CTS_INV
+// returns the operation success status
+bool uartPinSignalInversion(uart_t *uart, uint32_t invMask, bool inverted) {
+  if (uart == NULL) {
+    return false;
+  }
+  UART_MUTEX_LOCK();
+  uint32_t _inv_mask = uart->inv_mask;
+  if (inverted) {
+    _inv_mask |= invMask;
+  } else {
+    _inv_mask &= ~invMask;
+  }
+  bool retCode = ESP_OK == uart_set_line_inverse(uart->num, _inv_mask);
+  if (retCode) {
+    uart->inv_mask = _inv_mask;
+  }
+  UART_MUTEX_UNLOCK();
+  return retCode;
 }
 
-
-uint32_t uartAvailable(uart_t* uart)
-{
-
-    if(uart == NULL) {
-        return 0;
+bool uartSetRxInvert(uart_t *uart, bool invert) {
+  if (uartPinSignalInversion(uart, UART_SIGNAL_RXD_INV, invert)) {
+    if (uart->_rxPin >= 0 && !_uartIsOneWireActive(uart)) {
+      _uartApplyRxPull(uart, uart->_rxPin);
     }
-
-    UART_MUTEX_LOCK();
-    size_t available;
-    uart_get_buffered_data_len(uart->num, &available);
-    if (uart->has_peek) available++;
-    UART_MUTEX_UNLOCK();
-    return available;
+    log_v("UART%u: RX signal inversion %s", uart->num, invert ? "enabled" : "disabled");
+    return true;
+  }
+  return false;
 }
 
-
-uint32_t uartAvailableForWrite(uart_t* uart)
-{
-    if(uart == NULL) {
-        return 0;
-    }
-    UART_MUTEX_LOCK();
-    uint32_t available =  uart_ll_get_txfifo_len(UART_LL_GET_HW(uart->num));  
-    size_t txRingBufferAvailable = 0;
-    if (ESP_OK == uart_get_tx_buffer_free_size(uart->num, &txRingBufferAvailable)) {
-        available = txRingBufferAvailable == 0 ? available : txRingBufferAvailable; 
-    }
-    UART_MUTEX_UNLOCK();
-    return available;
+bool uartSetTxInvert(uart_t *uart, bool invert) {
+  if (uartPinSignalInversion(uart, UART_SIGNAL_TXD_INV, invert)) {
+    log_v("UART%u: TX signal inversion %s", uart->num, invert ? "enabled" : "disabled");
+    return true;
+  }
+  return false;
 }
 
-size_t uartReadBytes(uart_t* uart, uint8_t *buffer, size_t size, uint32_t timeout_ms)
-{
-    if(uart == NULL || size == 0 || buffer == NULL) {
-        return 0;
-    }
-
-    size_t bytes_read = 0;
-
-    UART_MUTEX_LOCK();
-
-    if (uart->has_peek) {
-        uart->has_peek = false;
-        *buffer++ = uart->peek_byte;
-        size--;
-        bytes_read = 1;
-    }
-
-    if (size > 0) {
-       int len = uart_read_bytes(uart->num, buffer, size, pdMS_TO_TICKS(timeout_ms));
-       if (len < 0) len = 0;  // error reading UART
-       bytes_read += len;
-    }
-
-        
-    UART_MUTEX_UNLOCK();
-    return bytes_read;
+bool uartSetCtsInvert(uart_t *uart, bool invert) {
+  if (uartPinSignalInversion(uart, UART_SIGNAL_CTS_INV, invert)) {
+    log_v("UART%u: CTS signal inversion %s", uart->num, invert ? "enabled" : "disabled");
+    return true;
+  }
+  return false;
 }
 
-// DEPRICATED but the original code will be kepts here as future reference when a final solution
+bool uartSetRtsInvert(uart_t *uart, bool invert) {
+  if (uartPinSignalInversion(uart, UART_SIGNAL_RTS_INV, invert)) {
+    log_v("UART%u: RTS signal inversion %s", uart->num, invert ? "enabled" : "disabled");
+    return true;
+  }
+  return false;
+}
+
+uint32_t uartAvailable(uart_t *uart) {
+
+  if (uart == NULL) {
+    return 0;
+  }
+
+  UART_MUTEX_LOCK();
+  size_t available;
+  uart_get_buffered_data_len(uart->num, &available);
+  if (uart->has_peek) {
+    available++;
+  }
+  UART_MUTEX_UNLOCK();
+  return available;
+}
+
+uint32_t uartAvailableForWrite(uart_t *uart) {
+  if (uart == NULL) {
+    return 0;
+  }
+  UART_MUTEX_LOCK();
+  uint32_t available = uart_ll_get_txfifo_len(UART_LL_GET_HW(uart->num));
+  size_t txRingBufferAvailable = 0;
+  if (ESP_OK == uart_get_tx_buffer_free_size(uart->num, &txRingBufferAvailable)) {
+    available = txRingBufferAvailable == 0 ? available : txRingBufferAvailable;
+  }
+  UART_MUTEX_UNLOCK();
+  return available;
+}
+
+size_t uartReadBytes(uart_t *uart, uint8_t *buffer, size_t size, uint32_t timeout_ms) {
+  if (uart == NULL || size == 0 || buffer == NULL) {
+    return 0;
+  }
+
+  size_t bytes_read = 0;
+
+  UART_MUTEX_LOCK();
+
+  if (uart->has_peek) {
+    uart->has_peek = false;
+    *buffer++ = uart->peek_byte;
+    size--;
+    bytes_read = 1;
+  }
+
+  if (size > 0) {
+    int len = uart_read_bytes(uart->num, buffer, size, pdMS_TO_TICKS(timeout_ms));
+    if (len < 0) {
+      len = 0;  // error reading UART
+    }
+    bytes_read += len;
+  }
+
+  UART_MUTEX_UNLOCK();
+  return bytes_read;
+}
+
+// DEPRECATED but the original code will be kept here as future reference when a final solution
 // to the UART driver is defined in the use case of reading byte by byte from UART.
-uint8_t uartRead(uart_t* uart)
-{
-    if(uart == NULL) {
-        return 0;
+uint8_t uartRead(uart_t *uart) {
+  if (uart == NULL) {
+    return 0;
+  }
+  uint8_t c = 0;
+
+  UART_MUTEX_LOCK();
+
+  if (uart->has_peek) {
+    uart->has_peek = false;
+    c = uart->peek_byte;
+  } else {
+
+    int len = uart_read_bytes(uart->num, &c, 1, 20 / portTICK_PERIOD_MS);
+    if (len <= 0) {  // includes negative return from IDF in case of error
+      c = 0;
     }
-    uint8_t c = 0;
+  }
+  UART_MUTEX_UNLOCK();
+  return c;
+}
 
-    UART_MUTEX_LOCK();
+uint8_t uartPeek(uart_t *uart) {
+  if (uart == NULL) {
+    return 0;
+  }
+  uint8_t c = 0;
 
-    if (uart->has_peek) {
-      uart->has_peek = false;
-      c = uart->peek_byte;
+  UART_MUTEX_LOCK();
+
+  if (uart->has_peek) {
+    c = uart->peek_byte;
+  } else {
+    int len = uart_read_bytes(uart->num, &c, 1, 20 / portTICK_PERIOD_MS);
+    if (len <= 0) {  // includes negative return from IDF in case of error
+      c = 0;
     } else {
-
-        int len = uart_read_bytes(uart->num, &c, 1, 20 / portTICK_PERIOD_MS);
-        if (len <= 0) { // includes negative return from IDF in case of error
-            c  = 0;
-        }
+      uart->has_peek = true;
+      uart->peek_byte = c;
     }
-    UART_MUTEX_UNLOCK();
-    return c;
+  }
+  UART_MUTEX_UNLOCK();
+  return c;
 }
 
+void uartWrite(uart_t *uart, uint8_t c) {
+  if (uart == NULL) {
+    return;
+  }
+  UART_MUTEX_LOCK();
+  uart_write_bytes(uart->num, &c, 1);
+  UART_MUTEX_UNLOCK();
+}
 
-uint8_t uartPeek(uart_t* uart)
-{
-    if(uart == NULL) {
-        return 0;
-    }
-    uint8_t c = 0;
+void uartWriteBuf(uart_t *uart, const uint8_t *data, size_t len) {
+  if (uart == NULL || data == NULL || !len) {
+    return;
+  }
 
-    UART_MUTEX_LOCK();
+  UART_MUTEX_LOCK();
+  uart_write_bytes(uart->num, data, len);
+  UART_MUTEX_UNLOCK();
+}
 
-    if (uart->has_peek) {
-      c = uart->peek_byte;
+void uartFlush(uart_t *uart) {
+  uartFlushTxOnly(uart, true);
+}
+
+void uartFlushTxOnly(uart_t *uart, bool txOnly) {
+  if (uart == NULL) {
+    return;
+  }
+
+  UART_MUTEX_LOCK();
+  while (!uart_ll_is_tx_idle(UART_LL_GET_HW(uart->num)));
+
+  if (!txOnly) {
+    ESP_ERROR_CHECK(uart_flush_input(uart->num));
+  }
+  UART_MUTEX_UNLOCK();
+}
+
+bool uartSetBaudRate(uart_t *uart, uint32_t baud_rate) {
+  if (uart == NULL) {
+    return false;
+  }
+  bool retCode = true;
+  soc_module_clk_t newClkSrc = UART_SCLK_DEFAULT;
+#if SOC_UART_LP_NUM >= 1
+  if (uart->num >= SOC_UART_HP_NUM) {  // it is a LP UART NUM
+    if (uart->_uart_clock_source >= 0) {
+      newClkSrc = (soc_periph_lp_uart_clk_src_t)uart->_uart_clock_source;  // use user defined LP UART clock
+      log_v("Setting UART%u to user defined LP clock source (%u) ", uart->num, newClkSrc);
     } else {
-        int len = uart_read_bytes(uart->num, &c, 1, 20 / portTICK_PERIOD_MS);
-        if (len <= 0) { // includes negative return from IDF in case of error
-            c  = 0;
-        } else {
-            uart->has_peek = true;
-            uart->peek_byte = c;
-        }
+      newClkSrc = LP_UART_SCLK_DEFAULT;  // use default LP clock
+      log_v("Setting UART%u to Default LP clock source", uart->num);
     }
-    UART_MUTEX_UNLOCK();
-    return c;
-}
-
-void uartWrite(uart_t* uart, uint8_t c)
-{
-    if(uart == NULL) {
-        return;
-    }
-    UART_MUTEX_LOCK();
-    uart_write_bytes(uart->num, &c, 1);
-    UART_MUTEX_UNLOCK();
-}
-
-void uartWriteBuf(uart_t* uart, const uint8_t * data, size_t len)
-{
-    if(uart == NULL || data == NULL || !len) {
-        return;
-    }
-
-    UART_MUTEX_LOCK();
-    uart_write_bytes(uart->num, data, len);
-    UART_MUTEX_UNLOCK();
-}
-
-void uartFlush(uart_t* uart)
-{
-    uartFlushTxOnly(uart, true);
-}
-
-void uartFlushTxOnly(uart_t* uart, bool txOnly)
-{
-    if(uart == NULL) {
-        return;
-    }
-    
-    UART_MUTEX_LOCK();
-    while(!uart_ll_is_tx_idle(UART_LL_GET_HW(uart->num)));
-
-    if ( !txOnly ) {
-        ESP_ERROR_CHECK(uart_flush_input(uart->num));
-    }
-    UART_MUTEX_UNLOCK();
-}
-
-void uartSetBaudRate(uart_t* uart, uint32_t baud_rate)
-{
-    if(uart == NULL) {
-        return;
-    }
-    UART_MUTEX_LOCK();
-#if CONFIG_IDF_TARGET_ESP32 || CONFIG_IDF_TARGET_ESP32S2
-    uart_ll_set_baudrate(UART_LL_GET_HW(uart->num), _get_effective_baudrate(baud_rate));
+  } else
+#endif  // SOC_UART_LP_NUM >= 1
+  {
+    if (uart->_uart_clock_source >= 0) {
+      newClkSrc = (soc_module_clk_t)uart->_uart_clock_source;  // use user defined HP UART clock
+      log_v("Setting UART%u to use HP clock source (%u) ", uart->num, newClkSrc);
+    } else {
+      // there is an issue when returning from light sleep with the C6 and H2: the uart baud rate is not restored
+      // therefore, uart clock source will set to XTAL for all SoC that support it. This fix solves the C6|H2 issue.
+#if SOC_UART_SUPPORT_XTAL_CLK
+      newClkSrc = UART_SCLK_XTAL;  // valid for C2, S3, C3, C6, H2 and P4
+      log_v("Setting UART%u to use XTAL clock", uart->num);
+#elif SOC_UART_SUPPORT_REF_TICK
+      if (baud_rate <= REF_TICK_BAUDRATE_LIMIT) {
+        newClkSrc = UART_SCLK_REF_TICK;  // valid for ESP32, S2 - MAX supported baud rate is 250 Kbps
+        log_v("Setting UART%u to use REF_TICK clock", uart->num);
+      } else {
+        newClkSrc = UART_SCLK_APB;  // baudrate may change with the APB Frequency!
+        log_v("Setting UART%u to use APB clock", uart->num);
+      }
 #else
-    uart_ll_set_baudrate(UART_LL_GET_HW(uart->num), baud_rate);
-#endif
+      // Default CLK Source: CLK_APB for ESP32|S2|S3|C3 -- CLK_PLL_F40M for C2 -- CLK_PLL_F48M for H2 -- CLK_PLL_F80M for C6|P4
+      // using newClkSrc = UART_SCLK_DEFAULT as defined in the variable declaration
+      log_v("Setting UART%u to use DEFAULT clock", uart->num);
+#endif  // SOC_UART_SUPPORT_XTAL_CLK
+    }
+  }
+  UART_MUTEX_LOCK();
+  HP_UART_SRC_CLK_ATOMIC() {
+    uart_ll_set_sclk(UART_LL_GET_HW(uart->num), newClkSrc);
+  }
+  // uart->_uart_clock_source can only change by explicit user API request/call
+  if (uart_set_baudrate(uart->num, baud_rate) == ESP_OK) {
+    log_v("Setting UART%u baud rate to %" PRIu32, uart->num, baud_rate);
     uart->_baudrate = baud_rate;
-    UART_MUTEX_UNLOCK();
+  } else {
+    retCode = false;
+    log_e("Setting UART%u baud rate to %" PRIu32 " has failed.", uart->num, baud_rate);
+  }
+  UART_MUTEX_UNLOCK();
+  return retCode;
 }
 
-uint32_t uartGetBaudRate(uart_t* uart)
-{
-    if(uart == NULL) {
-        return 0;
+uint32_t uartGetBaudRate(uart_t *uart) {
+  uint32_t baud_rate = 0;
+
+  if (uart == NULL) {
+    return 0;  // TBD in Arduino Core 4.x (uint32_t)-1;  // return value when failed;
+  }
+
+  soc_module_clk_t src_clk;
+  uint32_t sclk_freq;
+  uart_dev_t *hw = UART_LL_GET_HW(uart->num);
+
+  UART_MUTEX_LOCK();
+  uart_ll_get_sclk(hw, &src_clk);
+  if (esp_clk_tree_src_get_freq_hz(src_clk, ESP_CLK_TREE_SRC_FREQ_PRECISION_CACHED, &sclk_freq) != ESP_OK) {
+    log_e("Getting UART%u source clock frequency has failed.", uart->num);
+    baud_rate = (uint32_t)-1;  // return value when failed
+  } else {
+    log_v("UART%u source clock frequency is %u Hz", uart->num, sclk_freq);
+#if CONFIG_IDF_TARGET_ESP32S3
+    if (hw->clkdiv.val == 0) {
+#elif CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C2 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32
+    if (hw->clk_div.val == 0) {
+#else  // C5, C6, C61, H2, H21, H4, P4 and future SoCs
+    if (hw->clkdiv_sync.val == 0) {
+#endif
+      log_e("Getting UART%u baud rate has failed. UART Clock not set or invalid.", uart->num);
+      baud_rate = (uint32_t)-1;  // return value when failed
+    } else {
+      baud_rate = uart_ll_get_baudrate(hw, sclk_freq);
+      log_v("UART%u baud rate is %" PRIu32, uart->num, baud_rate);
     }
-
-    UART_MUTEX_LOCK();
-    uint32_t baud_rate = uart_ll_get_baudrate(UART_LL_GET_HW(uart->num));
-#if CONFIG_IDF_TARGET_ESP32 || CONFIG_IDF_TARGET_ESP32S2
-    uint32_t Freq = getApbFrequency()/1000000;
-    if (Freq < 80) {
-        baud_rate = baud_rate / (80 / Freq);
-     }
-#endif
-    UART_MUTEX_UNLOCK();
-    return baud_rate;
+  }
+  UART_MUTEX_UNLOCK();
+  return baud_rate;
 }
 
-static void ARDUINO_ISR_ATTR uart0_write_char(char c)
-{
-    while (uart_ll_get_txfifo_len(&UART0) == 0);
-    uart_ll_write_txfifo(&UART0, (const uint8_t *) &c, 1);
+static void ARDUINO_ISR_ATTR uart0_write_char(char c) {
+  while (uart_ll_get_txfifo_len(&UART0) == 0);
+  uart_ll_write_txfifo(&UART0, (const uint8_t *)&c, 1);
 }
 
-#if SOC_UART_NUM > 1
-static void ARDUINO_ISR_ATTR uart1_write_char(char c)
-{
-    while (uart_ll_get_txfifo_len(&UART1) == 0);
-    uart_ll_write_txfifo(&UART1, (const uint8_t *) &c, 1);
+#if SOC_UART_HP_NUM > 1
+static void ARDUINO_ISR_ATTR uart1_write_char(char c) {
+  while (uart_ll_get_txfifo_len(&UART1) == 0);
+  uart_ll_write_txfifo(&UART1, (const uint8_t *)&c, 1);
 }
 #endif
 
-#if SOC_UART_NUM > 2
-static void ARDUINO_ISR_ATTR uart2_write_char(char c)
-{
-    while (uart_ll_get_txfifo_len(&UART2) == 0);
-    uart_ll_write_txfifo(&UART2, (const uint8_t *) &c, 1);
+#if SOC_UART_HP_NUM > 2
+static void ARDUINO_ISR_ATTR uart2_write_char(char c) {
+  while (uart_ll_get_txfifo_len(&UART2) == 0);
+  uart_ll_write_txfifo(&UART2, (const uint8_t *)&c, 1);
 }
 #endif
 
-void uart_install_putc()
-{
-    switch(s_uart_debug_nr) {
-    case 0:
-        ets_install_putc1((void (*)(char)) &uart0_write_char);
-        break;
-#if SOC_UART_NUM > 1
-    case 1:
-        ets_install_putc1((void (*)(char)) &uart1_write_char);
-        break;
+#if SOC_UART_HP_NUM > 3
+static void ARDUINO_ISR_ATTR uart3_write_char(char c) {
+  while (uart_ll_get_txfifo_len(&UART3) == 0);
+  uart_ll_write_txfifo(&UART3, (const uint8_t *)&c, 1);
+}
 #endif
-#if SOC_UART_NUM > 2
-    case 2:
-        ets_install_putc1((void (*)(char)) &uart2_write_char);
-        break;
+
+#if SOC_UART_HP_NUM > 4
+static void ARDUINO_ISR_ATTR uart4_write_char(char c) {
+  while (uart_ll_get_txfifo_len(&UART4) == 0);
+  uart_ll_write_txfifo(&UART4, (const uint8_t *)&c, 1);
+}
 #endif
-    default:
-        ets_install_putc1(NULL);
-        break;
-    }
-    ets_install_putc2(NULL);
+
+void uart_install_putc() {
+  switch (s_uart_debug_nr) {
+    case 0: ets_install_putc1((void (*)(char)) & uart0_write_char); break;
+#if SOC_UART_HP_NUM > 1
+    case 1: ets_install_putc1((void (*)(char)) & uart1_write_char); break;
+#endif
+#if SOC_UART_HP_NUM > 2
+    case 2: ets_install_putc1((void (*)(char)) & uart2_write_char); break;
+#endif
+#if SOC_UART_HP_NUM > 3
+    case 3: ets_install_putc1((void (*)(char)) & uart3_write_char); break;
+#endif
+#if SOC_UART_HP_NUM > 4
+    case 4: ets_install_putc1((void (*)(char)) & uart4_write_char); break;
+#endif
+    default: ets_install_putc1(NULL); break;
+  }
+  ets_install_putc2(NULL);
 }
 
 // Routines that take care of UART mode in the HardwareSerial Class code
 // used to set UART_MODE_RS485_HALF_DUPLEX auto RTS for TXD for ESP32 chips
-bool uartSetMode(uart_t *uart, uart_mode_t mode)
-{
-    if (uart == NULL || uart->num >= SOC_UART_NUM)
-    {
-        return false;
-    }
-    
-    UART_MUTEX_LOCK();
-    bool retCode = (ESP_OK == uart_set_mode(uart->num, mode));
+bool uartSetMode(uart_t *uart, uart_mode_t mode) {
+  if (uart == NULL || uart->num >= SOC_UART_NUM) {
+    return false;
+  }
+
+  if (mode != UART_MODE_UART && _uartIsOneWireActive(uart)) {
+    log_e("UART%u one-wire mode is not compatible with the requested UART mode", uart->num);
+    return false;
+  }
+
+  UART_MUTEX_LOCK();
+  bool retCode = (ESP_OK == uart_set_mode(uart->num, mode));
+  if (retCode) {
+    uart->_uart_mode = mode;
+  }
+  UART_MUTEX_UNLOCK();
+  return retCode;
+}
+
+// Routine that sets UART_MODE_IRDA direction: TX or RX
+// irdaDirection: ESP32_UART_IRDA_TX (1) for TX mode, ESP32_UART_IRDA_RX (0) for RX mode
+// IrDA mode direction is exclusive: the UART can transmit OR receive, but not both simultaneously.
+// The UART hardware automatically handles IrDA pulse timing and encoding/decoding.
+bool uartSetIrdaDirection(uart_t *uart, esp32_uart_irda_direction_t irdaDirection) {
+  if (uart == NULL || uart->num >= SOC_UART_NUM || (irdaDirection != ESP32_UART_IRDA_RX && irdaDirection != ESP32_UART_IRDA_TX)) {
+    return false;
+  }
+
+  UART_MUTEX_LOCK();
+  uart_dev_t *hw = UART_LL_GET_HW(uart->num);
+
+#if CONFIG_IDF_TARGET_ESP32 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3 || CONFIG_IDF_TARGET_ESP32C2 || CONFIG_IDF_TARGET_ESP32C3
+  bool isIrdaModeEnabled = hw->conf0.irda_en == 1;
+#else
+  bool isIrdaModeEnabled = hw->conf0_sync.irda_en == 1;
+#endif
+  if (!isIrdaModeEnabled) {
+    __attribute__((unused)) uint8_t uart_num = uart->num;
     UART_MUTEX_UNLOCK();
-    return retCode;
+    log_e("UART%u is not in IrDA mode; set UART_MODE_IRDA before setting IrDA TX/RX direction.", uart_num);
+    return false;
+  }
+
+#if CONFIG_IDF_TARGET_ESP32 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3 || CONFIG_IDF_TARGET_ESP32C2 || CONFIG_IDF_TARGET_ESP32C3
+  // enables IRDA TX
+  hw->conf0.irda_tx_en = irdaDirection;
+#else
+  // enables IRDA TX
+  hw->conf0_sync.irda_tx_en = irdaDirection;
+  // it needs UART Update
+  uart_ll_update(hw);
+#endif
+  UART_MUTEX_UNLOCK();
+  return true;
 }
 
-void uartSetDebug(uart_t* uart)
-{
-    if(uart == NULL || uart->num >= SOC_UART_NUM) {
-        s_uart_debug_nr = -1;
-    } else {
-        s_uart_debug_nr = uart->num;
+// this function will set the uart clock source
+// it must be called before uartBegin(), otherwise it won't change any thing.
+bool uartSetClockSource(uint8_t uartNum, uart_sclk_t clkSrc) {
+  if (uartNum >= SOC_UART_NUM) {
+    log_e("UART%u is invalid. This device has %u UARTs, from 0 to %u.", uartNum, SOC_UART_NUM, SOC_UART_NUM - 1);
+    return false;
+  }
+  uart_t *uart = &_uart_bus_array[uartNum];
+#if SOC_UART_LP_NUM >= 1
+  if (uart->num >= SOC_UART_HP_NUM) {
+    switch (clkSrc) {
+      case UART_SCLK_XTAL: uart->_uart_clock_source = LP_UART_SCLK_XTAL_D2; break;
+#if CONFIG_IDF_TARGET_ESP32C5
+      case UART_SCLK_RTC: uart->_uart_clock_source = LP_UART_SCLK_RC_FAST; break;
+#elif CONFIG_IDF_TARGET_ESP32P4
+      case UART_SCLK_RTC: uart->_uart_clock_source = LP_UART_SCLK_DEFAULT; break;  // default is RTC_FAST for P4
+#else
+      case UART_SCLK_RTC: uart->_uart_clock_source = LP_UART_SCLK_LP_FAST; break;
+#endif
+      case UART_SCLK_DEFAULT:
+      default:                uart->_uart_clock_source = LP_UART_SCLK_DEFAULT;
     }
-    uart_install_putc();
+  } else
+#endif
+  {
+    uart->_uart_clock_source = clkSrc;
+  }
+  log_v("UART%u set clock source to %d", uart->num, uart->_uart_clock_source);
+  return true;
 }
 
-int uartGetDebug()
-{
-    return s_uart_debug_nr;
+bool uartEnableRxInternalPull(uint8_t uartNum, bool enable) {
+  if (uartNum >= SOC_UART_NUM) {
+    log_e("UART%u is invalid. This device has %u UARTs, from 0 to %u.", uartNum, SOC_UART_NUM, SOC_UART_NUM - 1);
+    return false;
+  }
+  if (uart_is_driver_installed(uartNum)) {
+    log_e("UART%u RX internal pull can't be changed when Serial is already running. Set it before calling begin().", uartNum);
+    return false;
+  }
+  _uart_bus_array[uartNum]._rxPullEnabled = enable;
+  log_v("UART%u RX internal pull %s", uartNum, enable ? "enabled" : "disabled");
+  return true;
 }
 
-int log_printfv(const char *format, va_list arg)
-{
-    static char loc_buf[64];
-    char * temp = loc_buf;
-    uint32_t len;
-    va_list copy;
-    va_copy(copy, arg);
-    len = vsnprintf(NULL, 0, format, copy);
-    va_end(copy);
-    if(len >= sizeof(loc_buf)){
-        temp = (char*)malloc(len+1);
-        if(temp == NULL) {
-            return 0;
-        }
+void uartSetDebug(uart_t *uart) {
+  // LP UART is not supported for debug
+  if (uart == NULL || uart->num >= SOC_UART_HP_NUM) {
+    s_uart_debug_nr = -1;
+  } else {
+    s_uart_debug_nr = uart->num;
+  }
+  uart_install_putc();
+}
+
+int uartGetDebug() {
+  return s_uart_debug_nr;
+}
+
+int log_printfv(const char *format, va_list arg) {
+  static char loc_buf[64];
+  char *temp = loc_buf;
+  uint32_t len;
+  va_list copy;
+  va_copy(copy, arg);
+  len = vsnprintf(NULL, 0, format, copy);
+  va_end(copy);
+  if (len >= sizeof(loc_buf)) {
+    temp = (char *)malloc(len + 1);
+    if (temp == NULL) {
+      return 0;
     }
-/*
+  }
+  /*
 // This causes dead locks with logging in specific cases and also with C++ constructors that may send logs
 #if !CONFIG_DISABLE_HAL_LOCKS
     if(s_uart_debug_nr != -1 && _uart_bus_array[s_uart_debug_nr].lock){
@@ -834,9 +2082,9 @@ int log_printfv(const char *format, va_list arg)
     }
 #endif
 */
-    vsnprintf(temp, len+1, format, arg);
-    ets_printf("%s", temp);
-/*
+  vsnprintf(temp, len + 1, format, arg);
+  ets_printf("%s", temp);
+  /*
 // This causes dead locks with logging and also with constructors that may send logs
 #if !CONFIG_DISABLE_HAL_LOCKS
     if(s_uart_debug_nr != -1 && _uart_bus_array[s_uart_debug_nr].lock){
@@ -844,170 +2092,230 @@ int log_printfv(const char *format, va_list arg)
     }
 #endif
 */
-    if(len >= sizeof(loc_buf)){
-        free(temp);
-    }
-    // flushes TX - try to assure that the log message is completely sent.
-    if(s_uart_debug_nr != -1) while(!uart_ll_is_tx_idle(UART_LL_GET_HW(s_uart_debug_nr)));
-    return len;
+  if (len >= sizeof(loc_buf)) {
+    free(temp);
+  }
+  // flushes TX - make sure that the log message is completely sent.
+  if (s_uart_debug_nr != -1) {
+    while (!uart_ll_is_tx_idle(UART_LL_GET_HW(s_uart_debug_nr)));
+  }
+  return len;
 }
 
-int log_printf(const char *format, ...)
-{
-    int len;
-    va_list arg;
-    va_start(arg, format);
-    len = log_printfv(format, arg);
-    va_end(arg);
-    return len;
+int log_printf(const char *format, ...) {
+  int len;
+  va_list arg;
+  va_start(arg, format);
+  len = log_printfv(format, arg);
+  va_end(arg);
+  return len;
 }
 
-
-static void log_print_buf_line(const uint8_t *b, size_t len, size_t total_len){
-    for(size_t i = 0; i<len; i++){
-        log_printf("%s0x%02x,",i?" ":"", b[i]);
+static void log_print_buf_line(const uint8_t *b, size_t len, size_t total_len) {
+  for (size_t i = 0; i < len; i++) {
+    log_printf("%s0x%02x,", i ? " " : "", b[i]);
+  }
+  if (total_len > 16) {
+    for (size_t i = len; i < 16; i++) {
+      log_printf("      ");
     }
-    if(total_len > 16){
-        for(size_t i = len; i<16; i++){
-            log_printf("      ");
-        }
-        log_printf("    // ");
-    } else {
-        log_printf(" // ");
-    }
-    for(size_t i = 0; i<len; i++){
-        log_printf("%c",((b[i] >= 0x20) && (b[i] < 0x80))?b[i]:'.');
-    }
-    log_printf("\n");
+    log_printf("    // ");
+  } else {
+    log_printf(" // ");
+  }
+  for (size_t i = 0; i < len; i++) {
+    log_printf("%c", ((b[i] >= 0x20) && (b[i] < 0x80)) ? b[i] : '.');
+  }
+  log_printf("\n");
 }
 
-void log_print_buf(const uint8_t *b, size_t len){
-    if(!len || !b){
-        return;
+void log_print_buf(const uint8_t *b, size_t len) {
+  if (!len || !b) {
+    return;
+  }
+  for (size_t i = 0; i < len; i += 16) {
+    if (len > 16) {
+      log_printf("/* 0x%04zX */ ", i);
     }
-    for(size_t i = 0; i<len; i+=16){
-        if(len > 16){
-            log_printf("/* 0x%04X */ ", i);
-        }
-        log_print_buf_line(b+i, ((len-i)<16)?(len - i):16, len);
-    }
+    log_print_buf_line(b + i, ((len - i) < 16) ? (len - i) : 16, len);
+  }
 }
 
 /*
- * if enough pulses are detected return the minimum high pulse duration + minimum low pulse duration divided by two. 
- * In the case of S3 and C3 using XTAL as UART CLK SOURCE, one bit period = Negative Pulse Count + 1
- * This equals one bit period. If flag is true the function return inmediately, otherwise it waits for enough pulses.
+ * if enough pulses are detected return the minimum high pulse duration + minimum low pulse duration divided by two.
+ * This equals one bit period. If flag is true the function return immediately, otherwise it waits for enough pulses.
  */
-unsigned long uartBaudrateDetect(uart_t *uart, bool flg)
-{
-    if(uart == NULL) {
-        return 0;
-    }
-
-    uart_dev_t *hw = UART_LL_GET_HW(uart->num);
-
-    while(uart_ll_get_rxd_edge_cnt(hw) < 30) { // UART_PULSE_NUM(uart_num)
-        if(flg) return 0;
-        ets_delay_us(1000);
-    }
-
-    UART_MUTEX_LOCK();
+unsigned long uartBaudrateDetect(uart_t *uart, bool flg) {
+// Baud rate detection only works for ESP32 and ESP32S2
 #if CONFIG_IDF_TARGET_ESP32 || CONFIG_IDF_TARGET_ESP32S2
-    unsigned long ret = ((uart_ll_get_low_pulse_cnt(hw) + uart_ll_get_high_pulse_cnt(hw)) >> 1);
-#else
-    unsigned long ret = uart_ll_get_neg_pulse_cnt(hw) + 1;
-#endif
-    UART_MUTEX_UNLOCK();
+  if (uart == NULL) {
+    return 0;
+  }
 
-    return ret;
+  uart_dev_t *hw = UART_LL_GET_HW(uart->num);
+
+  while (hw->rxd_cnt.edge_cnt < 30) {  // UART_PULSE_NUM(uart_num)
+    if (flg) {
+      return 0;
+    }
+    ets_delay_us(1000);
+  }
+
+  UART_MUTEX_LOCK();
+  //log_i("lowpulse_min_cnt = %" PRIu32 " hightpulse_min_cnt = %" PRIu32, hw->lowpulse.min_cnt, hw->highpulse.min_cnt);
+  unsigned long ret = ((hw->lowpulse.min_cnt + hw->highpulse.min_cnt) >> 1);
+  UART_MUTEX_UNLOCK();
+
+  return ret;
+#else
+  return 0;
+#endif
 }
 
-
 /*
- * To start detection of baud rate with the uart the auto_baud.en bit needs to be cleared and set. The bit period is 
- * detected calling uartBadrateDetect(). The raw baudrate is computed using the UART_CLK_FREQ. The raw baudrate is 
+ * To start detection of baud rate with the uart the auto_baud.en bit needs to be cleared and set. The bit period is
+ * detected calling uartBadrateDetect(). The raw baudrate is computed using the UART_CLK_FREQ. The raw baudrate is
  * rounded to the closed real baudrate.
- * 
+ *
+ * ESP32-C3 reports wrong baud rate detection as shown below:
+ *
+ * This will help in a future recall for the C3.
+ * Baud Sent:          Baud Read:
+ *  300        -->       19536
+ * 2400        -->       19536
+ * 4800        -->       19536
+ * 9600        -->       28818
+ * 19200       -->       57678
+ * 38400       -->       115440
+ * 57600       -->       173535
+ * 115200      -->       347826
+ * 230400      -->       701754
+ *
+ *
 */
 void uartStartDetectBaudrate(uart_t *uart) {
-    if(uart == NULL) {
-        return;
-    }
+  if (uart == NULL) {
+    return;
+  }
 
-    uart_dev_t *hw = UART_LL_GET_HW(uart->num);
-    uart_ll_set_autobaud_en(hw, false);
-    uart_ll_set_autobaud_en(hw, true);
-}
- 
-unsigned long uartDetectBaudrate(uart_t *uart)
-{
-    if(uart == NULL) {
-        return 0;
-    }
-
-    static bool uartStateDetectingBaudrate = false;
-
-    if(!uartStateDetectingBaudrate) {
-        uartStartDetectBaudrate(uart);
-        uartStateDetectingBaudrate = true;
-    }
-
-    unsigned long divisor = uartBaudrateDetect(uart, true);
-    if (!divisor) {
-        return 0;
-    }
-
-    uart_dev_t *hw = UART_LL_GET_HW(uart->num);
-    uart_ll_set_autobaud_en(hw, false);
-
-    uartStateDetectingBaudrate = false; // Initialize for the next round
-    
+// Baud rate detection only works for ESP32 and ESP32S2
 #if CONFIG_IDF_TARGET_ESP32 || CONFIG_IDF_TARGET_ESP32S2
-    unsigned long baudrate = getApbFrequency() / divisor;  // ESP32 and S2 APB Freq
+  uart_dev_t *hw = UART_LL_GET_HW(uart->num);
+  hw->auto_baud.glitch_filt = 0x08;
+  hw->auto_baud.en = 0;
+  hw->auto_baud.en = 1;
 #else
-    unsigned long baudrate = (getXtalFrequencyMhz() * 1000000) / divisor;  // S3 and C3 XTAL Frequency
-#endif
-    
-    static const unsigned long default_rates[] = {300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 74880, 115200, 230400, 250000, 
-                                                  256000, 460800, 500000, 921600, 1000000, 1843200, 2000000, 3686400};
-    size_t i;
-    for (i = 1; i < sizeof(default_rates) / sizeof(default_rates[0]) - 1; i++)	{ // find the nearest real baudrate
-        if (baudrate <= default_rates[i]) {
-            if (baudrate - default_rates[i - 1] < default_rates[i] - baudrate) i--;
-            break;
-        }
-    }
 
-    return default_rates[i];
+  // ESP32-C3 requires further testing
+  // Baud rate detection returns wrong values
+
+  log_e("baud rate detection for this SoC is not supported.");
+  return;
+
+  // Code below for C3 kept for future recall
+  //hw->rx_filt.glitch_filt = 0x08;
+  //hw->rx_filt.glitch_filt_en = 1;
+  //hw->conf0.autobaud_en = 0;
+  //hw->conf0.autobaud_en = 1;
+#endif
+}
+
+unsigned long uartDetectBaudrate(uart_t *uart) {
+  if (uart == NULL) {
+    return 0;
+  }
+
+// Baud rate detection only works for ESP32 and ESP32S2
+#if CONFIG_IDF_TARGET_ESP32 || CONFIG_IDF_TARGET_ESP32S2
+
+  static bool uartStateDetectingBaudrate = false;
+
+  if (!uartStateDetectingBaudrate) {
+    uartStartDetectBaudrate(uart);
+    uartStateDetectingBaudrate = true;
+  }
+
+  unsigned long divisor = uartBaudrateDetect(uart, true);
+  if (!divisor) {
+    return 0;
+  }
+
+  uart_dev_t *hw = UART_LL_GET_HW(uart->num);
+  hw->auto_baud.en = 0;
+
+  uartStateDetectingBaudrate = false;  // Initialize for the next round
+
+  unsigned long baudrate = getApbFrequency() / divisor;
+
+  //log_i("APB_FREQ = %" PRIu32 "\nraw baudrate detected = %" PRIu32, getApbFrequency(), baudrate);
+
+  static const unsigned long default_rates[] = {300,   600,    1200,   2400,   4800,   9600,   19200,   38400,  57600,
+                                                74880, 115200, 230400, 256000, 460800, 921600, 1843200, 3686400};
+
+  size_t i;
+  for (i = 1; i < sizeof(default_rates) / sizeof(default_rates[0]) - 1; i++)  // find the nearest real baudrate
+  {
+    if (baudrate <= default_rates[i]) {
+      if (baudrate - default_rates[i - 1] < default_rates[i] - baudrate) {
+        i--;
+      }
+      break;
+    }
+  }
+
+  return default_rates[i];
+#else
+  log_e("baud rate detection this SoC is not supported.");
+  return 0;
+#endif
 }
 
 /*
-    These functions are for testing purpose only and can be used in Arduino Sketches
-    Those are used in the UART examples
-*/
+ * These functions are for testing purposes only and can be used in Arduino Sketches.
+ * They are utilized in the UART examples and CI.
+ */
 
-/*
-    This is intended to make an internal loopback connection using IOMUX
-    The function uart_internal_loopback() shall be used right after Arduino Serial.begin(...)
-    This code "replaces" the physical wiring for connecting TX <--> RX in a loopback
-*/
-
-// gets the right TX or RX SIGNAL, based on the UART number from gpio_sig_map.h
-#if SOC_UART_NUM > 2
-  #define UART_TX_SIGNAL(uartNumber) (uartNumber == UART_NUM_0 ? U0TXD_OUT_IDX : (uartNumber == UART_NUM_1 ? U1TXD_OUT_IDX : U2TXD_OUT_IDX))
-  #define UART_RX_SIGNAL(uartNumber) (uartNumber == UART_NUM_0 ? U0RXD_IN_IDX : (uartNumber == UART_NUM_1 ? U1RXD_IN_IDX : U2RXD_IN_IDX))
-#else
-  #define UART_TX_SIGNAL(uartNumber) (uartNumber == UART_NUM_0 ? U0TXD_OUT_IDX : U1TXD_OUT_IDX)
-  #define UART_RX_SIGNAL(uartNumber) (uartNumber == UART_NUM_0 ? U0RXD_IN_IDX : U1RXD_IN_IDX)
-#endif
 /*
    This function internally binds defined UARTs TX signal with defined RX pin of any UART (same or different).
    This creates a loop that lets us receive anything we send on the UART without external wires.
 */
-void uart_internal_loopback(uint8_t uartNum, int8_t rxPin)
-{
-  if (uartNum > SOC_UART_NUM - 1 || !GPIO_IS_VALID_GPIO(rxPin)) return;
-  esp_rom_gpio_connect_out_signal(rxPin, UART_TX_SIGNAL(uartNum), false, false);
+void uart_internal_loopback(uint8_t uartNum, int8_t rxPin) {
+  // LP UART is not supported for loopback
+  if (uartNum >= SOC_UART_HP_NUM || !GPIO_IS_VALID_GPIO(rxPin)) {
+    log_e("UART%u is not supported for loopback or RX pin %d is invalid.", uartNum, rxPin);
+    return;
+  }
+
+  uart_t *uart = &_uart_bus_array[uartNum];
+  const bool same_uart_rx = (rxPin == uart->_rxPin);
+  const bool iomux_rx = _uartIsNativeIomuxPin((uart_port_t)uartNum, rxPin, SOC_UART_RX_PIN_IDX);
+
+  // Native IOMUX RX pins bypass the GPIO matrix; route loopback inside the UART peripheral instead.
+  if (same_uart_rx && iomux_rx) {
+    if (uart_set_loop_back((uart_port_t)uartNum, true) != ESP_OK) {
+      log_e("UART%u failed to enable internal loopback mode.", uartNum);
+    } else {
+      log_d("UART%u internal loopback enabled (peripheral).", uartNum);
+    }
+    return;
+  }
+
+  // GPIO matrix loopback (cross-UART or non-native RX pins): disable peripheral loopback first.
+  uart_set_loop_back((uart_port_t)uartNum, false);
+  esp_rom_gpio_connect_out_signal(rxPin, uart_periph_signal[uartNum].pins[SOC_UART_TX_PIN_IDX].signal, false, false);
+}
+
+/*
+   This function internally binds defined UARTs CTS signal with defined RTS pin of any UART (same or different).
+   This creates a internal connection of CTS to RTS used when testing Hardware Flow Control without external wires.
+*/
+void uart_internal_hw_flow_ctrl_loopback(uint8_t uartNum, int8_t ctsPin) {
+  // LP UART is not supported for hw flow ctrl loopback
+  if (uartNum >= SOC_UART_HP_NUM || !GPIO_IS_VALID_GPIO(ctsPin)) {
+    log_e("UART%u is not supported for hw flow ctrl loopback or CTS pin %d is invalid.", uartNum, ctsPin);
+    return;
+  }
+  esp_rom_gpio_connect_out_signal(ctsPin, uart_periph_signal[uartNum].pins[SOC_UART_RTS_PIN_IDX].signal, false, false);
 }
 
 /*
@@ -1015,21 +2323,41 @@ void uart_internal_loopback(uint8_t uartNum, int8_t rxPin)
 */
 
 // Forces a BREAK in the line based on SERIAL_8N1 configuration at any baud rate
-void uart_send_break(uint8_t uartNum)
-{
+void uart_send_break(uint8_t uartNum) {
   uint32_t currentBaudrate = 0;
   uart_get_baudrate(uartNum, &currentBaudrate);
   // calculates 10 bits of breaks in microseconds for baudrates up to 500mbps
-  // This is very sensetive timing... it works fine for SERIAL_8N1
-  uint32_t breakTime = (uint32_t) (10.0 * (1000000.0 / currentBaudrate));
+  // This is very sensitive timing... it works fine for SERIAL_8N1
+  uint32_t breakTime = (uint32_t)(10.0 * (1000000.0 / currentBaudrate));
   uart_set_line_inverse(uartNum, UART_SIGNAL_TXD_INV);
   esp_rom_delay_us(breakTime);
   uart_set_line_inverse(uartNum, UART_SIGNAL_INV_DISABLE);
 }
 
 // Sends a buffer and at the end of the stream, it generates BREAK in the line
-int uart_send_msg_with_break(uint8_t uartNum, uint8_t *msg, size_t msgSize)
-{
+int uart_send_msg_with_break(uint8_t uartNum, uint8_t *msg, size_t msgSize) {
   // 12 bits long BREAK for 8N1
   return uart_write_bytes_with_break(uartNum, (const void *)msg, msgSize, 12);
 }
+
+// returns the maximum valid uart RX Timeout based on the UART Source Clock and Baudrate
+uint16_t uart_get_max_rx_timeout(uint8_t uartNum) {
+  if (uartNum >= SOC_UART_NUM) {
+    log_e("UART%u is invalid. This device has %u UARTs, from 0 to %u.", uartNum, SOC_UART_NUM, SOC_UART_NUM - 1);
+    return (uint16_t)-1;
+  }
+  uint16_t tout_max_thresh = uart_ll_max_tout_thrd(UART_LL_GET_HW(uartNum));
+  uint8_t symbol_len = 1;  // number of bits per symbol including start
+  uart_parity_t parity_mode;
+  uart_stop_bits_t stop_bit;
+  uart_word_length_t data_bit;
+  uart_ll_get_data_bit_num(UART_LL_GET_HW(uartNum), &data_bit);
+  uart_ll_get_stop_bits(UART_LL_GET_HW(uartNum), &stop_bit);
+  uart_ll_get_parity(UART_LL_GET_HW(uartNum), &parity_mode);
+  symbol_len += (data_bit < UART_DATA_BITS_MAX) ? (uint8_t)data_bit + 5 : 8;
+  symbol_len += (stop_bit > UART_STOP_BITS_1) ? 2 : 1;
+  symbol_len += (parity_mode > UART_PARITY_DISABLE) ? 1 : 0;
+  return (uint16_t)(tout_max_thresh / symbol_len);
+}
+
+#endif /* SOC_UART_SUPPORTED */

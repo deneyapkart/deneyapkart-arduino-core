@@ -1,74 +1,95 @@
-/*
- *  DCMotorSurme örneği,
- *  Bu örnek uygulamada L298N motor sürücü ile dc motor önce hızlanacak daha sonra yavaşlayarak yön değiştirmektedir. 
- *  Bir ileri bir geri olarak döngü içinde bu işlemleri devam ettirmektedir. 
- * 
- */
-#define PWM_FREQ  5000                                  // PWM frekansi
-#define PWM_CH    0                                     // PWM kanali (0-15)
-#define PWM_RES   8                                     // PWM cozunurlugu (1-16 bits)
+#include <Arduino.h>
 
-#define MOT_PIN   PWM0                                  // PWM pini
-#define MOT_DIR1  D4                                    // Motor yon secme pin1
-#define MOT_DIR2  D5                                    // Motor yon secme pin2
+#define PWM_FREQ  5000
+#define PWM_RES   8
 
-uint8_t dutyCycle     = 0;                              // Motor hiz kontrol degiskeni (0-255) (8 bit cozunurluk)
-uint8_t accAmount     = 5;                              // Ivmelenme adimi
-uint8_t motorDir      = 1;                              // Motor yon secimi 1--> Ileri, 0--> Geri
-uint8_t dirCounter    = 0;                              // Yon degisimi icin sayac
-uint8_t changeDirFlag = 1;                              // Yon degisim bayragi
+#define MOT_PIN   D0
+#define MOT_DIR1  D4
+#define MOT_DIR2  D5
+
+int dutyCycle = 0;
+int accAmount = 5;
+
+bool motorDir = true;
 
 void setup() {
-  pinMode(MOT_PIN, OUTPUT);                             // Motor PWM pini cikis olarak ayarlandi
-  pinMode(MOT_DIR1, OUTPUT);                            // Motor yon secme pin1 cikis olarak ayarlandi
-  pinMode(MOT_DIR2, OUTPUT);                            // Motor yon secme pin2 cikis olarak ayarlandi
-  
-  ledcSetup(PWM_CH, PWM_FREQ, PWM_RES);                 // PWM zamanlayicisi ayarlandi 
-  ledcAttachPin(MOT_PIN, PWM_CH);                       // Motor PWM pini ile zamanlayici iliskilendirildi
-  Serial.begin(115200);                                 // Seri haberlesme baslatildi
-  Serial.println("\nMotor Surme Ornegi");
+
+  Serial.begin(115200);
+  delay(1000);
+
+  pinMode(MOT_DIR1, OUTPUT);
+  pinMode(MOT_DIR2, OUTPUT);
+
+  // Yeni ESP32 PWM API
+  if (!ledcAttach(MOT_PIN, PWM_FREQ, PWM_RES)) {
+    Serial.println("HATA: PWM baslatilamadi!");
+    return;
+  }
+
+  ledcWrite(MOT_PIN, 0);
+
+  Serial.println();
+  Serial.println("======================");
+  Serial.println("DC MOTOR SURME TESTI");
+  Serial.println("======================");
+  Serial.println("Motor ileri yonde basliyor.");
+
+
+  digitalWrite(MOT_DIR1, LOW);
+  digitalWrite(MOT_DIR2, HIGH);
 }
 
 void loop() {
-  ledcWrite(PWM_CH, dutyCycle);                         // Motor PWM hiz ayari yapildi
 
-  if(motorDir == 1 && changeDirFlag == 1)               // Ileri yon
-  {   
-    digitalWrite(MOT_DIR1, LOW);
-    digitalWrite(MOT_DIR2, HIGH);    
-    changeDirFlag = 0;
-    Serial.println("\nMotor ileri yonde hareket ediyor");
+  ledcWrite(MOT_PIN, dutyCycle);
+
+  Serial.print("PWM: ");
+  Serial.println(dutyCycle);
+
+  dutyCycle += accAmount;
+
+  if (dutyCycle >= 255) {
+
+    dutyCycle = 255;
+
+    Serial.println("Maksimum hiz.");
+    Serial.println("Motor yavasliyor...");
+
+    accAmount = -5;
   }
-  else if(motorDir == 0 && changeDirFlag == 1)          // Geri yon
-  {
-    digitalWrite(MOT_DIR1, HIGH);
-    digitalWrite(MOT_DIR2, LOW);
-    changeDirFlag = 0;
-    Serial.println("\nMotor geri yonde hareket ediyor");
-  }
 
-  if(dutyCycle == 0)
-  {
-    Serial.println("Hizlaniyor...");  
-  }
-  if(dutyCycle == 255)  
-  {
-    Serial.println("Yavasliyor...");  
-  } 
+  else if (dutyCycle <= 0) {
 
-  dutyCycle = dutyCycle + accAmount;                    // Motor PWM hiz ayari degistirildi
+    dutyCycle = 0;
 
-  if (dutyCycle <= 0 || dutyCycle >= 255)               // Sinir degerlerde motor yon degisimi yapildi
-  {
-    accAmount = -accAmount;
-    dirCounter++;
+    ledcWrite(MOT_PIN, 0);
 
-    if(dirCounter == 2)
-    {
-      changeDirFlag = 1;
-      motorDir      = !motorDir;
-      dirCounter    = 0;
+    Serial.println("Motor durdu.");
+    Serial.println("Yon degistiriliyor...");
+
+    delay(500);
+
+    motorDir = !motorDir;
+
+    if (motorDir) {
+
+      digitalWrite(MOT_DIR1, LOW);
+      digitalWrite(MOT_DIR2, HIGH);
+
+      Serial.println("Motor ILERI yonde.");
+
+    } else {
+
+      digitalWrite(MOT_DIR1, HIGH);
+      digitalWrite(MOT_DIR2, LOW);
+
+      Serial.println("Motor GERI yonde.");
     }
+
+    accAmount = 5;
+
+    Serial.println("Motor hizlaniyor...");
   }
-  delay(50);                                            
+
+  delay(50);
 }

@@ -1,47 +1,118 @@
-/*
- *   RFIDkartUIDokuma örneği,
- *   RFIDkartUIDokuma uygulamasında RFID NFC modülüne kart okutulunca kartın UIDsini seri port ekrane yazdırmaktadır.
- *   Kart UIDnizi okunduğunda harici olarak D12 pinine bağlanan LED yanmaktadır. 
- *
- *  ==============================================================================
- *    Bu uygulama örneği için "MFRC522 by GithubCommunity" kütüphanesi indirilmelidir.  ->https://github.com/miguelbalboa/rfid<-
- *    Bu uygulama örneği MFRC522 kütüphanesi 1.4.8 versiyonu ile yazılmıştır.
- *  ==============================================================================
-*/
+#include <Arduino.h>
+#include <SPI.h>
 #include <MFRC522.h>
 
-MFRC522 mfrc522(D4, D0);  //D4:SDA(CS), D0:RST
+#define SS_PIN  D10
+#define RST_PIN D0
 
-/* Kart UID yazıldı*/
-String fnc_user_ID() {
-  mfrc522.PICC_ReadCardSerial();
-  String user_ID = "";
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+
+String yetkiliUID = "3B AA 43 0E";
+
+String kartUIDOku() {
+
+  String uid = "";
+
   for (byte i = 0; i < mfrc522.uid.size; i++) {
-    user_ID += (mfrc522.uid.uidByte[i] < 0x10 ? "0" : " ") + String(mfrc522.uid.uidByte[i], HEX);
+
+    if (i > 0) {
+      uid += " ";
+    }
+
+    if (mfrc522.uid.uidByte[i] < 0x10) {
+      uid += "0";
+    }
+
+    uid += String(mfrc522.uid.uidByte[i], HEX);
   }
-  return user_ID;
+
+  uid.toUpperCase();
+
+  return uid;
 }
 
 void setup() {
-  SPI.begin();
-  mfrc522.PCD_Init();
+
   Serial.begin(115200);
-  pinMode(D12, OUTPUT);
+  delay(1000);
+
+  Serial.println();
+  Serial.println("RFID sistemi baslatiliyor...");
+  
+  rgbLedWrite(RGB_BUILTIN, 0, 0, 0);
+
+  SPI.begin(SCK, MISO, MOSI, SS_PIN);
+
+  mfrc522.PCD_Init();
+
+  delay(500);
+
+  byte version = mfrc522.PCD_ReadRegister(MFRC522::VersionReg);
+
+  Serial.print("RC522 VersionReg: 0x");
+  Serial.println(version, HEX);
+
+  if (version == 0x00 || version == 0xFF) {
+
+    Serial.println("HATA: RC522 bulunamadi!");
+
+    rgbLedWrite(RGB_BUILTIN, 255, 0, 0);
+
+  } else {
+
+    Serial.println("RC522 BASARIYLA BULUNDU!");
+    Serial.println("RFID kartinizi yaklastirin...");
+
+    rgbLedWrite(RGB_BUILTIN, 0, 0, 0);
+  }
 }
 
 void loop() {
-  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
-    Serial.print("Kart UID: ");
-    String strID = fnc_user_ID();
-    Serial.println(strID);  //Kart UID seri port ekrane yazıldı
-    Serial.println();
 
-    /*Kart UIDnizi okuduğunda LED yanmaktadır*/
-    if (strID.indexOf("33 38 1f 2e") >= 0) {  //Kendi KART UIDnizi yazın
-      digitalWrite(D12, HIGH);
-    }
-    delay(1000);
-  } else {
-    digitalWrite(D12, LOW);
+  // Yeni kart var mı?
+  if (!mfrc522.PICC_IsNewCardPresent()) {
+    return;
   }
+
+  if (!mfrc522.PICC_ReadCardSerial()) {
+    return;
+  }
+
+  String strID = kartUIDOku();
+
+  Serial.println();
+  Serial.print("Kart UID: ");
+  Serial.println(strID);
+
+  
+  if (strID == yetkiliUID) {
+
+    Serial.println("YETKILI KART!");
+    Serial.println("Giris basarili.");
+
+
+    rgbLedWrite(RGB_BUILTIN, 0, 255, 0);
+
+  } else {
+
+    Serial.println("YETKISIZ KART!");
+    Serial.println("Giris reddedildi.");
+
+    // KIRMIZI
+    rgbLedWrite(RGB_BUILTIN, 255, 0, 0);
+  }
+ 
+  delay(2000);
+
+  // LED kapansın
+  rgbLedWrite(RGB_BUILTIN, 0, 0, 0);
+
+  
+  mfrc522.PICC_HaltA();
+  mfrc522.PCD_StopCrypto1();
+
+  delay(500);
+
+  Serial.println();
+  Serial.println("Yeni kart bekleniyor...");
 }
