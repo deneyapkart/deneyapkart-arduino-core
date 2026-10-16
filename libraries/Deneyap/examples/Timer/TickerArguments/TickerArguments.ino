@@ -4,8 +4,12 @@
 */
 #include <Ticker.h>
 
-#define LED_PIN   LEDB  // Deneyap Kart ve Deneyap Mini Led pini 
-//#define LED_PIN   D0  // Diğer Deneyap Geliştirme kartları harici LED takılmalıdır
+#ifdef LEDB
+#define LED_PIN   LEDB         // Deneyap Kart ve Deneyap Mini dahili LED pini
+#else
+#define LED_PIN   LED_BUILTIN  // Dahili RGB LED'i olan kartlar (beyaz yanar)
+#endif
+//#define LED_PIN   D0  // Harici LED kullanmak için üstteki tanımları silip bu satırı açın
 
 Ticker tickerSetHigh;
 Ticker tickerSetLow;
@@ -16,7 +20,7 @@ void setPin(int state) {
 
 void setup() {
   pinMode(LED_PIN, OUTPUT);
-  digitalWrite(1, LOW);
+  digitalWrite(LED_PIN, LOW);
   
   // her 25 ms'de setPin(0) çağır
   tickerSetLow.attach_ms(25, setPin, 0);
