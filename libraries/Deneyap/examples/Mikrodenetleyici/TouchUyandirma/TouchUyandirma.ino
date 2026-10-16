@@ -7,7 +7,11 @@
  *  İşlemleri kaç defa yapıldığı seri port ekranına yazdırılmaktadır. 
  *  Deneyap Kart G touch pinleri bulunmamaktadır. 
 */
-#define Threshold 40 /* Değer arttıkça hassasiyet artar */
+#if CONFIG_IDF_TARGET_ESP32
+#define Threshold 40   /* Değer arttıkça hassasiyet artar */
+#else
+#define Threshold 5000 /* ESP32-S2/S3: değer azaldıkça hassasiyet artar */
+#endif
 
 RTC_DATA_ATTR int bootCount = 0;
 touch_pad_t touchPin;
@@ -35,7 +39,8 @@ ESP32'nin kullandığı touchpad yazdırma yöntemi
 uykudan uyandı
 */
 void print_wakeup_touchpad(){
-  touchPin = esp_sleep_get_touchpad_wakeup_status();
+  touchPin = (touch_pad_t)esp_sleep_get_touchpad_wakeup_status();
+#if CONFIG_IDF_TARGET_ESP32
 
   switch(touchPin)
   {
@@ -51,10 +56,13 @@ void print_wakeup_touchpad(){
     case 9  : Serial.println("GPIO 32'te dokunma algılandı"); break;
     default : Serial.println("Touchpad değil uyandırma"); break;
   }
-}
-
-void callback(){
-  //yer tutucu geri çağırma işlevi
+#else
+  if (touchPin < TOUCH_PAD_MAX) {
+    Serial.printf("GPIO %d'te dokunma algılandı\n", touchPin);
+  } else {
+    Serial.println("Touchpad değil uyandırma");
+  }
+#endif
 }
 
 void setup(){
@@ -69,11 +77,8 @@ void setup(){
   print_wakeup_reason();
   print_wakeup_touchpad();
 
-  //Touchpad 2'te kurulum kesintisi D9 (GPIO2)
-  touchAttachInterrupt(T2, callback, Threshold);
-
-  // Touchpad'i uyandırma kaynağı olarak yapılandır
-  esp_sleep_enable_touchpad_wakeup();
+  // T2 touch pinini uyandırma kaynağı olarak yapılandır
+  touchSleepWakeUpEnable(T2, Threshold);
 
   Serial.println("Uyku modu başlıyor");
   esp_deep_sleep_start();

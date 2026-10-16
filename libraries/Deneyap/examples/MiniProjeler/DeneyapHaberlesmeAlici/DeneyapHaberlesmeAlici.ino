@@ -11,7 +11,7 @@ typedef struct struct_message {
 
 struct_message myData;
 
-void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len) {
   memcpy(&myData, incomingData, sizeof(myData));
   Serial.print("Buton Durumu: ");
   Serial.println(myData.button);

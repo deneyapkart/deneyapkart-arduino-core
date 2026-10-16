@@ -11,6 +11,9 @@
  *    Seri port ekranına gelen QR kodu görünür değilse, altındaki URL'yi bir tarayıcıda kopyala yapıştırın.
  *    QR kod seri port ekranından görünmüyor ise dahili butona "BUT" 4 saniyeden fazla basılı tutun.    
 */
+#if CONFIG_IDF_TARGET_ESP32
+#error "ESP RainMaker ornekleri Deneyap Kart ve Deneyap Kart 1A (ESP32) ile derlenemez (esp32 3.x siniri). Deneyap Kart v2, Kart G veya Mini v2 kullanin."
+#endif
 #include "RMaker.h"
 #include "WiFi.h"
 #include "WiFiProv.h"
@@ -84,9 +87,9 @@ void setup() {
 
   WiFi.onEvent(sysProvEvent);
 #if CONFIG_IDF_TARGET_ESP32S2
-  WiFiProv.beginProvision(WIFI_PROV_SCHEME_SOFTAP, WIFI_PROV_SCHEME_HANDLER_NONE, WIFI_PROV_SECURITY_1, pop, service_name);
+  WiFiProv.beginProvision(NETWORK_PROV_SCHEME_SOFTAP, NETWORK_PROV_SCHEME_HANDLER_NONE, NETWORK_PROV_SECURITY_1, pop, service_name);
 #else
-  WiFiProv.beginProvision(WIFI_PROV_SCHEME_BLE, WIFI_PROV_SCHEME_HANDLER_FREE_BTDM, WIFI_PROV_SECURITY_1, pop, service_name);
+  WiFiProv.beginProvision(NETWORK_PROV_SCHEME_BLE, NETWORK_PROV_SCHEME_HANDLER_FREE_BTDM, NETWORK_PROV_SECURITY_1, pop, service_name);
 #endif
 }
 

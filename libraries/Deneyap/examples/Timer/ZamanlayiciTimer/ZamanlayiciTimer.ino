@@ -3,7 +3,7 @@
  *   Bu örnek, ESP32'de donanım Timer'ın nasıl kullanılacağını göstermektedir. Zamanlayıcı onTimer'ı çağırmaktadır.
  *   Her saniye işlev görmektedir. Zamanlayıcı, (IO0)'a bağlanan BUT butonu ile durdurmaktadır.
 */
-#define BTN_STOP_ALARM  0  //Durdur butonunun tanımlanması
+#define BTN_STOP_ALARM  GPKEY  //Durdur butonunun tanımlanması (kart üzerindeki BUT butonu)
 
 hw_timer_t * timer = NULL;
 volatile SemaphoreHandle_t timerSemaphore;
@@ -31,19 +31,15 @@ void setup() {
   // Timer tetiklendiğinde bizi bilgilendirmek için semaphore oluştur
   timerSemaphore = xSemaphoreCreateBinary();
 
-  // 4'ün 1. zamanlayıcısını kullanın (sıfırdan sayılır).
-  // Ön ölçekleyici için 80 bölücü ayarlayın (daha fazla bilgi için ESP32 Teknik Referans Kılavuzuna bakın)
-  timer = timerBegin(0, 80, true);
+  // Timer'ı 1 MHz frekansla başlatın (her tik 1 mikrosaniye)
+  timer = timerBegin(1000000);
 
   // Timerımıza onTimer fonksiyonunu ekleyin.
-  timerAttachInterrupt(timer, &onTimer, true);
+  timerAttachInterrupt(timer, &onTimer);
 
-   // Alarmı her saniye onTimer işlevini çağıracak şekilde ayarlayın (mikrosaniye cinsinden değer)
-   // Alarmı tekrarla (üçüncü parametre)
-  timerAlarmWrite(timer, 1000000, true);
-
-  // Alarmı başlatın
-  timerAlarmEnable(timer);
+  // Alarmı her saniye onTimer işlevini çağıracak şekilde ayarlayın (mikrosaniye cinsinden değer)
+  // Alarmı tekrarla (üçüncü parametre), sınırsız tekrar (dördüncü parametre 0)
+  timerAlarm(timer, 1000000, true, 0);
 }
 
 void loop() {

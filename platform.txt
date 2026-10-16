@@ -2,9 +2,9 @@ name=Deneyap Gelistirme Kartlari
 version=2.1.0
 
 tools.esp32-arduino-libs.path={runtime.tools.{build.chip_variant}-libs.path}
-tools.xtensa-esp-elf-gcc.path={runtime.tools.xtensa-esp-elf-gcc.path}
+tools.xtensa-esp-elf-gcc.path={runtime.tools.esp-x32.path}
 tools.xtensa-esp-elf-gdb.path={runtime.tools.xtensa-esp-elf-gdb.path}
-tools.riscv32-esp-elf-gcc.path={runtime.tools.riscv32-esp-elf-gcc.path}
+tools.riscv32-esp-elf-gcc.path={runtime.tools.esp-rv32.path}
 tools.riscv32-esp-elf-gdb.path={runtime.tools.riscv32-esp-elf-gdb.path}
 
 tools.esptool_py.path={runtime.tools.esptool_py.path}
@@ -102,7 +102,7 @@ build.code_debug=0
 build.defines=
 build.loop_core=
 build.event_core=
-build.extra_flags=-DARDUINO_HOST_OS="{runtime.os}" -DARDUINO_FQBN="{build.fqbn}" -DESP32=ESP32 -DCORE_DEBUG_LEVEL={build.code_debug} {build.loop_core} {build.event_core} {build.defines} {build.extra_flags.{build.mcu}} {build.zigbee_mode}
+build.extra_flags=-DARDUINO_HOST_OS="{runtime.os}" -DARDUINO_FQBN="{build.fqbn}" -DESP32=ESP32 -DCORE_DK_VERSION=201000 -DCORE_DEBUG_LEVEL={build.code_debug} {build.loop_core} {build.event_core} {build.defines} {build.extra_flags.{build.mcu}} {build.zigbee_mode}
 build.extra_libs=
 build.memory_type={build.boot}_qspi
 build.chip_variant={build.mcu}
@@ -324,9 +324,9 @@ debug.toolchain=gcc
 debug.toolchain.path={tools.{build.tarch}-esp-elf-gdb.path}/bin/
 debug.toolchain.prefix={build.tarch}-{build.target}-elf
 debug.server=openocd
-debug.server.openocd.path={runtime.platform.path}/tools/openocd-esp32/bin/openocd
-debug.server.openocd.scripts_dir={runtime.platform.path}/tools/openocd-esp32/share/openocd/scripts/
-debug.server.openocd.scripts_dir.windows={runtime.platform.path}\tools\openocd-esp32\share\openocd\scripts\
+debug.server.openocd.path={runtime.tools.openocd-esp32.path}/bin/openocd
+debug.server.openocd.scripts_dir={runtime.tools.openocd-esp32.path}/share/openocd/scripts/
+debug.server.openocd.scripts_dir.windows={runtime.tools.openocd-esp32.path}\share\openocd\scripts\
 debug.server.openocd.scripts.0=board/{debug_script.{build.mcu}}
 debug.svd_file={runtime.platform.path}/tools/ide-debug/svd/{build.mcu}.svd
 

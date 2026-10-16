@@ -17,6 +17,7 @@ void motor_forward();
 void motor_backward();
 void motor_right();
 void motor_left();
+void ledYak(bool kirmizi, bool yesil, bool mavi);
 
 typedef struct struct_message {
     float accel_x;
@@ -27,7 +28,7 @@ typedef struct struct_message {
 struct_message imuData;
 
 // callback function that will be executed when data is received
-void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len) {
   memcpy(&imuData, incomingData, sizeof(imuData));
   Serial.print("Bytes received: ");
   Serial.println(len);
@@ -53,16 +54,18 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
 }
 
 void setup() {
+#ifdef LEDR
   pinMode(LEDR, OUTPUT);
   pinMode(LEDG, OUTPUT);
   pinMode(LEDB, OUTPUT);
+#endif
   Serial.begin(115200);
   WiFi.mode(WIFI_MODE_STA);
 
-  /*pinMode(MOT1_DIRA, OUTPUT);
+  pinMode(MOT1_DIRA, OUTPUT);
   pinMode(MOT1_DIRB, OUTPUT);
   pinMode(MOT2_DIRA, OUTPUT);
-  pinMode(MOT2_DIRB, OUTPUT);*/
+  pinMode(MOT2_DIRB, OUTPUT);
 
   // Init ESP-NOW
   if (esp_now_init() != ESP_OK) {
@@ -81,9 +84,7 @@ void loop() {
 
 void motor_stop()
 {
-  writeRedLed(LOW);
-  writeGreenLed(LOW);
-  writeBlueLed(LOW);
+  ledYak(LOW, LOW, LOW);
 
   digitalWrite(MOT1_DIRA, LOW);
   digitalWrite(MOT1_DIRB, LOW);
@@ -95,9 +96,7 @@ void motor_stop()
 
 void motor_forward()
 {
-  writeRedLed(HIGH);
-  writeGreenLed(LOW);
-  writeBlueLed(LOW);
+  ledYak(HIGH, LOW, LOW);
 
   digitalWrite(MOT1_DIRA, HIGH);
   digitalWrite(MOT1_DIRB, LOW);
@@ -109,9 +108,7 @@ void motor_forward()
 
 void motor_backward()
 {
-  writeRedLed(LOW);
-  writeGreenLed(HIGH);
-  writeBlueLed(LOW);
+  ledYak(LOW, HIGH, LOW);
 
   digitalWrite(MOT1_DIRA, LOW);
   digitalWrite(MOT1_DIRB, HIGH);
@@ -123,9 +120,7 @@ void motor_backward()
 
 void motor_right()
 {
-  writeRedLed(LOW);
-  writeGreenLed(LOW);
-  writeBlueLed(HIGH);
+  ledYak(LOW, LOW, HIGH);
 
   digitalWrite(MOT1_DIRA, LOW);
   digitalWrite(MOT1_DIRB, HIGH);
@@ -137,9 +132,7 @@ void motor_right()
 
 void motor_left()
 {
-  writeRedLed(HIGH);
-  writeGreenLed(HIGH);
-  writeBlueLed(HIGH);
+  ledYak(HIGH, HIGH, HIGH);
 
   digitalWrite(MOT1_DIRA, HIGH);
   digitalWrite(MOT1_DIRB, LOW);
@@ -147,4 +140,25 @@ void motor_left()
   digitalWrite(MOT2_DIRB, HIGH);
 
   Serial.println("SOL");
+}
+
+// Dahili LED ile yön gösterimi
+void ledYak(bool kirmizi, bool yesil, bool mavi)
+{
+#ifdef LEDR
+#ifdef ARDUINO_DYDK
+  // Deneyap Kart: RGB LED'ler LOW ile yanar
+  digitalWrite(LEDR, !kirmizi);
+  digitalWrite(LEDG, !yesil);
+  digitalWrite(LEDB, !mavi);
+#else
+  // Deneyap Mini: RGB LED'ler HIGH ile yanar
+  digitalWrite(LEDR, kirmizi);
+  digitalWrite(LEDG, yesil);
+  digitalWrite(LEDB, mavi);
+#endif
+#else
+  // Adreslenebilir RGB LED'i olan kartlar
+  rgbLedWrite(RGBLED, kirmizi ? RGB_BRIGHTNESS : 0, yesil ? RGB_BRIGHTNESS : 0, mavi ? RGB_BRIGHTNESS : 0);
+#endif
 }
