@@ -14,7 +14,6 @@
 #endif
 
 RTC_DATA_ATTR int bootCount = 0;
-touch_pad_t touchPin;
 /*
 ESP32'nin nedenini yazdırma yöntemi
 uykudan uyandı
@@ -34,37 +33,6 @@ void print_wakeup_reason(){
     default : Serial.printf("Uyanma deepsleepten kaynaklanmadı: %d\n",wakeup_reason); break;
   }
 }
-/*
-ESP32'nin kullandığı touchpad yazdırma yöntemi
-uykudan uyandı
-*/
-void print_wakeup_touchpad(){
-  touchPin = (touch_pad_t)esp_sleep_get_touchpad_wakeup_status();
-#if CONFIG_IDF_TARGET_ESP32
-
-  switch(touchPin)
-  {
-    case 0  : Serial.println("GPIO 4'te dokunma algılandı"); break;
-    case 1  : Serial.println("GPIO 0'te dokunma algılandı"); break;
-    case 2  : Serial.println("GPIO 2'te dokunma algılandı"); break;
-    case 3  : Serial.println("GPIO 15'te dokunma algılandı"); break;
-    case 4  : Serial.println("GPIO 13'te dokunma algılandı"); break;
-    case 5  : Serial.println("GPIO 12'te dokunma algılandı"); break;
-    case 6  : Serial.println("GPIO 14'te dokunma algılandı"); break;
-    case 7  : Serial.println("GPIO 27'te dokunma algılandı"); break;
-    case 8  : Serial.println("GPIO 33'te dokunma algılandı"); break;
-    case 9  : Serial.println("GPIO 32'te dokunma algılandı"); break;
-    default : Serial.println("Touchpad değil uyandırma"); break;
-  }
-#else
-  if (touchPin < TOUCH_PAD_MAX) {
-    Serial.printf("GPIO %d'te dokunma algılandı\n", touchPin);
-  } else {
-    Serial.println("Touchpad değil uyandırma");
-  }
-#endif
-}
-
 void setup(){
   Serial.begin(115200);
   delay(1000); 
@@ -73,9 +41,8 @@ void setup(){
   ++bootCount;
   Serial.println("Önyükleme sayısı: " + String(bootCount));
 
-  //ESP32 ve touchpad uyandırma nedenini de yazdırın
+  // Uyandırma nedenini yazdır
   print_wakeup_reason();
-  print_wakeup_touchpad();
 
   // T2 touch pinini uyandırma kaynağı olarak yapılandır
   touchSleepWakeUpEnable(T2, Threshold);
