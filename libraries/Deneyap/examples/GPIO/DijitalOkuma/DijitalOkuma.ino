@@ -4,6 +4,13 @@
  *   Cyan, Beyaz renklerinde yanacaktır ve sonraki buton basımında led sönmektedir. 
  *   Bu işlem bir döngü şekilde her butona basımında devam etmektedir.
 */
+#if defined(ARDUINO_DYDK)  // DENEYAP KART: RGB ledler LOW ile yanar
+#define LED_YAK    LOW
+#define LED_SONDUR HIGH
+#elif defined(ARDUINO_DYM)  // DENEYAP MİNİ: RGB ledler HIGH ile yanar
+#define LED_YAK    HIGH
+#define LED_SONDUR LOW
+#endif
 enum renkler {
   KIRMIZI,
   YESIL,
@@ -42,51 +49,51 @@ void loop() {
   switch (renk_durumu) {
 #if defined(ARDUINO_DYDK) || defined(ARDUINO_DYM)  // DENEYAP KART veya DENEYAP MİNİ kartı kullanılıyorsa
     case KIRMIZI:
-      digitalWrite(LEDR, HIGH);
-      digitalWrite(LEDG, LOW);
-      digitalWrite(LEDB, LOW);
+      digitalWrite(LEDR, LED_YAK);
+      digitalWrite(LEDG, LED_SONDUR);
+      digitalWrite(LEDB, LED_SONDUR);
       break;
 
     case YESIL:
-      digitalWrite(LEDR, LOW);
-      digitalWrite(LEDG, HIGH);
-      digitalWrite(LEDB, LOW);
+      digitalWrite(LEDR, LED_SONDUR);
+      digitalWrite(LEDG, LED_YAK);
+      digitalWrite(LEDB, LED_SONDUR);
       break;
 
     case MAVI:
-      digitalWrite(LEDR, LOW);
-      digitalWrite(LEDG, LOW);
-      digitalWrite(LEDB, HIGH);
+      digitalWrite(LEDR, LED_SONDUR);
+      digitalWrite(LEDG, LED_SONDUR);
+      digitalWrite(LEDB, LED_YAK);
       break;
 
     case SARI:
-      digitalWrite(LEDR, HIGH);
-      digitalWrite(LEDG, HIGH);
-      digitalWrite(LEDB, LOW);
+      digitalWrite(LEDR, LED_YAK);
+      digitalWrite(LEDG, LED_YAK);
+      digitalWrite(LEDB, LED_SONDUR);
       break;
 
     case MAGENTA:
-      digitalWrite(LEDR, HIGH);
-      digitalWrite(LEDG, LOW);
-      digitalWrite(LEDB, HIGH);
+      digitalWrite(LEDR, LED_YAK);
+      digitalWrite(LEDG, LED_SONDUR);
+      digitalWrite(LEDB, LED_YAK);
       break;
 
     case CYAN:
-      digitalWrite(LEDR, LOW);
-      digitalWrite(LEDG, HIGH);
-      digitalWrite(LEDB, HIGH);
+      digitalWrite(LEDR, LED_SONDUR);
+      digitalWrite(LEDG, LED_YAK);
+      digitalWrite(LEDB, LED_YAK);
       break;
 
     case BEYAZ:
-      digitalWrite(LEDR, HIGH);
-      digitalWrite(LEDG, HIGH);
-      digitalWrite(LEDB, HIGH);
+      digitalWrite(LEDR, LED_YAK);
+      digitalWrite(LEDG, LED_YAK);
+      digitalWrite(LEDB, LED_YAK);
       break;
 
     case RENK_YOK:
-      digitalWrite(LEDR, LOW);
-      digitalWrite(LEDG, LOW);
-      digitalWrite(LEDB, LOW);
+      digitalWrite(LEDR, LED_SONDUR);
+      digitalWrite(LEDG, LED_SONDUR);
+      digitalWrite(LEDB, LED_SONDUR);
       break;
 
 #else  // Diğer Deneyap Geliştirme Kartları kullanılıyorsa

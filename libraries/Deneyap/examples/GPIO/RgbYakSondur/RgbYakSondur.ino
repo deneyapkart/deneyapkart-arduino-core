@@ -3,6 +3,13 @@
  *   Deneyap Geliştirme Kartlarının üzerinde yer alan RGB led 400 milisaniye arayla Kırmızı, Yeşil, Mavi, Turuncu, Magenta, 
  *   Cyan, Beyaz renkleri yakmaktadır. 
 */
+#if defined(ARDUINO_DYDK)  // DENEYAP KART: RGB ledler LOW ile yanar
+#define LED_YAK    LOW
+#define LED_SONDUR HIGH
+#elif defined(ARDUINO_DYM)  // DENEYAP MİNİ: RGB ledler HIGH ile yanar
+#define LED_YAK    HIGH
+#define LED_SONDUR LOW
+#endif
 #define gecikme_suresi 400  // milisaniye
 
 void setup() {
@@ -16,51 +23,51 @@ void setup() {
 void loop() {
 #if defined(ARDUINO_DYDK) || defined(ARDUINO_DYM)  // DENEYAP KART veya DENEYAP MİNİ kartı kullanılıyorsa
   // Mavi
-  digitalWrite(LEDR, LOW);
-  digitalWrite(LEDG, LOW);
-  digitalWrite(LEDB, HIGH);
+  digitalWrite(LEDR, LED_SONDUR);
+  digitalWrite(LEDG, LED_SONDUR);
+  digitalWrite(LEDB, LED_YAK);
   delay(gecikme_suresi);
 
   // Yeşil
-  digitalWrite(LEDR, LOW);
-  digitalWrite(LEDG, HIGH);
-  digitalWrite(LEDB, LOW);
+  digitalWrite(LEDR, LED_SONDUR);
+  digitalWrite(LEDG, LED_YAK);
+  digitalWrite(LEDB, LED_SONDUR);
   delay(gecikme_suresi);
 
   // Kırmızı
-  digitalWrite(LEDR, HIGH);
-  digitalWrite(LEDG, LOW);
-  digitalWrite(LEDB, LOW);
+  digitalWrite(LEDR, LED_YAK);
+  digitalWrite(LEDG, LED_SONDUR);
+  digitalWrite(LEDB, LED_SONDUR);
   delay(gecikme_suresi);
 
   // Beyaz
-  digitalWrite(LEDR, HIGH);
-  digitalWrite(LEDG, HIGH);
-  digitalWrite(LEDB, HIGH);
+  digitalWrite(LEDR, LED_YAK);
+  digitalWrite(LEDG, LED_YAK);
+  digitalWrite(LEDB, LED_YAK);
   delay(gecikme_suresi);
 
   // Renk yok
-  digitalWrite(LEDR, LOW);
-  digitalWrite(LEDG, LOW);
-  digitalWrite(LEDB, LOW);
+  digitalWrite(LEDR, LED_SONDUR);
+  digitalWrite(LEDG, LED_SONDUR);
+  digitalWrite(LEDB, LED_SONDUR);
   delay(gecikme_suresi);
 
   // Cyan
-  digitalWrite(LEDR, LOW);
-  digitalWrite(LEDG, HIGH);
-  digitalWrite(LEDB, HIGH);
+  digitalWrite(LEDR, LED_SONDUR);
+  digitalWrite(LEDG, LED_YAK);
+  digitalWrite(LEDB, LED_YAK);
   delay(gecikme_suresi);
 
   // Meganta
-  digitalWrite(LEDR, HIGH);
-  digitalWrite(LEDG, LOW);
-  digitalWrite(LEDB, HIGH);
+  digitalWrite(LEDR, LED_YAK);
+  digitalWrite(LEDG, LED_SONDUR);
+  digitalWrite(LEDB, LED_YAK);
   delay(gecikme_suresi);
 
   // Sarı
-  digitalWrite(LEDR, HIGH);
-  digitalWrite(LEDG, HIGH);
-  digitalWrite(LEDB, LOW);
+  digitalWrite(LEDR, LED_YAK);
+  digitalWrite(LEDG, LED_YAK);
+  digitalWrite(LEDB, LED_SONDUR);
   delay(gecikme_suresi);
 
 #else  // Diğer Deneyap Geliştirme Kartları kullanılıyorsa
